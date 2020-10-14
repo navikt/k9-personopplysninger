@@ -1,0 +1,21 @@
+{
+  "app": "k9-personopplysninger",
+  "cluster": "dev-gcp",
+  "namespace": "omsorgspenger",
+  "team": "omsorgspenger",
+  "minReplicas": "1",
+  "maxReplicas": "1",
+  "ingresses": [
+    "https://k9-personopplysninger.dev.adeo.no"
+  ],
+  "externalHosts": [
+    "api-gw-q1.oera.no"
+  ],
+  "env": {
+    "KAFKA_BOOTSTRAP_SERVERS": "b27apvl00045.preprod.local:8443,b27apvl00046.preprod.local:8443,b27apvl00047.preprod.local:8443",
+    "KAFKA_PROPERTIES_SECURITY_PROTOCOL": "SASL_SSL",
+    "KAFKA_RAPID_TOPIC": "k9-rapid-v2",
+    "KAFKA_CONSUMER_GROUP_ID": "k9-personopplysninger",
+    "STS_URL": "https://api-gw-q1.oera.no/security-token-service"
+  }
+}
