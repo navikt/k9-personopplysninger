@@ -5,11 +5,13 @@ import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.helse.rapids_rivers.River
 import no.nav.k9.rapid.river.BehovssekvensPacketListener
+import no.nav.k9.rapid.river.leggTilLøsning
 import no.nav.k9.rapid.river.skalLøseBehov
 import org.slf4j.LoggerFactory
 
 internal class HentPersonopplysninger(
-        rapidsConnection: RapidsConnection) : BehovssekvensPacketListener(
+        rapidsConnection: RapidsConnection,
+        internal val personopplysningerMediator: PersonopplysningerMediator) : BehovssekvensPacketListener(
         logger = LoggerFactory.getLogger(HentPersonopplysninger::class.java)
 ) {
 
@@ -24,7 +26,17 @@ internal class HentPersonopplysninger(
 
     override fun handlePacket(id: String, packet: JsonMessage): Boolean {
         logger.info("Mottatt $BEHOV med id $id")
-        return false
+        lateinit var løsning: Map<String, String>
+        try {
+            løsning = personopplysningerMediator.hentPersonopplysninger()
+        } catch(cause: Throwable) {
+            secureLogger.error("Feil vid försök att lösa behov $BEHOV med id $id", cause)
+            return false
+        }
+        packet.leggTilLøsning(
+                behov = BEHOV,
+                løsning = løsning)
+        return true
     }
 
     override fun onSent(id: String, packet: JsonMessage) {
