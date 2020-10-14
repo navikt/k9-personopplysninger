@@ -3,7 +3,6 @@ package no.nav.omsorgspenger
 import no.nav.helse.rapids_rivers.RapidApplication
 import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.omsorgspenger.config.Environment
-import no.nav.omsorgspenger.config.readServiceUserCredentials
 import no.nav.omsorgspenger.personopplysninger.HentPersonopplysninger
 
 fun main() {
