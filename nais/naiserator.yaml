@@ -45,7 +45,7 @@ spec:
     enabled: true
     path: /metrics
   filesFrom:
-    - secret: k9personopplysninger-srvusercredentials
+    - secret: k9-personopplysninger-srvusercredentials
       mountPath: /var/run/secrets/nais.io/service_user # Behov fra rapids-and-rivers.
   env:
   {{#each env}}
