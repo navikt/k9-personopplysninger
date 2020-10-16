@@ -21,9 +21,11 @@ java {
 
 dependencies {
     implementation("no.nav.k9.rapid:river:$k9rapidVersion")
+    implementation("no.nav.helse:dusseldorf-ktor-health:$dusseldorfKtorVersion")
 
     implementation("io.ktor:ktor-client-jackson:$ktorVersion")
     implementation("io.ktor:ktor-client-cio:$ktorVersion")
+    implementation("io.ktor:ktor-jackson:$ktorVersion")
 
 
     testImplementation ("org.skyscreamer:jsonassert:$jsonassertVersion")
