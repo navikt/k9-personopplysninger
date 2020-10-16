@@ -28,8 +28,8 @@ internal class HentPersonopplysninger(
         logger.info("Mottatt $BEHOV med id $id")
         lateinit var løsning: Map<String, String>
         try {
-            løsning = personopplysningerMediator.hentPersonopplysninger()
-        } catch(cause: Throwable) {
+            løsning = personopplysningerMediator.hentPersonopplysninger(packet[IDENTITETSNUMMER].asText())
+        } catch (cause: Throwable) {
             secureLogger.error("Feil vid försök att lösa behov $BEHOV med id $id", cause)
             return false
         }

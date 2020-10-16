@@ -1,9 +1,7 @@
 package no.nav.omsorgspenger.client.pdl
 
-import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlinx.coroutines.runBlocking
-import no.nav.klage.clients.pdl.HentPdlResponse
 import no.nav.omsorgspenger.ApplicationContext
 import no.nav.omsorgspenger.testutils.ApplicationContextExtension
 import org.junit.jupiter.api.Test
@@ -16,11 +14,12 @@ internal class PdlClientTest(
     private val pdlClient = applicationContext.pdlClient
 
     @Test
-    fun `test`() {
+    fun `Parser gyldig request`() {
         val response = runBlocking {
             pdlClient.getPersonInfo("111111")
         }
 
-        assertNotNull(response)
+        assertNotNull(response.data)
     }
+
 }

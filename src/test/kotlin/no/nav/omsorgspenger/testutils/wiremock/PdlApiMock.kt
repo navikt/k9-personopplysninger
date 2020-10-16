@@ -20,9 +20,10 @@ private fun WireMockServer.stubPdlApiHentPerson(): WireMockServer {
                     .withHeader("x-nav-apiKey", AnythingPattern())
                     .withRequestBody(matchingJsonPath("$.query"))
                     .willReturn(
-                    WireMock.aResponse()
-                            .withStatus(200)
-                            .withBody("""
+                            WireMock.aResponse()
+                                    .withStatus(200)
+                                    .withHeader("Content-Type", "application/json")
+                                    .withBody("""
                                 {
                                   "data": {
                                     "hentPerson": {
@@ -54,7 +55,7 @@ private fun WireMockServer.stubPdlApiHentPerson(): WireMockServer {
                                   }
                                 }
                             """.trimIndent())
-            )
+                    )
     )
 
     return this

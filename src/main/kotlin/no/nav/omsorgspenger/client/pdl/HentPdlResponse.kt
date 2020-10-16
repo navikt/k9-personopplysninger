@@ -1,6 +1,8 @@
 package no.nav.klage.clients.pdl
 
-data class HentPdlResponse(val data: HentPersonInfo?)
+import kotlin.reflect.full.memberProperties
+
+data class HentPdlResponse(val data: HentPersonInfo, val errors: List<PdlError>?)
 
 data class HentPersonInfo(val hentPerson: Person?, val hentIdenter: Identer?)
 
@@ -31,5 +33,9 @@ data class Foedsel(
 )
 
 data class Identer(
+        val identer: List<Ident>
+)
+
+data class Ident(
         val ident: String
 )
