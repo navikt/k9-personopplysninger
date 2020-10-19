@@ -27,19 +27,22 @@ internal class HentPersonopplysninger(
     override fun handlePacket(id: String, packet: JsonMessage): Boolean {
         logger.info("Mottatt $BEHOV med id $id")
         lateinit var løsning: Map<String, String>
+        val ident = packet[IDENTITETSNUMMER].asText()
         try {
-            løsning = personopplysningerMediator.hentPersonopplysninger(packet[IDENTITETSNUMMER].asText())
+            løsning = personopplysningerMediator.hentPersonopplysninger(ident)
         } catch (cause: Throwable) {
             secureLogger.error("Feil vid försök att lösa behov $BEHOV med id $id", cause)
             return false
         }
         packet.leggTilLøsning(
                 behov = BEHOV,
-                løsning = løsning)
+                løsning = mapOf(ident to løsning)
+        )
         return true
     }
 
     override fun onSent(id: String, packet: JsonMessage) {
+        logger.info(packet.toJson())
         logger.info("Løst behov $BEHOV med id $id")
     }
 

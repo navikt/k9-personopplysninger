@@ -4,18 +4,19 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import io.ktor.application.*
+import io.ktor.application.Application
+import io.ktor.application.install
 import io.ktor.client.HttpClient
-import io.ktor.client.features.json.JsonFeature
 import io.ktor.client.features.json.JacksonSerializer
-import io.ktor.features.*
-import io.ktor.jackson.*
-import io.ktor.routing.*
+import io.ktor.client.features.json.JsonFeature
+import io.ktor.features.ContentNegotiation
+import io.ktor.jackson.jackson
+import io.ktor.routing.routing
 import no.nav.helse.dusseldorf.ktor.health.HealthRoute
 import no.nav.helse.dusseldorf.ktor.health.HealthService
 import no.nav.helse.rapids_rivers.RapidApplication
 import no.nav.helse.rapids_rivers.RapidsConnection
-import no.nav.klage.clients.pdl.PdlClient
+import no.nav.omsorgspenger.client.pdl.PdlClient
 import no.nav.omsorgspenger.config.Environment
 import no.nav.omsorgspenger.config.ServiceUser
 import no.nav.omsorgspenger.config.readServiceUserCredentials
@@ -25,7 +26,7 @@ import no.nav.omsorgspenger.personopplysninger.PersonopplysningerMediator
 fun main() {
     val applicationContext = ApplicationContext.Builder().build()
     RapidApplication.Builder(RapidApplication.RapidApplicationConfig.fromEnv(applicationContext.env))
-            .withKtorModule { omsorgspengerJournalføring(applicationContext) }
+            .withKtorModule { omsorgspengerPersonopplysninger(applicationContext) }
             .build()
             .apply { registerApplicationContext(applicationContext) }
             .start()
@@ -40,13 +41,14 @@ internal fun RapidsConnection.registerApplicationContext(applicationContext: App
         override fun onStartup(rapidsConnection: RapidsConnection) {
             applicationContext.start()
         }
+
         override fun onShutdown(rapidsConnection: RapidsConnection) {
             applicationContext.stop()
         }
     })
 }
 
-internal fun Application.omsorgspengerJournalføring(applicationContext: ApplicationContext) {
+internal fun Application.omsorgspengerPersonopplysninger(applicationContext: ApplicationContext) {
     install(ContentNegotiation) {
         jackson()
     }
@@ -74,24 +76,24 @@ internal class ApplicationContext(
             internal var stsRestClient: StsRestClient? = null,
             internal var pdlClient: PdlClient? = null,
             internal var personopplysningerMediator: PersonopplysningerMediator? = null) {
-        internal fun build() : ApplicationContext {
-            val benyttetEnv = env?:System.getenv()
-            val benyttetHttpClient = httpClient?:HttpClient {
+        internal fun build(): ApplicationContext {
+            val benyttetEnv = env ?: System.getenv()
+            val benyttetHttpClient = httpClient ?: HttpClient {
                 install(JsonFeature) { serializer = JacksonSerializer(objectMapper) }
             }
-            val benyttetServiceUser = serviceUser?:serviceUser?:readServiceUserCredentials()
-            val benyttetStsRestClient = stsRestClient?:StsRestClient(
+            val benyttetServiceUser = serviceUser ?: serviceUser ?: readServiceUserCredentials()
+            val benyttetStsRestClient = stsRestClient ?: StsRestClient(
                     env = benyttetEnv,
                     serviceUser = benyttetServiceUser,
                     httpClient = benyttetHttpClient
             )
-            val benyttetPdlClient = pdlClient?: PdlClient(
+            val benyttetPdlClient = pdlClient ?: PdlClient(
                     env = benyttetEnv,
                     stsRestClient = benyttetStsRestClient,
                     httpClient = benyttetHttpClient,
                     serviceUser = benyttetServiceUser
             )
-            val benyttetPersonopplysningerMediator = personopplysningerMediator?: PersonopplysningerMediator(
+            val benyttetPersonopplysningerMediator = personopplysningerMediator ?: PersonopplysningerMediator(
                     pdlClient = benyttetPdlClient
             )
 

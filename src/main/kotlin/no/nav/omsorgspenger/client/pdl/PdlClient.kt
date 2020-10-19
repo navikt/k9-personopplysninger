@@ -1,8 +1,7 @@
-package no.nav.klage.clients.pdl
+package no.nav.omsorgspenger.client.pdl
 
 import io.ktor.client.HttpClient
 import io.ktor.client.request.accept
-import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.client.request.options
 import io.ktor.client.request.post
@@ -18,7 +17,6 @@ import no.nav.omsorgspenger.StsRestClient
 import no.nav.omsorgspenger.config.Environment
 import no.nav.omsorgspenger.config.ServiceUser
 import no.nav.omsorgspenger.config.hentRequiredEnv
-import org.slf4j.LoggerFactory
 
 internal class PdlClient(
         private val env: Environment,
@@ -27,7 +25,6 @@ internal class PdlClient(
         private val httpClient: HttpClient
 ) : HealthCheck {
 
-    private val logger = LoggerFactory.getLogger(PdlClient::class.java)
     private val pdlBaseUrl = env.hentRequiredEnv("PDL_BASE_URL")
     private val apiKey = env.hentRequiredEnv("PDL_API_GW_KEY")
 
@@ -41,7 +38,7 @@ internal class PdlClient(
             header("x-nav-apiKey", apiKey)
             accept(ContentType.Application.Json)
             contentType(ContentType.Application.Json)
-            body = hentPersonQuery(ident)
+            body = hentPersonInfoQuery(ident)
         }.receive()
     }
 

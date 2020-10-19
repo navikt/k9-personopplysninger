@@ -26,19 +26,21 @@ internal class HentPersonopplysningerTest(
     }
 
     @Test
-    fun `Løser behov`() {
-
-        val (_, behovssekvens) = nyBehovsSekvens("111111111")
+    fun `River tar emot och løser gyldigt behov`() {
+        val (_, behovssekvens) = nyBehovsSekvens("01019911111")
         rapid.sendTestMessage(behovssekvens)
-
-        println(rapid.inspektør.message(0))
-
         assertEquals(1, rapid.inspektør.size)
+    }
+
+    @Test
+    fun `Hanterar behov med respons utan innehåll fra PDL`() {
+        val (_, behovssekvens) = nyBehovsSekvens("404")
+        rapid.sendTestMessage(behovssekvens)
+        assertEquals(0, rapid.inspektør.size)
     }
 
     internal companion object {
         const val BEHOV = "HentPersonopplysninger"
-        const val IDENTITETSNUMMER = "@behov.$BEHOV.identitetsnummer"
     }
 
     private fun nyBehovsSekvens(

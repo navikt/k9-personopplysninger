@@ -1,4 +1,22 @@
-package no.nav.klage.clients.pdl
+package no.nav.omsorgspenger.client.pdl
+
+data class GraphqlQuery(
+        val query: String,
+        val variables: Variables
+)
+
+data class PersonInfoGraphqlQuery(
+        val query: String,
+        val variables: Variabler
+)
+
+data class Variabler(
+        val ident: String
+)
+
+data class Variables(
+        val ident: String
+)
 
 data class PdlError(
         val message: String,
@@ -17,16 +35,7 @@ data class PdlErrorExtension(
         val classification: String
 )
 
-data class GraphqlQuery(
-    val query: String,
-    val variables: Variables
-)
-
-data class Variables(
-        val ident: String
-)
-
-fun hentPersonQuery(identitetsnummer: String): GraphqlQuery {
+fun hentPersonInfoQuery(fnr: String): PersonInfoGraphqlQuery {
     val query = GraphqlQuery::class.java.getResource("/pdl/hentPersonInfo.graphql").readText().replace("[\n\r]", "")
-    return GraphqlQuery(query, Variables(identitetsnummer))
+    return PersonInfoGraphqlQuery(query, Variabler(fnr))
 }

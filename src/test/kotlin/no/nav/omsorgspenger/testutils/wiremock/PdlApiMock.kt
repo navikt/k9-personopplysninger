@@ -18,7 +18,7 @@ private fun WireMockServer.stubPdlApiHentPerson(): WireMockServer {
                     .withHeader("Content-Type", equalTo("application/json"))
                     .withHeader("Nav-Consumer-Token", AnythingPattern())
                     .withHeader("x-nav-apiKey", AnythingPattern())
-                    .withRequestBody(matchingJsonPath("$.query"))
+                    .withRequestBody(matchingJsonPath("$.variables.ident", equalTo("01019911111")))
                     .willReturn(
                             WireMock.aResponse()
                                     .withStatus(200)
@@ -61,5 +61,49 @@ private fun WireMockServer.stubPdlApiHentPerson(): WireMockServer {
     return this
 }
 
-internal fun WireMockServer.stubPdlApi() = stubPdlApiHentPerson()
+private fun WireMockServer.stubPdlApiHentPersonError(): WireMockServer {
+    WireMock.stubFor(
+            WireMock.post(WireMock
+                    .urlPathMatching(".*$pdlApiMockPath.*"))
+                    .withHeader("Authorization", containing("Bearer"))
+                    .withHeader("Content-Type", equalTo("application/json"))
+                    .withHeader("Nav-Consumer-Token", AnythingPattern())
+                    .withHeader("x-nav-apiKey", AnythingPattern())
+                    .withRequestBody(matchingJsonPath("$.variables.ident", equalTo("404")))
+                    .willReturn(
+                            WireMock.aResponse()
+                                    .withStatus(200)
+                                    .withHeader("Content-Type", "application/json")
+                                    .withBody("""
+                                {
+                                  "errors": [
+                                    {
+                                      "message": "Ikke tilgang til å se person",
+                                      "locations": [
+                                        {
+                                          "line": 30,
+                                          "column": 5
+                                        }
+                                      ],
+                                      "path": [
+                                        "hentPerson"
+                                      ],
+                                      "extensions": {
+                                        "code": "unauthorized",
+                                        "classification": "ExecutionAborted"
+                                      }
+                                    }
+                                  ],
+                                  "data": {
+                                    "hentPerson": null
+                                  }
+                                }
+                            """.trimIndent())
+                    )
+    )
+
+    return this
+}
+
+internal fun WireMockServer.stubPdlApi() = stubPdlApiHentPerson().stubPdlApiHentPersonError()
 internal fun WireMockServer.pdlApiBaseUrl() = baseUrl() + pdlApiBasePath

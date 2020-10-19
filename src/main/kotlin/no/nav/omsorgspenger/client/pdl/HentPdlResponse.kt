@@ -1,6 +1,4 @@
-package no.nav.klage.clients.pdl
-
-import kotlin.reflect.full.memberProperties
+package no.nav.omsorgspenger.client.pdl
 
 data class HentPdlResponse(val data: HentPersonInfo, val errors: List<PdlError>?)
 
@@ -26,7 +24,14 @@ data class Navn(
         val fornavn: String,
         val mellomnavn: String?,
         val etternavn: String
-)
+) {
+    override fun toString(): String {
+        return if(mellomnavn.isNullOrEmpty())
+            "$fornavn $etternavn"
+        else
+            "$fornavn $mellomnavn $etternavn"
+    }
+}
 
 data class Foedsel(
         val foedselsdato: String

@@ -16,10 +16,17 @@ internal class PdlClientTest(
     @Test
     fun `Parser gyldig request`() {
         val response = runBlocking {
-            pdlClient.getPersonInfo("111111")
+            pdlClient.getPersonInfo("01019911111")
         }
+        assertNotNull(response.data.hentPerson)
+    }
 
-        assertNotNull(response.data)
+    @Test
+    fun `Hanterar svar utan løsning`() {
+        val response = runBlocking {
+            pdlClient.getPersonInfo("404")
+        }
+        assertNotNull(response.errors)
     }
 
 }
