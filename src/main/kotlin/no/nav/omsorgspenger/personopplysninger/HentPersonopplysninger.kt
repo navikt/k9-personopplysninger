@@ -42,7 +42,6 @@ internal class HentPersonopplysninger(
     }
 
     override fun onSent(id: String, packet: JsonMessage) {
-        logger.info(packet.toJson())
         logger.info("Løst behov $BEHOV med id $id")
     }
 
