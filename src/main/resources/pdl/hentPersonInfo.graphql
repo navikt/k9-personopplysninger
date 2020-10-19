@@ -3,8 +3,12 @@ query($ident: ID!){
         adressebeskyttelse{
                 gradering
         },
-        navn{fornavn,mellomnavn,etternavn},
-        foedsel{foedselsdato}
+        navn(historikk: false){
+            fornavn,mellomnavn,etternavn
+        },
+        foedsel{
+            foedselsdato
+        }
     },
     hentIdenter(ident: $ident, grupper: AKTORID, historikk:false) {
             identer {
