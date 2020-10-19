@@ -46,7 +46,10 @@ internal class PdlClient(
     }
 
     override suspend fun check() = kotlin.runCatching {
-        httpClient.options<HttpStatement>(pdlBaseUrl).execute().status
+        httpClient.options<HttpStatement>(pdlBaseUrl) {
+            header(HttpHeaders.Authorization, "Bearer ${stsRestClient.token()}")
+            header("x-nav-apiKey", apiKey)
+        }.execute().status
     }.fold(
             onSuccess = { statusCode ->
                 when (HttpStatusCode.OK == statusCode) {
