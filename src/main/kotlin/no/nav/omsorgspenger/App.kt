@@ -103,7 +103,8 @@ internal class ApplicationContext(
                     pdlClient = benyttetPdlClient,
                     personopplysningerMediator = benyttetPersonopplysningerMediator,
                     healthService = HealthService(healthChecks = setOf(
-                            benyttetStsRestClient
+                            benyttetStsRestClient,
+                            benyttetPdlClient
                     ))
             )
         }
