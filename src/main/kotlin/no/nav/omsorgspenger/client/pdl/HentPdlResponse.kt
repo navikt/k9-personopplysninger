@@ -1,8 +1,10 @@
 package no.nav.omsorgspenger.client.pdl
 
 data class HentPdlResponse(val data: HentPersonInfo, val errors: List<PdlError>?)
-
 data class HentPersonInfo(val hentPerson: Person?, val hentIdenter: Identer?)
+
+data class HentPdlBolkResponse(val data: HentPersonBolkInfo, val errors: List<PdlError>?)
+data class HentPersonBolkInfo(val hentPersonBolk: List<PersonBolk>?, val hentIdenterBolk: List<IdenterBolk>?)
 
 data class Person(
         val navn: List<Navn>,
@@ -39,6 +41,18 @@ data class Foedsel(
 
 data class Identer(
         val identer: List<Ident>
+)
+
+data class PersonBolk(
+        val ident: String,
+        val person: Person?,
+        val code: String
+)
+
+data class IdenterBolk(
+        val ident: String,
+        val identer: List<Ident>?,
+        val code: String
 )
 
 data class Ident(

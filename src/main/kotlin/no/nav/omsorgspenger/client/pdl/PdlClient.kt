@@ -42,6 +42,19 @@ internal class PdlClient(
         }.receive()
     }
 
+    suspend fun getPersonInfo(ident: Array<String>): HentPdlBolkResponse {
+        return httpClient.post<HttpStatement>("$pdlBaseUrl") {
+            header(HttpHeaders.Authorization, "Bearer ${stsRestClient.token()}")
+            header("Nav-Consumer-Token", "Bearer ${stsRestClient.token()}")
+            header("Nav-Consumer-Id", serviceUser.username)
+            header("TEMA", "OMS")
+            header("x-nav-apiKey", apiKey)
+            accept(ContentType.Application.Json)
+            contentType(ContentType.Application.Json)
+            body = hentPersonInfoQuery(ident)
+        }.receive()
+    }
+
     override suspend fun check() = kotlin.runCatching {
         httpClient.options<HttpStatement>(pdlBaseUrl) {
             header(HttpHeaders.Authorization, "Bearer ${stsRestClient.token()}")

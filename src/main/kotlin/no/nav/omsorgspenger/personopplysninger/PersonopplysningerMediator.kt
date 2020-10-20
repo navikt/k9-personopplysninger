@@ -26,7 +26,6 @@ internal class PersonopplysningerMediator(
             }
 
         }
-
         return losning
     }
 

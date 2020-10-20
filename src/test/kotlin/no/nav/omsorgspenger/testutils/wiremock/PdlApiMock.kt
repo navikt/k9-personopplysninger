@@ -105,5 +105,79 @@ private fun WireMockServer.stubPdlApiHentPersonError(): WireMockServer {
     return this
 }
 
-internal fun WireMockServer.stubPdlApi() = stubPdlApiHentPerson().stubPdlApiHentPersonError()
+private fun WireMockServer.stubPdlApiHentPersonBolk(): WireMockServer {
+    WireMock.stubFor(
+            WireMock.post(WireMock
+                    .urlPathMatching(".*$pdlApiMockPath.*"))
+                    .withHeader("Authorization", containing("Bearer"))
+                    .withHeader("Content-Type", equalTo("application/json"))
+                    .withHeader("Nav-Consumer-Token", AnythingPattern())
+                    .withHeader("x-nav-apiKey", AnythingPattern())
+                    .withRequestBody(matchingJsonPath("$.variables.ident", equalTo("[ \"12345678910\", \"12345678911\" ]")))
+                    .willReturn(
+                            WireMock.aResponse()
+                                    .withStatus(200)
+                                    .withHeader("Content-Type", "application/json")
+                                    .withBody("""
+                                    {
+                                       "data":{
+                                          "hentPersonBolk":[
+                                             {
+                                                "ident":"12345678910",
+                                                "person":{
+                                                   "navn":[
+                                                      {
+                                                         "fornavn":"Ola",
+                                                         "mellomnavn":null,
+                                                         "etternavn":"Normann"
+                                                      }
+                                                   ],
+                                                   "adressebeskyttelse":[
+                                                      {
+                                                         "gradering":"UGRADERT"
+                                                      }
+                                                   ],
+                                                   "foedsel":[
+                                                      {
+                                                         "foedselsdato":"123456"
+                                                      }
+                                                   ]
+                                                },
+                                                "code":"ok"
+                                             },
+                                             {
+                                                "ident":"12345678911",
+                                                "person":null,
+                                                "code":"not_found"
+                                             }
+                                          ],
+                                          "hentIdenterBolk":[
+                                             {
+                                                "ident":"12345678910",
+                                                "identer":[
+                                                   {
+                                                      "ident":"12345678910"
+                                                   }
+                                                ],
+                                                "code":"ok"
+                                             },
+                                             {
+                                                "ident":"12345678911",
+                                                "identer":null,
+                                                "code":"not_found"
+                                             }
+                                          ]
+                                       }
+                                    }
+                            """.trimIndent())
+                    )
+    )
+
+    return this
+}
+
+internal fun WireMockServer.stubPdlApi() = stubPdlApiHentPerson()
+        .stubPdlApiHentPersonError()
+        .stubPdlApiHentPersonBolk()
+
 internal fun WireMockServer.pdlApiBaseUrl() = baseUrl() + pdlApiBasePath

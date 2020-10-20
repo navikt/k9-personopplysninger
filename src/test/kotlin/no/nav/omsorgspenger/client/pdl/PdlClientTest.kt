@@ -22,11 +22,20 @@ internal class PdlClientTest(
     }
 
     @Test
-    fun `Hanterar svar utan løsning`() {
+    fun `Svar utan løsning`() {
         val response = runBlocking {
             pdlClient.getPersonInfo("404")
         }
         assertNotNull(response.errors)
+    }
+
+    @Test
+    fun `Flera ident i input`() {
+        val response = runBlocking {
+            pdlClient.getPersonInfo(arrayOf("12345678910", "12345678911"))
+        }
+        assertNotNull(response.data.hentIdenterBolk)
+        assertNotNull(response.data.hentPersonBolk)
     }
 
 }
