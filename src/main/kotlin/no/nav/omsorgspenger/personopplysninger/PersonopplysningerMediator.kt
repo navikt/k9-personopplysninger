@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory
 internal class PersonopplysningerMediator(
         internal val pdlClient: PdlClient
 ) {
-    private val logger = LoggerFactory.getLogger(PersonopplysningerMediator::class.java)
+    private val secureLogger = LoggerFactory.getLogger("tjenestekall")
 
     fun hentPersonopplysninger(ident: String): Map<String, String> {
 
@@ -18,7 +18,7 @@ internal class PersonopplysningerMediator(
             try {
                 val response = pdlClient.getPersonInfo(ident)
                 if (!response.errors.isNullOrEmpty()) {
-                    logger.error("Fann feil vid hent av data fra PDL:", response.errors)
+                    secureLogger.error("Fann feil vid hent av data fra PDL:", response.errors)
                 }
                 losning = response.toLøsning().asMap()
             } catch (cause: Throwable) {
