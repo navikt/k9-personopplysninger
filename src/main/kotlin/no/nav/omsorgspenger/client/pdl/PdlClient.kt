@@ -13,7 +13,7 @@ import io.ktor.http.contentType
 import no.nav.helse.dusseldorf.ktor.health.HealthCheck
 import no.nav.helse.dusseldorf.ktor.health.Healthy
 import no.nav.helse.dusseldorf.ktor.health.UnHealthy
-import no.nav.omsorgspenger.StsRestClient
+import no.nav.omsorgspenger.client.StsRestClient
 import no.nav.omsorgspenger.config.Environment
 import no.nav.omsorgspenger.config.ServiceUser
 import no.nav.omsorgspenger.config.hentRequiredEnv

@@ -16,6 +16,7 @@ import no.nav.helse.dusseldorf.ktor.health.HealthRoute
 import no.nav.helse.dusseldorf.ktor.health.HealthService
 import no.nav.helse.rapids_rivers.RapidApplication
 import no.nav.helse.rapids_rivers.RapidsConnection
+import no.nav.omsorgspenger.client.StsRestClient
 import no.nav.omsorgspenger.client.pdl.PdlClient
 import no.nav.omsorgspenger.config.Environment
 import no.nav.omsorgspenger.config.ServiceUser
@@ -58,24 +59,24 @@ internal fun Application.omsorgspengerPersonopplysninger(applicationContext: App
 }
 
 internal class ApplicationContext(
-        internal val env: Environment,
-        internal val serviceUser: ServiceUser,
-        internal val httpClient: HttpClient,
-        internal val stsRestClient: StsRestClient,
-        internal val pdlClient: PdlClient,
-        internal val personopplysningerMediator: PersonopplysningerMediator,
-        internal val healthService: HealthService) {
+        val env: Environment,
+        val serviceUser: ServiceUser,
+        val httpClient: HttpClient,
+        val stsRestClient: StsRestClient,
+        val pdlClient: PdlClient,
+        val personopplysningerMediator: PersonopplysningerMediator,
+        val healthService: HealthService) {
 
     internal fun start() {}
     internal fun stop() {}
 
     internal class Builder(
-            internal var env: Environment? = null,
-            internal var serviceUser: ServiceUser? = null,
-            internal var httpClient: HttpClient? = null,
-            internal var stsRestClient: StsRestClient? = null,
-            internal var pdlClient: PdlClient? = null,
-            internal var personopplysningerMediator: PersonopplysningerMediator? = null) {
+            var env: Environment? = null,
+            var serviceUser: ServiceUser? = null,
+            var httpClient: HttpClient? = null,
+            var stsRestClient: StsRestClient? = null,
+            var pdlClient: PdlClient? = null,
+            var personopplysningerMediator: PersonopplysningerMediator? = null) {
         internal fun build(): ApplicationContext {
             val benyttetEnv = env ?: System.getenv()
             val benyttetHttpClient = httpClient ?: HttpClient {
