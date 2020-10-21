@@ -6,7 +6,7 @@
   "minReplicas": "1",
   "maxReplicas": "1",
   "ingresses": [
-    "https://k9-personopplysninger.dev.adeo.no"
+    "https://k9-personopplysninger.dev.intern.nav.no"
   ],
   "externalHosts": [
     "api-gw-q1.oera.no"
