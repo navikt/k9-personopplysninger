@@ -43,9 +43,7 @@ internal class ApplicationContextExtension : ParameterResolver {
         }
 
         private val støttedeParametre = listOf(
-            ApplicationContext.Builder::class.java,
-            ApplicationContext::class.java,
-            WireMockServer::class.java
+            ApplicationContext::class.java
         )
     }
 

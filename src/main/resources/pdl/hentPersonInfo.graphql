@@ -10,7 +10,7 @@ query($ident: ID!){
             foedselsdato
         }
     },
-    hentIdenter(ident: $ident, grupper: AKTORID, historikk:false) {
+    hentIdenter(ident: $ident, grupper: [AKTORID], historikk:false) {
             identer {
                 ident
             }
