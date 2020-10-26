@@ -15,6 +15,7 @@ query($identer: [ID!]!) {
         code
     },
     hentIdenterBolk(identer: $identer, grupper: [AKTORID], historikk: false) {
+        ident,
         identer{
             ident
         },
