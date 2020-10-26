@@ -1,4 +1,4 @@
-package no.nav.omsorgspenger.client.pdl
+package no.nav.omsorgspenger.personopplysninger.pdl
 
 import kotlinx.coroutines.runBlocking
 import no.nav.omsorgspenger.ApplicationContext
@@ -17,7 +17,7 @@ internal class PdlClientTest(
     @Test
     fun `Parser gyldig request`() {
         val response = runBlocking {
-            pdlClient.getPersonInfo("01019911111")
+            pdlClient.getPersonInfo("01019911111", "testId")
         }
         assert(response.data.hentPerson.toString().contains("01011999"))
         assert(response.data.hentIdenter.toString().contains("01019911111"))
@@ -26,7 +26,7 @@ internal class PdlClientTest(
     @Test
     fun `Svar utan løsning`() {
         val response = runBlocking {
-            pdlClient.getPersonInfo("404")
+            pdlClient.getPersonInfo("404", "testId")
         }
         assertNotNull(response.errors)
         assert(response.errors.toString().contains("unauthorized"))
@@ -36,7 +36,7 @@ internal class PdlClientTest(
     fun `Flera ident i input`() {
         val personer = setOf("12345678910", "12345678911")
         val response = runBlocking {
-            pdlClient.getPersonInfo(personer)
+            pdlClient.getPersonInfo(personer, "testId")
         }
         assert(response.data.hentIdenterBolk?.size == 2)
     }
@@ -45,7 +45,7 @@ internal class PdlClientTest(
     fun `Inget svar fra PDL kaster illegalstate exception`() {
         assertThrows(IllegalStateException::class.java) {
              runBlocking {
-                pdlClient.getPersonInfo("500")
+                pdlClient.getPersonInfo("500", "testId")
             }
         }
 

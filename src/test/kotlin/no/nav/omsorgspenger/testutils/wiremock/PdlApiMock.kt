@@ -92,7 +92,7 @@ private fun WireMockServer.stubPdlApiHentAnnenPerson(): WireMockServer {
                                       ],
                                       "foedsel": [
                                         {
-                                            "foedselsdato": "0101190"
+                                            "foedselsdato": null
                                         }
                                       ]
                                     },

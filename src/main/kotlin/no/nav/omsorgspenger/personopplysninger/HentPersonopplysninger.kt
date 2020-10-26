@@ -1,6 +1,5 @@
 package no.nav.omsorgspenger.personopplysninger
 
-import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.TextNode
 import no.nav.helse.rapids_rivers.JsonMessage
@@ -35,7 +34,7 @@ internal class HentPersonopplysninger(
                 .toSet()
 
         var løsning = identitetsnummer
-                .map { it to hentPersonopplysningerFor(it) }
+                .map { it to hentPersonopplysningerFor(it, id) }
                 .toMap()
                 .also { require(it.size == identitetsnummer.size) }
                 .also { require(it.keys.containsAll(identitetsnummer)) }
@@ -51,8 +50,10 @@ internal class HentPersonopplysninger(
         logger.info("Løst behov $BEHOV med id $id").also { incLostBehov() }
     }
 
-    private fun hentPersonopplysningerFor(identitetsnummer: String) = try {
-        personopplysningerMediator.hentPersonopplysninger(identitetsnummer = identitetsnummer)
+    private fun hentPersonopplysningerFor(identitetsnummer: String, correlationId: String) = try {
+        personopplysningerMediator.hentPersonopplysninger(
+                identitetsnummer = identitetsnummer,
+                correlationId = correlationId)
     } catch(cause: Throwable) {
         incPdlFeil()
         throw cause

@@ -2,8 +2,8 @@ package no.nav.omsorgspenger.personopplysninger
 
 import kotlin.reflect.full.memberProperties
 import kotlinx.coroutines.runBlocking
-import no.nav.omsorgspenger.client.pdl.HentPdlResponse
-import no.nav.omsorgspenger.client.pdl.PdlClient
+import no.nav.omsorgspenger.personopplysninger.pdl.HentPdlResponse
+import no.nav.omsorgspenger.personopplysninger.pdl.PdlClient
 import org.slf4j.LoggerFactory
 
 internal class PersonopplysningerMediator(
@@ -11,18 +11,19 @@ internal class PersonopplysningerMediator(
 ) {
     private val secureLogger = LoggerFactory.getLogger("tjenestekall")
 
-    fun hentPersonopplysninger(identitetsnummer: String): Map<String, String> {
+    fun hentPersonopplysninger(identitetsnummer: String, correlationId: String): Map<String, String> {
 
         lateinit var attributer: Map<String, String>
         runBlocking {
             try {
-                val response = pdlClient.getPersonInfo(identitetsnummer)
+                val response = pdlClient.getPersonInfo(identitetsnummer, correlationId)
                 if (!response.errors.isNullOrEmpty()) {
-                    secureLogger.error("Fann feil vid hent av data fra PDL:", response.errors)
+                    secureLogger.error("Fann feil vid hent av data fra PDL: ", response.errors.toString())
                 }
                 attributer = response.toLøsning().asMap()
             } catch (cause: Throwable) {
-                throw IllegalStateException("Feil vid hent av data fra PDL:", cause)
+                secureLogger.error("Uventet feil vid hent av data fra PDL: ", cause)
+                throw IllegalStateException("Feil vid hent av data fra PDL: ")
             }
 
         }
@@ -30,11 +31,9 @@ internal class PersonopplysningerMediator(
     }
 
     private fun HentPdlResponse.toLøsning(): PersonInfo {
-        requireNotNull(this.data.hentIdenter?.identer) { "Ident kan ikke vara null."}
-        requireNotNull(this.data.hentPerson?.navn) { "Navn kan ikke vara null." }
         return PersonInfo(
                 navn = this.data.hentPerson!!.navn[0].toString(),
-                fødseldato = this.data.hentPerson?.foedsel?.get(0).foedselsdato,
+                fødseldato = this.data.hentPerson.foedsel[0].foedselsdato,
                 aktørId = this.data.hentIdenter!!.identer[0].ident
         )
     }

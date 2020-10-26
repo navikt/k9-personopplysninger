@@ -1,4 +1,4 @@
-package no.nav.omsorgspenger.client.pdl
+package no.nav.omsorgspenger.personopplysninger.pdl
 
 import io.ktor.client.HttpClient
 import io.ktor.client.request.accept
@@ -29,11 +29,12 @@ internal class PdlClient(
     private val apiKey = env.hentRequiredEnv("PDL_API_GW_KEY")
 
 
-    suspend fun getPersonInfo(ident: String): HentPdlResponse {
+    suspend fun getPersonInfo(ident: String, correlationId: String): HentPdlResponse {
         return httpClient.post<HttpStatement>("$pdlBaseUrl") {
             header(HttpHeaders.Authorization, "Bearer ${stsRestClient.token()}")
             header("Nav-Consumer-Token", "Bearer ${stsRestClient.token()}")
             header("Nav-Consumer-Id", serviceUser.username)
+            header("Nav-Call-Id", correlationId)
             header("TEMA", "OMS")
             header("x-nav-apiKey", apiKey)
             accept(ContentType.Application.Json)
@@ -42,11 +43,12 @@ internal class PdlClient(
         }.receive()
     }
 
-    suspend fun getPersonInfo(ident: Set<String>): HentPdlBolkResponse {
+    suspend fun getPersonInfo(ident: Set<String>, correlationId: String): HentPdlBolkResponse {
         return httpClient.post<HttpStatement>("$pdlBaseUrl") {
             header(HttpHeaders.Authorization, "Bearer ${stsRestClient.token()}")
             header("Nav-Consumer-Token", "Bearer ${stsRestClient.token()}")
             header("Nav-Consumer-Id", serviceUser.username)
+            header("Nav-Call-Id", correlationId)
             header("TEMA", "OMS")
             header("x-nav-apiKey", apiKey)
             accept(ContentType.Application.Json)

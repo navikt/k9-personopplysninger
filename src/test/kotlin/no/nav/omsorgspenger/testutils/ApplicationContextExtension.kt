@@ -1,6 +1,5 @@
 package no.nav.omsorgspenger.testutils
 
-import com.github.tomakehurst.wiremock.WireMockServer
 import io.ktor.util.KtorExperimentalAPI
 import no.nav.helse.dusseldorf.testsupport.wiremock.WireMockBuilder
 import no.nav.helse.dusseldorf.testsupport.wiremock.getNaisStsTokenUrl

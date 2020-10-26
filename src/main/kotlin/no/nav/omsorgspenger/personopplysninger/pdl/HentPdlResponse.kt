@@ -1,4 +1,4 @@
-package no.nav.omsorgspenger.client.pdl
+package no.nav.omsorgspenger.personopplysninger.pdl
 
 data class HentPdlResponse(val data: HentPersonInfo, val errors: List<PdlError>?)
 data class HentPersonInfo(val hentPerson: Person?, val hentIdenter: Identer?)

@@ -1,4 +1,4 @@
-package no.nav.omsorgspenger.client.pdl
+package no.nav.omsorgspenger.personopplysninger.pdl
 
 data class GraphqlQuery(
         val query: String,

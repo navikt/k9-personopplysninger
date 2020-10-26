@@ -33,8 +33,8 @@ internal class HentPersonopplysningerTest(
     }
 
     @Test
-    fun `Hanterar behov med respons utan innehåll fra PDL`() {
-        val (_, behovssekvens) = nyBehovsSekvens(setOf("404"))
+    fun `Hanterar behov med respons utan innehåll och feil fra PDL`() {
+        val (_, behovssekvens) = nyBehovsSekvens(setOf("404", "500"))
         rapid.sendTestMessage(behovssekvens)
         assertEquals(0, rapid.inspektør.size)
     }
