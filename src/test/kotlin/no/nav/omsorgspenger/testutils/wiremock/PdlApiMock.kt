@@ -18,7 +18,7 @@ private fun WireMockServer.stubPdlApiHentPerson(): WireMockServer {
                     .withHeader("Content-Type", equalTo("application/json"))
                     .withHeader("Nav-Consumer-Token", AnythingPattern())
                     .withHeader("x-nav-apiKey", AnythingPattern())
-                    .withRequestBody(matchingJsonPath("$.variables.ident", equalTo("01019911111")))
+                    .withRequestBody(matchingJsonPath("$.variables.ident", containing("01019911111")))
                     .willReturn(
                             WireMock.aResponse()
                                     .withStatus(200)
@@ -61,6 +61,57 @@ private fun WireMockServer.stubPdlApiHentPerson(): WireMockServer {
     return this
 }
 
+private fun WireMockServer.stubPdlApiHentAnnenPerson(): WireMockServer {
+    WireMock.stubFor(
+            WireMock.post(WireMock
+                    .urlPathMatching(".*$pdlApiMockPath.*"))
+                    .withHeader("Authorization", containing("Bearer"))
+                    .withHeader("Content-Type", equalTo("application/json"))
+                    .withHeader("Nav-Consumer-Token", AnythingPattern())
+                    .withHeader("x-nav-apiKey", AnythingPattern())
+                    .withRequestBody(matchingJsonPath("$.variables.ident", containing("01019011111")))
+                    .willReturn(
+                            WireMock.aResponse()
+                                    .withStatus(200)
+                                    .withHeader("Content-Type", "application/json")
+                                    .withBody("""
+                                {
+                                  "data": {
+                                    "hentPerson": {
+                                      "navn": [
+                                        {
+                                          "fornavn": "Ola",
+                                          "mellomnavn": "Junior",
+                                          "etternavn": "Normann"
+                                        }
+                                      ],
+                                      "adressebeskyttelse": [
+                                        {
+                                            "gradering": "UGRADERT"
+                                        }
+                                      ],
+                                      "foedsel": [
+                                        {
+                                            "foedselsdato": "0101190"
+                                        }
+                                      ]
+                                    },
+                                    "hentIdenter": {
+                                        "identer": [
+                                            {
+                                                "ident": "01019011111"
+                                            }
+                                        ]
+                                    }
+                                  }
+                                }
+                            """.trimIndent())
+                    )
+    )
+
+    return this
+}
+
 private fun WireMockServer.stubPdlApiHentPersonError(): WireMockServer {
     WireMock.stubFor(
             WireMock.post(WireMock
@@ -69,7 +120,7 @@ private fun WireMockServer.stubPdlApiHentPersonError(): WireMockServer {
                     .withHeader("Content-Type", equalTo("application/json"))
                     .withHeader("Nav-Consumer-Token", AnythingPattern())
                     .withHeader("x-nav-apiKey", AnythingPattern())
-                    .withRequestBody(matchingJsonPath("$.variables.ident", equalTo("404")))
+                    .withRequestBody(matchingJsonPath("$.variables.ident", containing("404")))
                     .willReturn(
                             WireMock.aResponse()
                                     .withStatus(200)
@@ -113,7 +164,8 @@ private fun WireMockServer.stubPdlApiHentPersonBolk(): WireMockServer {
                     .withHeader("Content-Type", equalTo("application/json"))
                     .withHeader("Nav-Consumer-Token", AnythingPattern())
                     .withHeader("x-nav-apiKey", AnythingPattern())
-                    .withRequestBody(matchingJsonPath("$.variables.ident", equalTo("[ \"12345678910\", \"12345678911\" ]")))
+                    .withRequestBody(matchingJsonPath("$.variables.identer", containing("12345678910")))
+                    .withRequestBody(matchingJsonPath("$.variables.identer", containing("12345678911")))
                     .willReturn(
                             WireMock.aResponse()
                                     .withStatus(200)
@@ -176,8 +228,28 @@ private fun WireMockServer.stubPdlApiHentPersonBolk(): WireMockServer {
     return this
 }
 
+private fun WireMockServer.stubPdlApiServerErrorResponse(): WireMockServer {
+    WireMock.stubFor(
+            WireMock.post(WireMock
+                    .urlPathMatching(".*$pdlApiMockPath.*"))
+                    .withHeader("Authorization", containing("Bearer"))
+                    .withHeader("Content-Type", equalTo("application/json"))
+                    .withHeader("Nav-Consumer-Token", AnythingPattern())
+                    .withHeader("x-nav-apiKey", AnythingPattern())
+                    .withRequestBody(matchingJsonPath("$.variables.ident", containing("500")))
+                    .willReturn(
+                            WireMock.aResponse()
+                                    .withStatus(500)
+                    )
+    )
+
+    return this
+}
+
 internal fun WireMockServer.stubPdlApi() = stubPdlApiHentPerson()
+        .stubPdlApiHentAnnenPerson()
         .stubPdlApiHentPersonError()
         .stubPdlApiHentPersonBolk()
+        .stubPdlApiServerErrorResponse()
 
 internal fun WireMockServer.pdlApiBaseUrl() = baseUrl() + pdlApiBasePath

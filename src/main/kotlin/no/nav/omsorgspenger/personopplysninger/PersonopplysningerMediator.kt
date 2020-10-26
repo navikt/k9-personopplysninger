@@ -11,38 +11,38 @@ internal class PersonopplysningerMediator(
 ) {
     private val secureLogger = LoggerFactory.getLogger("tjenestekall")
 
-    fun hentPersonopplysninger(ident: String): Map<String, String> {
+    fun hentPersonopplysninger(identitetsnummer: String): Map<String, String> {
 
-        lateinit var losning: Map<String, String>
+        lateinit var attributer: Map<String, String>
         runBlocking {
             try {
-                val response = pdlClient.getPersonInfo(ident)
+                val response = pdlClient.getPersonInfo(identitetsnummer)
                 if (!response.errors.isNullOrEmpty()) {
                     secureLogger.error("Fann feil vid hent av data fra PDL:", response.errors)
                 }
-                losning = response.toLøsning().asMap()
+                attributer = response.toLøsning().asMap()
             } catch (cause: Throwable) {
                 throw IllegalStateException("Feil vid hent av data fra PDL:", cause)
             }
 
         }
-        return losning
+        return attributer
     }
 
     private fun HentPdlResponse.toLøsning(): PersonInfo {
-        checkNotNull(this.data.hentPerson)
-        checkNotNull(this.data.hentIdenter)
+        requireNotNull(this.data.hentIdenter?.identer) { "Ident kan ikke vara null."}
+        requireNotNull(this.data.hentPerson?.navn) { "Navn kan ikke vara null." }
         return PersonInfo(
-                navn = this.data.hentPerson.navn[0].toString(),
-                fødseldato = this.data.hentPerson.foedsel[0].foedselsdato,
-                aktørId = this.data.hentIdenter.identer[0].ident
+                navn = this.data.hentPerson!!.navn[0].toString(),
+                fødseldato = this.data.hentPerson?.foedsel?.get(0).foedselsdato,
+                aktørId = this.data.hentIdenter!!.identer[0].ident
         )
     }
 
     private companion object {
         data class PersonInfo(
                 val navn: String,
-                val fødseldato: String,
+                val fødseldato: String?,
                 val aktørId: String
         )
 

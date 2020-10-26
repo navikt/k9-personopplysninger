@@ -5,14 +5,24 @@ data class GraphqlQuery(
         val variables: Variables
 )
 
-data class PersonInfoGraphqlQuery(
+data class BolkPersonInfoGraphqlQuery(
         val query: String,
         val variables: Variables
 )
 
-data class Variables(
-        val ident: Any
+data class PersonInfoGraphqlQuery(
+        val query: String,
+        val variables: Variable
 )
+
+data class Variables(
+        val identer: List<String>
+)
+
+data class Variable(
+        val ident: String
+)
+
 
 data class PdlError(
         val message: String,
@@ -33,10 +43,10 @@ data class PdlErrorExtension(
 
 fun hentPersonInfoQuery(fnr: String): PersonInfoGraphqlQuery {
     val query = GraphqlQuery::class.java.getResource("/pdl/hentPersonInfo.graphql").readText().replace("[\n\r]", "")
-    return PersonInfoGraphqlQuery(query, Variables(fnr))
+    return PersonInfoGraphqlQuery(query, Variable(fnr))
 }
 
-fun hentPersonInfoQuery(fnr: Array<String>): PersonInfoGraphqlQuery {
+fun hentPersonInfoQuery(fnr: Set<String>): BolkPersonInfoGraphqlQuery {
     val query = GraphqlQuery::class.java.getResource("/pdl/hentPersonBolkInfo.graphql").readText().replace("[\n\r]", "")
-    return PersonInfoGraphqlQuery(query, Variables(fnr))
+    return BolkPersonInfoGraphqlQuery(query, Variables(fnr.toList()))
 }

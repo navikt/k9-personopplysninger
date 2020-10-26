@@ -42,7 +42,7 @@ internal class PdlClient(
         }.receive()
     }
 
-    suspend fun getPersonInfo(ident: Array<String>): HentPdlBolkResponse {
+    suspend fun getPersonInfo(ident: Set<String>): HentPdlBolkResponse {
         return httpClient.post<HttpStatement>("$pdlBaseUrl") {
             header(HttpHeaders.Authorization, "Bearer ${stsRestClient.token()}")
             header("Nav-Consumer-Token", "Bearer ${stsRestClient.token()}")

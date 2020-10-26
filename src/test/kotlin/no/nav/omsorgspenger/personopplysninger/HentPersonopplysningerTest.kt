@@ -27,16 +27,24 @@ internal class HentPersonopplysningerTest(
 
     @Test
     fun `River tar emot och løser gyldigt behov`() {
-        val (_, behovssekvens) = nyBehovsSekvens("01019911111")
+        val (_, behovssekvens) = nyBehovsSekvens(setOf("01019911111"))
         rapid.sendTestMessage(behovssekvens)
         assertEquals(1, rapid.inspektør.size)
     }
 
     @Test
     fun `Hanterar behov med respons utan innehåll fra PDL`() {
-        val (_, behovssekvens) = nyBehovsSekvens("404")
+        val (_, behovssekvens) = nyBehovsSekvens(setOf("404"))
         rapid.sendTestMessage(behovssekvens)
         assertEquals(0, rapid.inspektør.size)
+    }
+
+    @Test
+    fun `Flere identitetsnummer i behov`() {
+        val (_, behovssekvens) = nyBehovsSekvens(setOf("01019911111", "01019011111"))
+        rapid.sendTestMessage(behovssekvens)
+        assert(rapid.inspektør.message(0)["@løsninger"].toPrettyString().contains("01019011111"))
+        assert(rapid.inspektør.message(0)["@løsninger"].toPrettyString().contains("01019911111"))
     }
 
     internal companion object {
@@ -44,7 +52,7 @@ internal class HentPersonopplysningerTest(
     }
 
     private fun nyBehovsSekvens(
-            ident: String,
+            ident: Set<String>,
     ) = Behovssekvens(
             id = "01BX5ZZKBKACTAV9WEVGEMMVS0",
             correlationId = UUID.randomUUID().toString(),
@@ -53,6 +61,7 @@ internal class HentPersonopplysningerTest(
                             navn = BEHOV,
                             input = mapOf(
                                     "identitetsnummer" to ident,
+                                    "attributter" to setOf("navn", "fødseldato", "aktørId")
                             )
                     )
             )
