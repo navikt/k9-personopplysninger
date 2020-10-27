@@ -1,7 +1,5 @@
 package no.nav.omsorgspenger.personopplysninger
 
-import kotlin.reflect.full.memberProperties
-import kotlinx.coroutines.runBlocking
 import no.nav.omsorgspenger.personopplysninger.pdl.HentPdlResponse
 import no.nav.omsorgspenger.personopplysninger.pdl.PdlClient
 import org.slf4j.LoggerFactory
@@ -11,43 +9,36 @@ internal class PersonopplysningerMediator(
 ) {
     private val secureLogger = LoggerFactory.getLogger("tjenestekall")
 
-    fun hentPersonopplysninger(identitetsnummer: String, correlationId: String): Map<String, String> {
+    suspend fun hentPersonopplysninger(identitetsnummer: Set<String>, correlationId: String): LøsningsMap {
 
-        lateinit var attributer: Map<String, String>
-        runBlocking {
-            try {
-                val response = pdlClient.getPersonInfo(identitetsnummer, correlationId)
-                if (!response.errors.isNullOrEmpty()) {
-                    secureLogger.error("Fann feil vid hent av data fra PDL: ", response.errors.toString())
-                }
-                attributer = response.toLøsning().asMap()
-            } catch (cause: Throwable) {
-                secureLogger.error("Uventet feil vid hent av data fra PDL: ", cause)
-                throw IllegalStateException("Feil vid hent av data fra PDL: ")
-            }
-
+        val response = pdlClient.getPersonInfo(identitetsnummer, correlationId)
+        if (!response.errors.isNullOrEmpty()) {
+            secureLogger.error("Fann feil vid hent av data fra PDL: ", response.errors.toString())
         }
-        return attributer
+
+        return identitetsnummer.map { it to response.toLøsning(it) }.toMap()
+
     }
 
-    private fun HentPdlResponse.toLøsning(): PersonInfo {
-        return PersonInfo(
-                navn = this.data.hentPerson!!.navn[0].toString(),
-                fødseldato = this.data.hentPerson.foedsel[0].foedselsdato,
-                aktørId = this.data.hentIdenter!!.identer[0].ident
-        )
-    }
+    private fun HentPdlResponse.toLøsning(identitetsnummer: String): Map<String, String?> {
+        var løsning = mutableMapOf<String, String?>()
 
-    private companion object {
-        data class PersonInfo(
-                val navn: String,
-                val fødseldato: String?,
-                val aktørId: String
-        )
+        if (!this.data.hentPersonBolk.isNullOrEmpty())
+            this.data.hentPersonBolk.filter { it.ident == identitetsnummer }
+                    .mapNotNull {
+                        løsning.put("navn", it.person?.navn?.get(0).toString() )
+                        løsning.put("fødseldato", it.person?.foedsel?.get(0)?.foedselsdato)
+                    }
 
-        inline fun <reified T : Any> T.asMap(): Map<String, String> {
-            val props = T::class.memberProperties.associateBy { it.name }
-            return props.keys.associateWith { props[it]?.get(this).toString() }
-        }
+        if (!this.data.hentIdenterBolk.isNullOrEmpty())
+            this.data.hentIdenterBolk.filter { it.ident == identitetsnummer }
+                    .mapNotNull {
+                        løsning.put("aktørId", it.identer?.get(0)?.ident)
+                    }
+
+        return løsning
+
     }
 }
+
+typealias LøsningsMap = Map<String, Map<String, String?>>

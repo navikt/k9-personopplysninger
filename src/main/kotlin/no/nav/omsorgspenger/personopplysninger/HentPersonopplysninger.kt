@@ -2,6 +2,7 @@ package no.nav.omsorgspenger.personopplysninger
 
 import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.TextNode
+import kotlinx.coroutines.runBlocking
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.helse.rapids_rivers.River
@@ -22,7 +23,7 @@ internal class HentPersonopplysninger(
         River(rapidsConnection).apply {
             validate { packet ->
                 packet.skalLøseBehov(BEHOV)
-                packet.require(IDENTITETSNUMMER) { it.requireArray { entry -> entry is TextNode }}
+                packet.require(IDENTITETSNUMMER) { it.requireArray { entry -> entry is TextNode } }
             }
         }.register(this)
     }
@@ -34,11 +35,13 @@ internal class HentPersonopplysninger(
                 .map { it.asText() }
                 .toSet()
 
-        var løsning = identitetsnummer
-                .map { it to hentPersonopplysningerFor(it, packet[Behovsformat.CorrelationId].asText()) }
-                .toMap()
-                .also { require(it.size == identitetsnummer.size) }
+        logger.info("Løser behov før ${identitetsnummer.size} person(er).")
+
+        val løsning = hentPersonopplysningerFor(
+                identitetsnummer = identitetsnummer,
+                correlationId = packet[Behovsformat.CorrelationId].asText())
                 .also { require(it.keys.containsAll(identitetsnummer)) }
+                .also { require(it.size == identitetsnummer.size) }
 
         packet.leggTilLøsning(
                 behov = BEHOV,
@@ -51,11 +54,13 @@ internal class HentPersonopplysninger(
         logger.info("Løst behov $BEHOV med id $id").also { incLostBehov() }
     }
 
-    private fun hentPersonopplysningerFor(identitetsnummer: String, correlationId: String) = try {
-        personopplysningerMediator.hentPersonopplysninger(
-                identitetsnummer = identitetsnummer,
-                correlationId = correlationId)
-    } catch(cause: Throwable) {
+    private fun hentPersonopplysningerFor(identitetsnummer: Set<String>, correlationId: String) = try {
+        runBlocking {
+            personopplysningerMediator.hentPersonopplysninger(
+                    identitetsnummer = identitetsnummer,
+                    correlationId = correlationId)
+        }
+    } catch (cause: Throwable) {
         incPdlFeil()
         throw cause
     }

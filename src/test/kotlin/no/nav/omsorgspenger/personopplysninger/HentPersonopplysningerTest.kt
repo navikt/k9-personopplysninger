@@ -2,6 +2,7 @@ package no.nav.omsorgspenger.personopplysninger
 
 import java.util.*
 import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import no.nav.k9.rapid.behov.Behov
 import no.nav.k9.rapid.behov.Behovssekvens
@@ -40,12 +41,13 @@ internal class HentPersonopplysningerTest(
     }
 
     @Test
-    fun `Flere identitetsnummer i behov`() {
-        val (_, behovssekvens) = nyBehovsSekvens(setOf("01019911111", "01019011111"))
+    fun `Response fra PDL med en part utan svar`() {
+        val (_, behovssekvens) = nyBehovsSekvens(setOf("12345678910", "12345678911"))
         rapid.sendTestMessage(behovssekvens)
-        assert(rapid.inspektør.message(0)["@løsninger"].toPrettyString().contains("01019011111"))
-        assert(rapid.inspektør.message(0)["@løsninger"].toPrettyString().contains("01019911111"))
+
+        assert(rapid.inspektør.message(0)["@løsninger"].toPrettyString().contains("null"))
     }
+
 
     internal companion object {
         const val BEHOV = "HentPersonopplysninger"

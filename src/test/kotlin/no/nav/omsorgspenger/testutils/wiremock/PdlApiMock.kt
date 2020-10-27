@@ -18,42 +18,52 @@ private fun WireMockServer.stubPdlApiHentPerson(): WireMockServer {
                     .withHeader("Content-Type", equalTo("application/json"))
                     .withHeader("Nav-Consumer-Token", AnythingPattern())
                     .withHeader("x-nav-apiKey", AnythingPattern())
-                    .withRequestBody(matchingJsonPath("$.variables.ident", containing("01019911111")))
+                    .withRequestBody(matchingJsonPath("$.variables.identer", containing("01019911111")))
                     .willReturn(
                             WireMock.aResponse()
                                     .withStatus(200)
                                     .withHeader("Content-Type", "application/json")
                                     .withBody("""
-                                {
-                                  "data": {
-                                    "hentPerson": {
-                                      "navn": [
-                                        {
-                                          "fornavn": "Ola",
-                                          "mellomnavn": null,
-                                          "etternavn": "Normann"
+                                    {
+                                        "data": {
+                                            "hentPersonBolk": [
+                                                {
+                                                    "ident": "01019911111",
+                                                    "person": {
+                                                        "navn": [
+                                                            {
+                                                                "fornavn": "LITEN",
+                                                                "mellomnavn": null,
+                                                                "etternavn": "MASKIN"
+                                                            }
+                                                        ],
+                                                        "foedsel": [
+                                                            {
+                                                                "foedselsdato": "1990-07-04"
+                                                            }
+                                                        ],
+                                                        "adressebeskyttelse": [
+                                                            {
+                                                                "gradering": "UGRADERT"
+                                                            }
+                                                        ]
+                                                    },
+                                                    "code": "ok"
+                                                }
+                                            ],
+                                            "hentIdenterBolk": [
+                                                {
+                                                    "ident": "01019911111",
+                                                    "identer": [
+                                                        {
+                                                            "ident": "2722577091065"
+                                                        }
+                                                    ],
+                                                    "code": "ok"
+                                                }
+                                            ]
                                         }
-                                      ],
-                                      "adressebeskyttelse": [
-                                        {
-                                            "gradering": "UGRADERT"
-                                        }
-                                      ],
-                                      "foedsel": [
-                                        {
-                                            "foedselsdato": "01011999"
-                                        }
-                                      ]
-                                    },
-                                    "hentIdenter": {
-                                        "identer": [
-                                            {
-                                                "ident": "01019911111"
-                                            }
-                                        ]
                                     }
-                                  }
-                                }
                             """.trimIndent())
                     )
     )
@@ -69,42 +79,52 @@ private fun WireMockServer.stubPdlApiHentAnnenPerson(): WireMockServer {
                     .withHeader("Content-Type", equalTo("application/json"))
                     .withHeader("Nav-Consumer-Token", AnythingPattern())
                     .withHeader("x-nav-apiKey", AnythingPattern())
-                    .withRequestBody(matchingJsonPath("$.variables.ident", containing("01019011111")))
+                    .withRequestBody(matchingJsonPath("$.variables.identer", containing("01019011111")))
                     .willReturn(
                             WireMock.aResponse()
                                     .withStatus(200)
                                     .withHeader("Content-Type", "application/json")
                                     .withBody("""
-                                {
-                                  "data": {
-                                    "hentPerson": {
-                                      "navn": [
                                         {
-                                          "fornavn": "Ola",
-                                          "mellomnavn": "Junior",
-                                          "etternavn": "Normann"
-                                        }
-                                      ],
-                                      "adressebeskyttelse": [
-                                        {
-                                            "gradering": "UGRADERT"
-                                        }
-                                      ],
-                                      "foedsel": [
-                                        {
-                                            "foedselsdato": null
-                                        }
-                                      ]
-                                    },
-                                    "hentIdenter": {
-                                        "identer": [
-                                            {
-                                                "ident": "01019011111"
+                                            "data": {
+                                                "hentPersonBolk": [
+                                                    {
+                                                        "ident": "01019011111",
+                                                        "person": {
+                                                            "navn": [
+                                                                {
+                                                                    "fornavn": "LITEN",
+                                                                    "mellomnavn": null,
+                                                                    "etternavn": "MASKIN"
+                                                                }
+                                                            ],
+                                                            "foedsel": [
+                                                                {
+                                                                    "foedselsdato": "1990-07-04"
+                                                                }
+                                                            ],
+                                                            "adressebeskyttelse": [
+                                                                {
+                                                                    "gradering": "UGRADERT"
+                                                                }
+                                                            ]
+                                                        },
+                                                        "code": "ok"
+                                                    }
+                                                ],
+                                                "hentIdenterBolk": [
+                                                    {
+                                                        "ident": "01019011111",
+                                                        "identer": [
+                                                            {
+                                                                "ident": "2722577091065"
+                                                            }
+                                                        ],
+                                                        "code": "ok"
+                                                    }
+                                                ]
                                             }
-                                        ]
-                                    }
-                                  }
-                                }
+                                        }
                             """.trimIndent())
                     )
     )
@@ -120,7 +140,7 @@ private fun WireMockServer.stubPdlApiHentPersonError(): WireMockServer {
                     .withHeader("Content-Type", equalTo("application/json"))
                     .withHeader("Nav-Consumer-Token", AnythingPattern())
                     .withHeader("x-nav-apiKey", AnythingPattern())
-                    .withRequestBody(matchingJsonPath("$.variables.ident", containing("404")))
+                    .withRequestBody(matchingJsonPath("$.variables.identer", containing("404")))
                     .willReturn(
                             WireMock.aResponse()
                                     .withStatus(200)
@@ -146,7 +166,8 @@ private fun WireMockServer.stubPdlApiHentPersonError(): WireMockServer {
                                     }
                                   ],
                                   "data": {
-                                    "hentPerson": null
+                                    "hentPersonBolk": null,
+                                    "hentIdenterBolk": null
                                   }
                                 }
                             """.trimIndent())
@@ -171,56 +192,62 @@ private fun WireMockServer.stubPdlApiHentPersonBolk(): WireMockServer {
                                     .withStatus(200)
                                     .withHeader("Content-Type", "application/json")
                                     .withBody("""
-                                    {
-                                       "data":{
-                                          "hentPersonBolk":[
-                                             {
-                                                "ident":"12345678910",
-                                                "person":{
-                                                   "navn":[
-                                                      {
-                                                         "fornavn":"Ola",
-                                                         "mellomnavn":null,
-                                                         "etternavn":"Normann"
-                                                      }
-                                                   ],
-                                                   "adressebeskyttelse":[
-                                                      {
-                                                         "gradering":"UGRADERT"
-                                                      }
-                                                   ],
-                                                   "foedsel":[
-                                                      {
-                                                         "foedselsdato":"123456"
-                                                      }
-                                                   ]
-                                                },
-                                                "code":"ok"
-                                             },
-                                             {
-                                                "ident":"12345678911",
-                                                "person":null,
-                                                "code":"not_found"
-                                             }
-                                          ],
-                                          "hentIdenterBolk":[
-                                             {
-                                                "ident":"12345678910",
-                                                "identer":[
-                                                   {
-                                                      "ident":"12345678910"
-                                                   }
+                                        {
+                                            "data": {
+                                                "hentPersonBolk": [
+                                                    {
+                                                        "ident": "12345678910",
+                                                        "person": {
+                                                            "navn": [
+                                                                {
+                                                                    "fornavn": "LITEN",
+                                                                    "mellomnavn": null,
+                                                                    "etternavn": "MASKIN"
+                                                                }
+                                                            ],
+                                                            "foedsel": [
+                                                                {
+                                                                    "foedselsdato": "1990-07-04"
+                                                                },
+                                                                {
+                                                                    "foedselsdato": "1990-07-04"
+                                                                },
+                                                                {
+                                                                    "foedselsdato": "1990-07-04"
+                                                                }
+                                                            ],
+                                                            "adressebeskyttelse": [
+                                                                {
+                                                                    "gradering": "UGRADERT"
+                                                                }
+                                                            ]
+                                                        },
+                                                        "code": "ok"
+                                                    },
+                                                    {
+                                                        "ident": "12345678911",
+                                                        "person": null,
+                                                        "code": "not_found"
+                                                    }
                                                 ],
-                                                "code":"ok"
-                                             },
-                                             {
-                                                "ident":"12345678911",
-                                                "identer":null,
-                                                "code":"not_found"
-                                             }
-                                          ]
-                                       }
-                                    }
+                                                "hentIdenterBolk": [
+                                                    {
+                                                        "ident": "12345678910",
+                                                        "identer": [
+                                                            {
+                                                                "ident": "2722577091065"
+                                                            }
+                                                        ],
+                                                        "code": "ok"
+                                                    },
+                                                    {
+                                                        "ident": "12345678911",
+                                                        "identer": null,
+                                                        "code": "not_found"
+                                                    }
+                                                ]
+                                            }
+                                        }
                             """.trimIndent())
                     )
     )
@@ -236,7 +263,7 @@ private fun WireMockServer.stubPdlApiServerErrorResponse(): WireMockServer {
                     .withHeader("Content-Type", equalTo("application/json"))
                     .withHeader("Nav-Consumer-Token", AnythingPattern())
                     .withHeader("x-nav-apiKey", AnythingPattern())
-                    .withRequestBody(matchingJsonPath("$.variables.ident", containing("500")))
+                    .withRequestBody(matchingJsonPath("$.variables.identer", containing("500")))
                     .willReturn(
                             WireMock.aResponse()
                                     .withStatus(500)

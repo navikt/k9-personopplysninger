@@ -28,8 +28,7 @@ internal class PdlClient(
     private val pdlBaseUrl = env.hentRequiredEnv("PDL_BASE_URL")
     private val apiKey = env.hentRequiredEnv("PDL_API_GW_KEY")
 
-
-    suspend fun getPersonInfo(ident: String, correlationId: String): HentPdlResponse {
+    suspend fun getPersonInfo(ident: Set<String>, correlationId: String): HentPdlResponse {
         return httpClient.post<HttpStatement>("$pdlBaseUrl") {
             header(HttpHeaders.Authorization, "Bearer ${stsRestClient.token()}")
             header("Nav-Consumer-Token", "Bearer ${stsRestClient.token()}")
@@ -41,20 +40,7 @@ internal class PdlClient(
             contentType(ContentType.Application.Json)
             body = hentPersonInfoQuery(ident)
         }.receive()
-    }
 
-    suspend fun getPersonInfo(ident: Set<String>, correlationId: String): HentPdlBolkResponse {
-        return httpClient.post<HttpStatement>("$pdlBaseUrl") {
-            header(HttpHeaders.Authorization, "Bearer ${stsRestClient.token()}")
-            header("Nav-Consumer-Token", "Bearer ${stsRestClient.token()}")
-            header("Nav-Consumer-Id", serviceUser.username)
-            header("Nav-Call-Id", correlationId)
-            header("TEMA", "OMS")
-            header("x-nav-apiKey", apiKey)
-            accept(ContentType.Application.Json)
-            contentType(ContentType.Application.Json)
-            body = hentPersonInfoQuery(ident)
-        }.receive()
     }
 
     override suspend fun check() = kotlin.runCatching {
