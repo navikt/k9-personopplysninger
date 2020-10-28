@@ -60,7 +60,7 @@ internal class HentPersonopplysningerTest(
         rapid.sendTestMessage(behovssekvens)
 
         val løsninger = rapid.inspektør.message(0)["@løsninger"]["HentPersonopplysninger"]
-        val expectedJson = """{"navn":{"etternavn":"MASKIN","fornavn":"LITEN","mellomnavn":null},"fødseldato":"1990-07-04","aktørId":"2722577091065"}"""
+        val expectedJson = """{"navn":{"etternavn":"MASKIN","fornavn":"LITEN","mellomnavn":null},"fødselsdato":"1990-07-04","aktørId":"2722577091065"}"""
 
         assert(løsninger.size() == 2) // @løst = 1
         assertEquals(expectedJson, løsninger["personopplysninger"].get("12345678910").toString())
