@@ -41,8 +41,15 @@ internal class HentPersonopplysningerTest(
     }
 
     @Test
-    fun `Hanterar behov med respons utan innehåll och feil fra PDL`() {
-        val (_, behovssekvens) = nyBehovsSekvens(setOf("404", "500"))
+    fun `Hanterar http 500 fra PDL`() {
+        val (_, behovssekvens) = nyBehovsSekvens(setOf("500"))
+        rapid.sendTestMessage(behovssekvens)
+        assertEquals(0, rapid.inspektør.size)
+    }
+
+    @Test
+    fun `Hanterar behov med bara errors`() {
+        val (_, behovssekvens) = nyBehovsSekvens(setOf("404"))
         rapid.sendTestMessage(behovssekvens)
         assertEquals(0, rapid.inspektør.size)
     }
@@ -53,10 +60,10 @@ internal class HentPersonopplysningerTest(
         rapid.sendTestMessage(behovssekvens)
 
         val løsninger = rapid.inspektør.message(0)["@løsninger"]["HentPersonopplysninger"]
-        val expectedJson = """{"personopplysninger":{"navn":{"etternavn":"MASKIN","fornavn":"LITEN","mellomnavn":null},"fødseldato":"1990-07-04","aktørId":"2722577091065"}}"""
+        val expectedJson = """{"navn":{"etternavn":"MASKIN","fornavn":"LITEN","mellomnavn":null},"fødseldato":"1990-07-04","aktørId":"2722577091065"}"""
 
         assert(løsninger.size() == 2) // @løst = 1
-        assertEquals(expectedJson, løsninger.get("12345678910").toString())
+        assertEquals(expectedJson, løsninger["personopplysninger"].get("12345678910").toString())
         assertNull(løsninger.get("12345678911"))
     }
 
