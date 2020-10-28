@@ -40,8 +40,6 @@ internal class HentPersonopplysninger(
         val løsning = hentPersonopplysningerFor(
                 identitetsnummer = identitetsnummer,
                 correlationId = packet[Behovsformat.CorrelationId].asText())
-                .also { require(it.keys.containsAll(identitetsnummer)) }
-                .also { require(it.size == identitetsnummer.size) }
 
         packet.leggTilLøsning(
                 behov = BEHOV,

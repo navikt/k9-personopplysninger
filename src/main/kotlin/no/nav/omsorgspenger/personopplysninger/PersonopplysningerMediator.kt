@@ -1,5 +1,6 @@
 package no.nav.omsorgspenger.personopplysninger
 
+import kotlin.reflect.full.memberProperties
 import no.nav.omsorgspenger.personopplysninger.pdl.HentPdlResponse
 import no.nav.omsorgspenger.personopplysninger.pdl.PdlClient
 import org.slf4j.LoggerFactory
@@ -16,29 +17,37 @@ internal class PersonopplysningerMediator(
             secureLogger.error("Fann feil vid hent av data fra PDL: ", response.errors.toString())
         }
 
-        return identitetsnummer.map { it to response.toLøsning(it) }.toMap()
-
+        return identitetsnummer
+                .map { it to mutableMapOf(
+                        "personopplysninger" to response.toLøsning(it)) }
+                .filter { !it.second["personopplysninger"].isNullOrEmpty() }
+                .toMap()
     }
 
-    private fun HentPdlResponse.toLøsning(identitetsnummer: String): Map<String, String?> {
-        var løsning = mutableMapOf<String, String?>()
+    private fun HentPdlResponse.toLøsning(identitetsnummer: String): Map<String, Any> {
+        var attributer = mutableMapOf<String, Any>()
 
         if (!this.data.hentPersonBolk.isNullOrEmpty())
             this.data.hentPersonBolk.filter { it.ident == identitetsnummer }
-                    .mapNotNull {
-                        løsning.put("navn", it.person?.navn?.get(0).toString() )
-                        løsning.put("fødseldato", it.person?.foedsel?.get(0)?.foedselsdato)
+                    .map {
+                        it.person?.navn?.get(0)?.asMap()?.let { navn -> attributer.put("navn", navn) }
+                        it.person?.foedsel?.get(0)?.foedselsdato?.let { fødselsdato -> attributer.put("fødseldato", fødselsdato) }
                     }
 
         if (!this.data.hentIdenterBolk.isNullOrEmpty())
             this.data.hentIdenterBolk.filter { it.ident == identitetsnummer }
-                    .mapNotNull {
-                        løsning.put("aktørId", it.identer?.get(0)?.ident)
+                    .map {
+                        it.identer?.get(0)?.ident?.let { ident -> attributer.put("aktørId", ident) }
                     }
 
-        return løsning
+        return attributer.toMap()
 
+    }
+
+    inline fun <reified T : Any> T.asMap(): Map<String, Any?> {
+        val props = T::class.memberProperties.associateBy { it.name }
+        return props.keys.associateWith { props[it]?.get(this) }
     }
 }
 
-typealias LøsningsMap = Map<String, Map<String, String?>>
+typealias LøsningsMap = Map<String, Map<String, Any>>

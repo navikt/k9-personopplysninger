@@ -1,12 +1,19 @@
 package no.nav.omsorgspenger.personopplysninger
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.SerializationFeature
+import com.fasterxml.jackson.module.kotlin.KotlinModule
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import java.util.*
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
+import kotlin.test.assertNull
+import no.nav.helse.rapids_rivers.isMissingOrNull
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import no.nav.k9.rapid.behov.Behov
 import no.nav.k9.rapid.behov.Behovssekvens
 import no.nav.omsorgspenger.ApplicationContext
+import no.nav.omsorgspenger.personopplysninger.pdl.HentPersonBolkInfo
 import no.nav.omsorgspenger.registerApplicationContext
 import no.nav.omsorgspenger.testutils.ApplicationContextExtension
 import org.junit.jupiter.api.BeforeEach
@@ -45,7 +52,12 @@ internal class HentPersonopplysningerTest(
         val (_, behovssekvens) = nyBehovsSekvens(setOf("12345678910", "12345678911"))
         rapid.sendTestMessage(behovssekvens)
 
-        assert(rapid.inspektør.message(0)["@løsninger"].toPrettyString().contains("null"))
+        val løsninger = rapid.inspektør.message(0)["@løsninger"]["HentPersonopplysninger"]
+        val expectedJson = """{"personopplysninger":{"navn":{"etternavn":"MASKIN","fornavn":"LITEN","mellomnavn":null},"fødseldato":"1990-07-04","aktørId":"2722577091065"}}"""
+
+        assert(løsninger.size() == 2) // @løst = 1
+        assertEquals(expectedJson, løsninger.get("12345678910").toString())
+        assertNull(løsninger.get("12345678911"))
     }
 
 
