@@ -37,7 +37,7 @@ internal class PersonopplysningerMediator(
         this.data.hentPersonBolk?.filter { it.ident == identitetsnummer }
                 ?.map {
                     it.person?.navn?.get(0)?.asMap()?.let { navn -> attributer.put("navn", navn) }
-                    it.person?.foedsel?.get(0)?.foedselsdato?.let { fødselsdato -> attributer.put("fødseldato", fødselsdato) }
+                    it.person?.foedsel?.get(0)?.foedselsdato?.let { fødselsdato -> attributer.put("fødselsdato", fødselsdato) }
                 }
 
         this.data.hentIdenterBolk?.filter { it.ident == identitetsnummer }
