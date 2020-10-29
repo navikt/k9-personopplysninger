@@ -37,7 +37,9 @@ internal class HentPersonopplysningerTest(
     fun `River tar emot och løser gyldigt behov`() {
         val (_, behovssekvens) = nyBehovsSekvens(setOf("01019911111"))
         rapid.sendTestMessage(behovssekvens)
-        assertEquals(1, rapid.inspektør.size)
+        val løsninger = rapid.inspektør.message(0)["@løsninger"]["HentPersonopplysninger"]["personopplysninger"]
+        val expectedJson = """{"navn":{"etternavn":"MASKIN","fornavn":"LITEN","mellomnavn":null},"fødselsdato":"1990-07-04","adressebeskyttelse":"UGRADERT","aktørId":"2722577091065"}"""
+        assertEquals(expectedJson, løsninger.get("01019911111").toString())
     }
 
     @Test
@@ -48,7 +50,7 @@ internal class HentPersonopplysningerTest(
     }
 
     @Test
-    fun `Hanterar behov med bara errors`() {
+    fun `Skickar inte tomt svar vid svar fra PDL null-data`() {
         val (_, behovssekvens) = nyBehovsSekvens(setOf("404"))
         rapid.sendTestMessage(behovssekvens)
         assertEquals(0, rapid.inspektør.size)
@@ -59,11 +61,11 @@ internal class HentPersonopplysningerTest(
         val (_, behovssekvens) = nyBehovsSekvens(setOf("12345678910", "12345678911"))
         rapid.sendTestMessage(behovssekvens)
 
-        val løsninger = rapid.inspektør.message(0)["@løsninger"]["HentPersonopplysninger"]
-        val expectedJson = """{"navn":{"etternavn":"MASKIN","fornavn":"LITEN","mellomnavn":null},"fødselsdato":"1990-07-04","aktørId":"2722577091065"}"""
+        val løsninger = rapid.inspektør.message(0)["@løsninger"]["HentPersonopplysninger"]["personopplysninger"]
+        val expectedJson = """{"navn":{"etternavn":"MASKIN","fornavn":"LITEN","mellomnavn":null},"fødselsdato":"1990-07-04","adressebeskyttelse":"UGRADERT","aktørId":"2722577091065"}"""
 
-        assert(løsninger.size() == 2) // @løst = 1
-        assertEquals(expectedJson, løsninger["personopplysninger"].get("12345678910").toString())
+        assert(løsninger.size() == 1)
+        assertEquals(expectedJson, løsninger.get("12345678910").toString())
         assertNull(løsninger.get("12345678911"))
     }
 

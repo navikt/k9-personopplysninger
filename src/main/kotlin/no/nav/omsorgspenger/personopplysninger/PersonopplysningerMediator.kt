@@ -1,9 +1,5 @@
 package no.nav.omsorgspenger.personopplysninger
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.SerializationFeature
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import kotlin.reflect.full.memberProperties
 import no.nav.omsorgspenger.personopplysninger.pdl.HentPdlResponse
 import no.nav.omsorgspenger.personopplysninger.pdl.PdlClient
@@ -38,6 +34,7 @@ internal class PersonopplysningerMediator(
                 ?.map {
                     it.person?.navn?.get(0)?.asMap()?.let { navn -> attributer.put("navn", navn) }
                     it.person?.foedsel?.get(0)?.foedselsdato?.let { fødselsdato -> attributer.put("fødselsdato", fødselsdato) }
+                    it.person?.adressebeskyttelse?.get(0)?.gradering?.let { gradering -> attributer.put("adressebeskyttelse", gradering)}
                 }
 
         this.data.hentIdenterBolk?.filter { it.ident == identitetsnummer }
@@ -55,13 +52,6 @@ internal class PersonopplysningerMediator(
         val props = T::class.memberProperties.associateBy { it.name }
         return props.keys.associateWith { props[it]?.get(this) }
     }
-
-    private companion object {
-        val objectMapper: ObjectMapper = jacksonObjectMapper()
-                .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-                .registerModule(JavaTimeModule())
-    }
-
 }
 
 typealias LøsningsMap = Map<String, Map<String, Any>>

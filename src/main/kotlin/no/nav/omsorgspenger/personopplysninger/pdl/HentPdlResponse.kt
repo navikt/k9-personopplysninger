@@ -21,18 +21,19 @@ data class Ident(
 
 data class Person(
         val navn: List<Navn>,
-        val adressebeskyttelse: List<Adressebeskyttelse>,
+        val adressebeskyttelse: List<Adressebeskyttelse>?,
         val foedsel: List<Foedsel>
 )
 
 data class Adressebeskyttelse(
-        val gradering: AdressebeskyttelseGradering
+        val gradering: AdressebeskyttelseGradering?
 )
 
 enum class AdressebeskyttelseGradering {
+    STRENGT_FORTROLIG_UTLAND,
     STRENGT_FORTROLIG,
     FORTROLIG,
-    UGRADERT,
+    UGRADERT
 }
 
 data class Navn(
