@@ -6,7 +6,7 @@
   "minReplicas": "1",
   "maxReplicas": "1",
   "ingresses": [
-    "https://k9-personopplysninger.dev.adeo.no"
+    "https://k9-personopplysninger.dev.intern.nav.no"
   ],
   "externalHosts": [
     "api-gw-q1.oera.no"
@@ -16,6 +16,7 @@
     "KAFKA_PROPERTIES_SECURITY_PROTOCOL": "SASL_SSL",
     "KAFKA_RAPID_TOPIC": "k9-rapid-v2",
     "KAFKA_CONSUMER_GROUP_ID": "k9-personopplysninger",
-    "STS_URL": "https://api-gw-q1.oera.no/security-token-service"
+    "STS_TOKEN_ENDPOINT": "https://api-gw-q1.oera.no/security-token-service/rest/v1/sts/token",
+    "PDL_BASE_URL": "https://api-gw-q1.oera.no/pdl-api/graphql"
   }
 }

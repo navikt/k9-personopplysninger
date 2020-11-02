@@ -44,9 +44,13 @@ spec:
   prometheus:
     enabled: true
     path: /metrics
+  secureLogs:
+    enabled: true
   filesFrom:
     - secret: k9-personopplysninger-srvusercredentials
       mountPath: /var/run/secrets/nais.io/service_user # Behov fra rapids-and-rivers.
+  envFrom:
+    - secret: k9-personopplysninger-apigwkeys
   env:
   {{#each env}}
     - name: {{@key}}

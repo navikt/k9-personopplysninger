@@ -1,23 +1,31 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 val junitJupiterVersion = "5.7.0"
-val k9rapidVersion = "1.fe10445"
+val k9rapidVersion = "1.e27694e"
 val ktorVersion = "1.4.1"
-val dusseldorfKtorVersion = "1.4.1.dcb9ddd"
+val dusseldorfKtorVersion = "1.4.1.15e3c67"
 val jsonassertVersion = "1.5.0"
 
 val mainClass = "no.nav.omsorgspenger.AppKt"
 
 plugins {
     kotlin("jvm") version "1.4.10"
-    id("com.github.johnrengelman.shadow") version "6.0.0"
+    id("com.github.johnrengelman.shadow") version "6.1.0"
 }
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_12
+    targetCompatibility = JavaVersion.VERSION_12
+}
+
 
 dependencies {
     implementation("no.nav.k9.rapid:river:$k9rapidVersion")
+    implementation("no.nav.helse:dusseldorf-ktor-health:$dusseldorfKtorVersion")
 
     implementation("io.ktor:ktor-client-jackson:$ktorVersion")
     implementation("io.ktor:ktor-client-cio:$ktorVersion")
+    implementation("io.ktor:ktor-jackson:$ktorVersion")
 
 
     testImplementation ("org.skyscreamer:jsonassert:$jsonassertVersion")
@@ -66,7 +74,7 @@ tasks {
     }
 
     withType<Wrapper> {
-        gradleVersion = "6.6.1"
+        gradleVersion = "6.7"
     }
 
 }
