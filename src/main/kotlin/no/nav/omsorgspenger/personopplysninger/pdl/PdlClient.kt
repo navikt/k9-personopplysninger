@@ -14,9 +14,9 @@ import no.nav.helse.dusseldorf.ktor.health.HealthCheck
 import no.nav.helse.dusseldorf.ktor.health.Healthy
 import no.nav.helse.dusseldorf.ktor.health.UnHealthy
 import no.nav.omsorgspenger.client.StsRestClient
-import no.nav.omsorgspenger.config.Environment
 import no.nav.omsorgspenger.config.ServiceUser
-import no.nav.omsorgspenger.config.hentRequiredEnv
+import no.nav.k9.rapid.river.Environment
+import no.nav.k9.rapid.river.hentRequiredEnv
 
 internal class PdlClient(
         private val env: Environment,

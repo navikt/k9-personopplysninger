@@ -132,6 +132,59 @@ private fun WireMockServer.stubPdlApiHentAnnenPerson(): WireMockServer {
     return this
 }
 
+private fun WireMockServer.stubPdlApiPartialInfo(): WireMockServer {
+    WireMock.stubFor(
+            WireMock.post(WireMock
+                    .urlPathMatching(".*$pdlApiMockPath.*"))
+                    .withHeader("Authorization", containing("Bearer"))
+                    .withHeader("Content-Type", equalTo("application/json"))
+                    .withHeader("Nav-Consumer-Token", AnythingPattern())
+                    .withHeader("x-nav-apiKey", AnythingPattern())
+                    .withRequestBody(matchingJsonPath("$.variables.identer", containing("123123")))
+                    .willReturn(
+                            WireMock.aResponse()
+                                    .withStatus(200)
+                                    .withHeader("Content-Type", "application/json")
+                                    .withBody("""
+                                        {
+                                          "data": {
+                                            "hentPersonBolk": [
+                                              {
+                                                "ident": "123123",
+                                                "person": {
+                                                  "navn": [
+                                                    {
+                                                      "fornavn": "STOR",
+                                                      "mellomnavn": "MELLAN",
+                                                      "etternavn": "MASKIN"
+                                                    }
+                                                  ],
+                                                  "foedsel": [
+                                                    {
+                                                      "foedselsdato": "1999-01-01"
+                                                    }
+                                                  ],
+                                                  "adressebeskyttelse": []
+                                                },
+                                                "code": "ok"
+                                              }
+                                            ],
+                                            "hentIdenterBolk": [
+                                              {
+                                                "ident": "123123",
+                                                "identer": [],
+                                                "code": "not_found"
+                                              }
+                                            ]
+                                          }
+                                        }
+                            """.trimIndent())
+                    )
+    )
+
+    return this
+}
+
 private fun WireMockServer.stubPdlApiHentPersonError(): WireMockServer {
     WireMock.stubFor(
             WireMock.post(WireMock
@@ -278,5 +331,6 @@ internal fun WireMockServer.stubPdlApi() = stubPdlApiHentPerson()
         .stubPdlApiHentPersonError()
         .stubPdlApiHentPersonBolk()
         .stubPdlApiServerErrorResponse()
+        .stubPdlApiPartialInfo()
 
 internal fun WireMockServer.pdlApiBaseUrl() = baseUrl() + pdlApiBasePath

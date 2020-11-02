@@ -1,19 +1,12 @@
 package no.nav.omsorgspenger.personopplysninger
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.SerializationFeature
-import com.fasterxml.jackson.module.kotlin.KotlinModule
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import java.util.*
 import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
 import kotlin.test.assertNull
-import no.nav.helse.rapids_rivers.isMissingOrNull
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import no.nav.k9.rapid.behov.Behov
 import no.nav.k9.rapid.behov.Behovssekvens
 import no.nav.omsorgspenger.ApplicationContext
-import no.nav.omsorgspenger.personopplysninger.pdl.HentPersonBolkInfo
 import no.nav.omsorgspenger.registerApplicationContext
 import no.nav.omsorgspenger.testutils.ApplicationContextExtension
 import org.junit.jupiter.api.BeforeEach
@@ -50,7 +43,7 @@ internal class HentPersonopplysningerTest(
     }
 
     @Test
-    fun `Skickar inte tomt svar vid svar fra PDL null-data`() {
+    fun `Skickar inte tom løsning vid svar fra PDL null-data`() {
         val (_, behovssekvens) = nyBehovsSekvens(setOf("404"))
         rapid.sendTestMessage(behovssekvens)
         assertEquals(0, rapid.inspektør.size)
@@ -69,13 +62,38 @@ internal class HentPersonopplysningerTest(
         assertNull(løsninger.get("12345678911"))
     }
 
+    @Test
+    fun `Person utan aktørId och emptyList adressebeskyttelse`() {
+        val (_, behovssekvens) = nyBehovsSekvens(setOf("123123"))
+        rapid.sendTestMessage(behovssekvens)
+
+        val løsninger = rapid.inspektør.message(0)["@løsninger"]["HentPersonopplysninger"]["personopplysninger"]
+        val expectedJson = """{"navn":{"etternavn":"MASKIN","fornavn":"STOR","mellomnavn":"MELLAN"},"fødselsdato":"1999-01-01"}"""
+
+        assert(løsninger.size() == 1)
+        assertEquals(expectedJson, løsninger.get("123123").toString())
+    }
+
+    @Test
+    fun `Sender bara med behovsattributer i behov`() {
+        val (_, behovssekvens) = nyBehovsSekvens(setOf("123123"), setOf("navn"))
+        rapid.sendTestMessage(behovssekvens)
+
+        val løsninger = rapid.inspektør.message(0)["@løsninger"]["HentPersonopplysninger"]["personopplysninger"]
+        val expectedJson = """{"navn":{"etternavn":"MASKIN","fornavn":"STOR","mellomnavn":"MELLAN"}}"""
+
+        assert(løsninger.size() == 1)
+        assertEquals(expectedJson, løsninger.get("123123").toString())
+    }
 
     internal companion object {
         const val BEHOV = "HentPersonopplysninger"
     }
 
+
     private fun nyBehovsSekvens(
             ident: Set<String>,
+            attributer: Set<String>? = setOf("navn", "fødselsdato", "adressebeskyttelse", "aktørId")
     ) = Behovssekvens(
             id = "01BX5ZZKBKACTAV9WEVGEMMVS0",
             correlationId = UUID.randomUUID().toString(),
@@ -84,10 +102,9 @@ internal class HentPersonopplysningerTest(
                             navn = BEHOV,
                             input = mapOf(
                                     "identitetsnummer" to ident,
-                                    "attributter" to setOf("navn", "fødseldato", "aktørId")
+                                    "attributter" to attributer
                             )
                     )
             )
     ).keyValue
-
 }

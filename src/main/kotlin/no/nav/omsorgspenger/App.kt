@@ -16,9 +16,9 @@ import no.nav.helse.dusseldorf.ktor.health.HealthRoute
 import no.nav.helse.dusseldorf.ktor.health.HealthService
 import no.nav.helse.rapids_rivers.RapidApplication
 import no.nav.helse.rapids_rivers.RapidsConnection
+import no.nav.k9.rapid.river.Environment
 import no.nav.omsorgspenger.client.StsRestClient
 import no.nav.omsorgspenger.personopplysninger.pdl.PdlClient
-import no.nav.omsorgspenger.config.Environment
 import no.nav.omsorgspenger.config.ServiceUser
 import no.nav.omsorgspenger.config.readServiceUserCredentials
 import no.nav.omsorgspenger.personopplysninger.HentPersonopplysninger

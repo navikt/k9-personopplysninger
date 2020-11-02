@@ -13,9 +13,9 @@ import java.time.LocalDateTime
 import no.nav.helse.dusseldorf.ktor.health.HealthCheck
 import no.nav.helse.dusseldorf.ktor.health.Healthy
 import no.nav.helse.dusseldorf.ktor.health.UnHealthy
-import no.nav.omsorgspenger.config.Environment
+import no.nav.k9.rapid.river.Environment
+import no.nav.k9.rapid.river.hentRequiredEnv
 import no.nav.omsorgspenger.config.ServiceUser
-import no.nav.omsorgspenger.config.hentRequiredEnv
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -64,7 +64,7 @@ internal class StsRestClient(
     override suspend fun check() = kotlin.runCatching {
         fetchToken()
     }.fold(
-            onSuccess = { Healthy("StsRestClient", "OK")},
-            onFailure = { UnHealthy("StsRestClient", "Feil: ${it.message}")}
+            onSuccess = { Healthy("StsRestClient", "OK") },
+            onFailure = { UnHealthy("StsRestClient", "Feil: ${it.message}") }
     )
 }

@@ -40,14 +40,7 @@ data class Navn(
         val fornavn: String,
         val mellomnavn: String?,
         val etternavn: String
-) {
-    override fun toString(): String {
-        return if(mellomnavn.isNullOrEmpty())
-            "$fornavn $etternavn"
-        else
-            "$fornavn $mellomnavn $etternavn"
-    }
-}
+)
 
 data class Foedsel(
         val foedselsdato: String?

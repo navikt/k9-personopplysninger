@@ -10,7 +10,7 @@ internal class PersonopplysningerMediator(
 ) {
     private val secureLogger = LoggerFactory.getLogger("tjenestekall")
 
-    suspend fun hentPersonopplysninger(identitetsnummer: Set<String>, correlationId: String): LøsningsMap {
+    suspend fun hentPersonopplysninger(identitetsnummer: Set<String>, behovsAttributer: Set<String>, correlationId: String): LøsningsMap {
 
         val response = pdlClient.getPersonInfo(identitetsnummer, correlationId)
         if (!response.errors.isNullOrEmpty()) {
@@ -19,32 +19,42 @@ internal class PersonopplysningerMediator(
 
         val resultat = mapOf(
                 "personopplysninger" to identitetsnummer
-                        .map { it to response.toLøsning(it) }
+                        .map { it to response.toLøsning(it, behovsAttributer) }
                         .filterNot { it.second.isNullOrEmpty() }
                         .toMap())
 
-        require(!resultat["personopplysninger"].isNullOrEmpty()) { "Lyckades inte parsa data fra PDL" }
+        require(!resultat["personopplysninger"].isNullOrEmpty()) { "Parsing av data fra PDL gav tomt resultat." }
         return resultat
     }
 
-    private fun HentPdlResponse.toLøsning(identitetsnummer: String): Map<String, Any> {
-        var attributer = mutableMapOf<String, Any>()
+    private fun HentPdlResponse.toLøsning(identitetsnummer: String, behovsAttributer: Set<String>): Map<String, Any?> {
+        var attributer = mutableMapOf<String, Any?>()
 
-        this.data.hentPersonBolk?.filter { it.ident == identitetsnummer }
+        this.data.hentPersonBolk?.filter { it.ident == identitetsnummer && it.code == "ok" }
                 ?.map {
-                    it.person?.navn?.get(0)?.asMap()?.let { navn -> attributer.put("navn", navn) }
-                    it.person?.foedsel?.get(0)?.foedselsdato?.let { fødselsdato -> attributer.put("fødselsdato", fødselsdato) }
-                    it.person?.adressebeskyttelse?.get(0)?.gradering?.let { gradering -> attributer.put("adressebeskyttelse", gradering)}
+                    it.person?.let { person ->
+                        person.navn?.firstOrNull()?.let { navn ->
+                            navn.asMap().let { attributer.put("navn", it) }
+                        }
+                        person.foedsel?.firstOrNull()?.let { foedsel ->
+                            foedsel.foedselsdato.let { attributer.put("fødselsdato", it) }
+                        }
+                        person.adressebeskyttelse?.firstOrNull()?.let { adressebeskyttelse ->
+                            adressebeskyttelse.gradering.let { attributer.put("adressebeskyttelse", it) }
+                        }
+                    }
                 }
 
-        this.data.hentIdenterBolk?.filter { it.ident == identitetsnummer }
+        this.data.hentIdenterBolk?.filter { it.ident == identitetsnummer && it.code == "ok" }
                 ?.map {
-                    it.identer?.get(0)?.ident?.let { ident -> attributer.put("aktørId", ident) }
+                    it.identer?.firstOrNull()?.let {
+                        it.ident.let { attributer.put("aktørId", it) }
+                    }
                 }
 
-
-
-        return attributer.toMap()
+        return attributer.toMap().filterKeys { behov ->
+            behovsAttributer.contains(behov)
+        }
 
     }
 
@@ -52,6 +62,7 @@ internal class PersonopplysningerMediator(
         val props = T::class.memberProperties.associateBy { it.name }
         return props.keys.associateWith { props[it]?.get(this) }
     }
+
 }
 
 typealias LøsningsMap = Map<String, Map<String, Any>>

@@ -24,6 +24,7 @@ internal class HentPersonopplysninger(
             validate { packet ->
                 packet.skalLøseBehov(BEHOV)
                 packet.require(IDENTITETSNUMMER) { it.requireArray { entry -> entry is TextNode } }
+                packet.require(ATTRIBUTER) { it.require() }
             }
         }.register(this)
     }
@@ -35,10 +36,15 @@ internal class HentPersonopplysninger(
                 .map { it.asText() }
                 .toSet()
 
+        val behovsAttributer: Set<String> = (packet[ATTRIBUTER] as ArrayNode)
+                .map { it.asText() }
+                .toSet()
+
         logger.info("Løser behov før ${identitetsnummer.size} person(er).")
 
         val løsning = hentPersonopplysningerFor(
                 identitetsnummer = identitetsnummer,
+                behovsAttributer = behovsAttributer,
                 correlationId = packet[Behovsformat.CorrelationId].asText())
 
         packet.leggTilLøsning(
@@ -52,10 +58,11 @@ internal class HentPersonopplysninger(
         logger.info("Løst behov $BEHOV med id $id").also { incLostBehov() }
     }
 
-    private fun hentPersonopplysningerFor(identitetsnummer: Set<String>, correlationId: String) = try {
+    private fun hentPersonopplysningerFor(identitetsnummer: Set<String>, behovsAttributer: Set<String>, correlationId: String) = try {
         runBlocking {
             personopplysningerMediator.hentPersonopplysninger(
                     identitetsnummer = identitetsnummer,
+                    behovsAttributer = behovsAttributer,
                     correlationId = correlationId)
         }
     } catch (cause: Throwable) {
@@ -66,5 +73,6 @@ internal class HentPersonopplysninger(
     internal companion object {
         const val BEHOV = "HentPersonopplysninger"
         const val IDENTITETSNUMMER = "@behov.$BEHOV.identitetsnummer"
+        const val ATTRIBUTER = "@behov.$BEHOV.attributter"
     }
 }
