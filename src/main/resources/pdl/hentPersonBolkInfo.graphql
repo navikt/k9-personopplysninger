@@ -8,16 +8,17 @@ query($identer: [ID!]!) {
             foedsel {
                 foedselsdato
             },
-            adressebeskyttelse {
+            adressebeskyttelse(historikk: false) {
                 gradering
             }
         },
         code
     },
-    hentIdenterBolk(identer: $identer, grupper: [AKTORID], historikk: false) {
+    hentIdenterBolk(identer: $identer, grupper: [AKTORID, FOLKEREGISTERIDENT], historikk: false) {
         ident,
         identer{
-            ident
+            ident,
+            gruppe
         },
         code
     }

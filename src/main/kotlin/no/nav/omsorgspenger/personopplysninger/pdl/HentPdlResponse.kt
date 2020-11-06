@@ -16,7 +16,8 @@ data class IdenterBolk(
 )
 
 data class Ident(
-        val ident: String
+        val ident: String,
+        val gruppe: String
 )
 
 data class Person(

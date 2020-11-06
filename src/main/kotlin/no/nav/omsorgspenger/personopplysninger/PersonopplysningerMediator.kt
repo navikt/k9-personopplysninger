@@ -44,11 +44,11 @@ internal class PersonopplysningerMediator(
                         }
                     }
                 }
-
         this.data.hentIdenterBolk?.filter { it.ident == identitetsnummer && it.code == "ok" }
                 ?.map {
-                    it.identer?.firstOrNull()?.let {
-                        it.ident.let { attributer.put("aktørId", it) }
+                    it.identer?.map { ident ->
+                        if(ident.gruppe == "AKTORID") { attributer.put("aktørId", ident.ident) }
+                        if(ident.gruppe == "FOLKEREGISTERIDENT") { attributer.put("gjeldendeIdentitetsnummer", ident.ident) }
                     }
                 }
 

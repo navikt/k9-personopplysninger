@@ -2,7 +2,6 @@ package no.nav.omsorgspenger.personopplysninger
 
 import java.util.*
 import kotlin.test.assertEquals
-import kotlin.test.assertNull
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import no.nav.k9.rapid.behov.Behov
 import no.nav.k9.rapid.behov.Behovssekvens
@@ -27,12 +26,13 @@ internal class HentPersonopplysningerTest(
     }
 
     @Test
-    fun `River tar emot och løser gyldigt behov`() {
-        val (_, behovssekvens) = nyBehovsSekvens(setOf("01019911111"))
+    fun `River tar emot och løser fullständigt behov`() {
+        val (_, behovssekvens) = nyBehovsSekvens(setOf("01019911111"), setOf("navn", "fødselsdato", "adressebeskyttelse", "aktørId", "gjeldendeIdentitetsnummer"))
         rapid.sendTestMessage(behovssekvens)
-        val løsninger = rapid.inspektør.message(0)["@løsninger"]["HentPersonopplysninger"]["personopplysninger"]
-        val expectedJson = """{"navn":{"etternavn":"MASKIN","fornavn":"LITEN","mellomnavn":null},"fødselsdato":"1990-07-04","adressebeskyttelse":"UGRADERT","aktørId":"2722577091065"}"""
-        assertEquals(expectedJson, løsninger.get("01019911111").toString())
+
+        val expectedJson = """{"navn":{"etternavn":"MASKIN","fornavn":"LITEN","mellomnavn":null},"fødselsdato":"1990-07-04","adressebeskyttelse":"UGRADERT","aktørId":"2722577091065","gjeldendeIdentitetsnummer":"01019911111"}"""
+
+        assert(løsningErKorrekt("01019911111", expectedJson))
     }
 
     @Test
@@ -54,24 +54,19 @@ internal class HentPersonopplysningerTest(
         val (_, behovssekvens) = nyBehovsSekvens(setOf("12345678910", "12345678911"))
         rapid.sendTestMessage(behovssekvens)
 
-        val løsninger = rapid.inspektør.message(0)["@løsninger"]["HentPersonopplysninger"]["personopplysninger"]
         val expectedJson = """{"navn":{"etternavn":"MASKIN","fornavn":"LITEN","mellomnavn":null},"fødselsdato":"1990-07-04","adressebeskyttelse":"UGRADERT","aktørId":"2722577091065"}"""
 
-        assert(løsninger.size() == 1)
-        assertEquals(expectedJson, løsninger.get("12345678910").toString())
-        assertNull(løsninger.get("12345678911"))
+        assert(løsningErKorrekt("12345678910", expectedJson))
     }
 
     @Test
     fun `Person utan aktørId och emptyList adressebeskyttelse`() {
-        val (_, behovssekvens) = nyBehovsSekvens(setOf("123123"))
+        val (_, behovssekvens) = nyBehovsSekvens(setOf("123123"), setOf("navn", "fødselsdato"))
         rapid.sendTestMessage(behovssekvens)
 
-        val løsninger = rapid.inspektør.message(0)["@løsninger"]["HentPersonopplysninger"]["personopplysninger"]
         val expectedJson = """{"navn":{"etternavn":"MASKIN","fornavn":"STOR","mellomnavn":"MELLAN"},"fødselsdato":"1999-01-01"}"""
 
-        assert(løsninger.size() == 1)
-        assertEquals(expectedJson, løsninger.get("123123").toString())
+        assert(løsningErKorrekt("123123", expectedJson))
     }
 
     @Test
@@ -79,11 +74,9 @@ internal class HentPersonopplysningerTest(
         val (_, behovssekvens) = nyBehovsSekvens(setOf("123123"), setOf("navn"))
         rapid.sendTestMessage(behovssekvens)
 
-        val løsninger = rapid.inspektør.message(0)["@løsninger"]["HentPersonopplysninger"]["personopplysninger"]
         val expectedJson = """{"navn":{"etternavn":"MASKIN","fornavn":"STOR","mellomnavn":"MELLAN"}}"""
 
-        assert(løsninger.size() == 1)
-        assertEquals(expectedJson, løsninger.get("123123").toString())
+        assert(løsningErKorrekt("123123", expectedJson))
     }
 
     internal companion object {
@@ -107,4 +100,11 @@ internal class HentPersonopplysningerTest(
                     )
             )
     ).keyValue
+
+    private fun løsningErKorrekt(ident: String, expectedJson: String): Boolean {
+        val resultat = rapid.inspektør.message(0)["@løsninger"]["HentPersonopplysninger"]["personopplysninger"]
+        val losning = resultat.get(ident)
+        return (resultat.size() == 1 && losning.toString() == expectedJson)
+    }
+
 }

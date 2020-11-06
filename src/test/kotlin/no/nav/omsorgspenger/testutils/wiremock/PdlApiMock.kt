@@ -56,7 +56,12 @@ private fun WireMockServer.stubPdlApiHentPerson(): WireMockServer {
                                                     "ident": "01019911111",
                                                     "identer": [
                                                         {
-                                                            "ident": "2722577091065"
+                                                            "ident": "2722577091065",
+                                                            "gruppe": "AKTORID"
+                                                        },
+                                                        {
+                                                            "ident": "01019911111",
+                                                            "gruppe": "FOLKEREGISTERIDENT"
                                                         }
                                                     ],
                                                     "code": "ok"
@@ -117,7 +122,8 @@ private fun WireMockServer.stubPdlApiHentAnnenPerson(): WireMockServer {
                                                         "ident": "01019011111",
                                                         "identer": [
                                                             {
-                                                                "ident": "2722577091065"
+                                                                "ident": "2722577091065",
+                                                                "gruppe": "AKTORID"
                                                             }
                                                         ],
                                                         "code": "ok"
@@ -288,7 +294,8 @@ private fun WireMockServer.stubPdlApiHentPersonBolk(): WireMockServer {
                                                         "ident": "12345678910",
                                                         "identer": [
                                                             {
-                                                                "ident": "2722577091065"
+                                                                "ident": "2722577091065",
+                                                                "gruppe": "AKTORID"
                                                             }
                                                         ],
                                                         "code": "ok"
