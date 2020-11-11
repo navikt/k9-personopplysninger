@@ -1,13 +1,13 @@
 package no.nav.omsorgspenger.personopplysninger
 
 import java.util.*
-import kotlin.test.assertEquals
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import no.nav.k9.rapid.behov.Behov
 import no.nav.k9.rapid.behov.Behovssekvens
 import no.nav.omsorgspenger.ApplicationContext
 import no.nav.omsorgspenger.registerApplicationContext
 import no.nav.omsorgspenger.testutils.ApplicationContextExtension
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -27,12 +27,13 @@ internal class HentPersonopplysningerTest(
 
     @Test
     fun `River tar emot och løser fullständigt behov`() {
-        val (_, behovssekvens) = nyBehovsSekvens(setOf("01019911111"), setOf("navn", "fødselsdato", "adressebeskyttelse", "aktørId", "gjeldendeIdentitetsnummer"))
+        val (_, behovssekvens) = nyBehovsSekvens(setOf("01019911111"),
+                setOf("navn", "fødselsdato", "adressebeskyttelse", "aktørId", "gjeldendeIdentitetsnummer"))
         rapid.sendTestMessage(behovssekvens)
 
         val expectedJson = """{"navn":{"etternavn":"MASKIN","fornavn":"LITEN","mellomnavn":null},"fødselsdato":"1990-07-04","adressebeskyttelse":"UGRADERT","aktørId":"2722577091065","gjeldendeIdentitetsnummer":"01019911111"}"""
 
-        assert(løsningErKorrekt("01019911111", expectedJson))
+        assertEquals(expectedJson, rapid.hentLøsning("01019911111"))
     }
 
     @Test
@@ -56,7 +57,8 @@ internal class HentPersonopplysningerTest(
 
         val expectedJson = """{"navn":{"etternavn":"MASKIN","fornavn":"LITEN","mellomnavn":null},"fødselsdato":"1990-07-04","adressebeskyttelse":"UGRADERT","aktørId":"2722577091065"}"""
 
-        assert(løsningErKorrekt("12345678910", expectedJson))
+        assertEquals(expectedJson, rapid.hentLøsning("12345678910"))
+        assertEquals(1, rapid.antalLøsninger())
     }
 
     @Test
@@ -66,7 +68,7 @@ internal class HentPersonopplysningerTest(
 
         val expectedJson = """{"navn":{"etternavn":"MASKIN","fornavn":"STOR","mellomnavn":"MELLAN"},"fødselsdato":"1999-01-01"}"""
 
-        assert(løsningErKorrekt("123123", expectedJson))
+        assertEquals(expectedJson, rapid.hentLøsning("123123"))
     }
 
     @Test
@@ -76,11 +78,38 @@ internal class HentPersonopplysningerTest(
 
         val expectedJson = """{"navn":{"etternavn":"MASKIN","fornavn":"STOR","mellomnavn":"MELLAN"}}"""
 
-        assert(løsningErKorrekt("123123", expectedJson))
+        assertEquals(expectedJson, rapid.hentLøsning("123123"))
+    }
+
+    @Test
+    fun `Sender inte med lösning på person utan alla behovsattribut`() {
+        val (_, behovssekvens) = nyBehovsSekvens(setOf("21108424238"))
+        rapid.sendTestMessage(behovssekvens)
+
+        assertEquals(0, rapid.inspektør.size)
+    }
+
+    @Test
+    fun `Sender endast en lösning där en av två personer icke har personinfo og adressebeskyttelse tomt`() {
+        val(_, behovssekvens) = nyBehovsSekvens(setOf("21108424239", "15098422273"))
+        rapid.sendTestMessage(behovssekvens)
+
+        val expectedJson = """{"navn":{"etternavn":"MASKIN","fornavn":"LITEN","mellomnavn":null},"fødselsdato":"1990-07-04","adressebeskyttelse":"UGRADERT","aktørId":"1168457597360"}"""
+
+        assertEquals(expectedJson, rapid.hentLøsning("15098422273"))
+        assertEquals(1, rapid.antalLøsninger())
     }
 
     internal companion object {
         const val BEHOV = "HentPersonopplysninger"
+    }
+
+    private fun TestRapid.hentLøsning(ident: String): String {
+        return this.inspektør.message(0)["@løsninger"]["HentPersonopplysninger"]["personopplysninger"].get(ident).toString()
+    }
+
+    private fun TestRapid.antalLøsninger(): Int {
+        return this.inspektør.message(0)["@løsninger"]["HentPersonopplysninger"]["personopplysninger"].size()
     }
 
 
@@ -100,11 +129,5 @@ internal class HentPersonopplysningerTest(
                     )
             )
     ).keyValue
-
-    private fun løsningErKorrekt(ident: String, expectedJson: String): Boolean {
-        val resultat = rapid.inspektør.message(0)["@løsninger"]["HentPersonopplysninger"]["personopplysninger"]
-        val losning = resultat.get(ident)
-        return (resultat.size() == 1 && losning.toString() == expectedJson)
-    }
 
 }

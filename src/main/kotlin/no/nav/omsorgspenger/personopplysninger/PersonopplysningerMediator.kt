@@ -20,7 +20,7 @@ internal class PersonopplysningerMediator(
         val resultat = mapOf(
                 "personopplysninger" to identitetsnummer
                         .map { it to response.toLøsning(it, behovsAttributer) }
-                        .filterNot { it.second.isNullOrEmpty() }
+                        .filter { it.second.keys.containsAll(behovsAttributer) }
                         .toMap())
 
         require(!resultat["personopplysninger"].isNullOrEmpty()) { "Parsing av data fra PDL gav tomt resultat." }
@@ -44,6 +44,7 @@ internal class PersonopplysningerMediator(
                         }
                     }
                 }
+
         this.data.hentIdenterBolk?.filter { it.ident == identitetsnummer && it.code == "ok" }
                 ?.map {
                     it.identer?.map { ident ->
@@ -51,7 +52,6 @@ internal class PersonopplysningerMediator(
                         if(ident.gruppe == "FOLKEREGISTERIDENT") { attributer.put("gjeldendeIdentitetsnummer", ident.ident) }
                     }
                 }
-
         return attributer.toMap().filterKeys { behov ->
             behovsAttributer.contains(behov)
         }
