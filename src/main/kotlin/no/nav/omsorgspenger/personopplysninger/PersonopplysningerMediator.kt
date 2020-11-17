@@ -15,6 +15,7 @@ internal class PersonopplysningerMediator(
         val response = pdlClient.getPersonInfo(identitetsnummer, correlationId)
         if (!response.errors.isNullOrEmpty()) {
             secureLogger.error("Fann feil vid hent av data fra PDL: ", response.errors.toString())
+            throw IllegalStateException("Fann feil vid hent av data fra PDL")
         }
 
         val resultat = mapOf(
@@ -23,7 +24,6 @@ internal class PersonopplysningerMediator(
                         .filter { it.second.keys.containsAll(behovsAttributer) }
                         .toMap())
 
-        require(!resultat["personopplysninger"].isNullOrEmpty()) { "Parsing av data fra PDL gav tomt resultat." }
         return resultat
     }
 

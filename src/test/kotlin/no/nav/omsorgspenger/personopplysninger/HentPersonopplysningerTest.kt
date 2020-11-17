@@ -1,6 +1,7 @@
 package no.nav.omsorgspenger.personopplysninger
 
 import java.util.*
+import kotlin.test.assertFalse
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import no.nav.k9.rapid.behov.Behov
 import no.nav.k9.rapid.behov.Behovssekvens
@@ -8,6 +9,9 @@ import no.nav.omsorgspenger.ApplicationContext
 import no.nav.omsorgspenger.registerApplicationContext
 import no.nav.omsorgspenger.testutils.ApplicationContextExtension
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -82,11 +86,13 @@ internal class HentPersonopplysningerTest(
     }
 
     @Test
-    fun `Sender inte med lösning på person utan alla behovsattribut`() {
+    fun `Sender med tom lösning på person utan alla behovsattribut`() {
         val (_, behovssekvens) = nyBehovsSekvens(setOf("21108424238"))
         rapid.sendTestMessage(behovssekvens)
 
-        assertEquals(0, rapid.inspektør.size)
+        val resultat = rapid.inspektør.message(0)["@løsninger"]["HentPersonopplysninger"]["personopplysninger"].toString()
+
+        assertFalse(resultat.contains("21108424238"))
     }
 
     @Test
