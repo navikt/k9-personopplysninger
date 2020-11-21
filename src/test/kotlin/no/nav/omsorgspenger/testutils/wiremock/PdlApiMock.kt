@@ -42,11 +42,7 @@ private fun WireMockServer.stubPdlApiHentPerson(): WireMockServer {
                                                                 "foedselsdato": "1990-07-04"
                                                             }
                                                         ],
-                                                        "adressebeskyttelse": [
-                                                            {
-                                                                "gradering": "UGRADERT"
-                                                            }
-                                                        ]
+                                                        "adressebeskyttelse": []
                                                     },
                                                     "code": "ok"
                                                 }

@@ -39,9 +39,7 @@ internal class PersonopplysningerMediator(
                         person.foedsel?.firstOrNull()?.let { foedsel ->
                             foedsel.foedselsdato.let { attributer.put("fødselsdato", it) }
                         }
-                        person.adressebeskyttelse?.firstOrNull()?.let { adressebeskyttelse ->
-                            adressebeskyttelse.gradering.let { attributer.put("adressebeskyttelse", it) }
-                        }
+                        attributer.put("adressebeskyttelse", person.gradering.name)
                     }
                 }
 

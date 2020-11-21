@@ -21,10 +21,19 @@ data class Ident(
 )
 
 data class Person(
-        val navn: List<Navn>,
-        val adressebeskyttelse: List<Adressebeskyttelse>?,
-        val foedsel: List<Foedsel>
-)
+    val navn: List<Navn>,
+    val adressebeskyttelse: List<Adressebeskyttelse>,
+    val foedsel: List<Foedsel>) {
+    internal val gradering = when {
+        adressebeskyttelse.isEmpty() ->
+            AdressebeskyttelseGradering.UGRADERT
+        adressebeskyttelse.size > 1 ->
+            throw IllegalStateException("Forventet ikke ${adressebeskyttelse.size} adressebeskyttelser uten historikk.")
+        else ->
+            adressebeskyttelse.first().gradering ?: AdressebeskyttelseGradering.UGRADERT
+
+    }
+}
 
 data class Adressebeskyttelse(
         val gradering: AdressebeskyttelseGradering?
