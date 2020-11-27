@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.skyscreamer.jsonassert.JSONAssert
 
 @ExtendWith(ApplicationContextExtension::class)
 internal class HentPersonopplysningerTest(
@@ -38,6 +39,20 @@ internal class HentPersonopplysningerTest(
         val expectedJson = """{"navn":{"etternavn":"MASKIN","fornavn":"LITEN","mellomnavn":null},"fødselsdato":"1990-07-04","adressebeskyttelse":"UGRADERT","aktørId":"2722577091065","gjeldendeIdentitetsnummer":"01019911111"}"""
 
         assertEquals(expectedJson, rapid.hentLøsning("01019911111"))
+    }
+
+    @Test
+    fun `River tar emot och løser behov om aktørId og enhetsnummer`() {
+        val (_, behovssekvens) = nyBehovsSekvens(setOf("01019911111"),
+            setOf("aktørId", "enhetsnummer"))
+        rapid.sendTestMessage(behovssekvens)
+
+        """{"enhetsnummer":"4487","aktørId":"2722577091065"}""".assertJsonEquals(
+            rapid.hentLøsning("01019911111")
+        )
+        """{"enhetsnummer":"4487"}""".assertJsonEquals(
+            rapid.hentFellesopplysninger()
+        )
     }
 
     @Test
@@ -110,6 +125,10 @@ internal class HentPersonopplysningerTest(
         const val BEHOV = "HentPersonopplysninger"
     }
 
+    private fun TestRapid.hentFellesopplysninger(): String {
+        return this.inspektør.message(0)["@løsninger"]["HentPersonopplysninger"]["fellesopplysninger"].toString()
+    }
+
     private fun TestRapid.hentLøsning(ident: String): String {
         return this.inspektør.message(0)["@løsninger"]["HentPersonopplysninger"]["personopplysninger"].get(ident).toString()
     }
@@ -117,6 +136,9 @@ internal class HentPersonopplysningerTest(
     private fun TestRapid.antalLøsninger(): Int {
         return this.inspektør.message(0)["@løsninger"]["HentPersonopplysninger"]["personopplysninger"].size()
     }
+
+
+    private fun String.assertJsonEquals(actual: String) = JSONAssert.assertEquals(this, actual, true)
 
 
     private fun nyBehovsSekvens(
