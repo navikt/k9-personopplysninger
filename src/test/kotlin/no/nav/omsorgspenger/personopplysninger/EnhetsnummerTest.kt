@@ -12,9 +12,9 @@ internal class EnhetsnummerTest {
     fun `Adressebeskyttelse til Enhetsnummer`() {
         "UGRADERT".adressebeskyttelseTilEnhetnummer().assertSykdomIFamilien()
         "FORTROLIG".adressebeskyttelseTilEnhetnummer().assertSykdomIFamilien()
-        "FINNESIKKE".adressebeskyttelseTilEnhetnummer().assertViken()
-        "STRENGT_FORTROLIG".adressebeskyttelseTilEnhetnummer().assertViken()
-        "STRENGT_FORTROLIG_UTLAND".adressebeskyttelseTilEnhetnummer().assertViken()
+        "FINNESIKKE".adressebeskyttelseTilEnhetnummer().assertVikafossen()
+        "STRENGT_FORTROLIG".adressebeskyttelseTilEnhetnummer().assertVikafossen()
+        "STRENGT_FORTROLIG_UTLAND".adressebeskyttelseTilEnhetnummer().assertVikafossen()
     }
 
     @Test
@@ -27,12 +27,12 @@ internal class EnhetsnummerTest {
     @Test
     fun `Felles Enhetsnummer for reelle enhetsnummer`() {
         listOf("4487","4487","4487","4487").fellesEnhetsnummer().assertSykdomIFamilien()
-        listOf("4487","4487","2103","4487").fellesEnhetsnummer().assertViken()
+        listOf("4487","4487","2103","4487").fellesEnhetsnummer().assertVikafossen()
         listOf("4487").fellesEnhetsnummer().assertSykdomIFamilien()
-        listOf("2103").fellesEnhetsnummer().assertViken()
+        listOf("2103").fellesEnhetsnummer().assertVikafossen()
     }
 
     private fun String.assertSykdomIFamilien() = assertEquals(Enhetsnummer.Enhet.SykdomIFamilien.nummer, this)
-    private fun String.assertViken() = assertEquals(Enhetsnummer.Enhet.Viken.nummer, this)
+    private fun String.assertVikafossen() = assertEquals(Enhetsnummer.Enhet.Vikafossen.nummer, this)
 
 }

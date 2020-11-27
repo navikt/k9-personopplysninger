@@ -7,17 +7,17 @@ internal object Enhetsnummer {
 
     internal fun String.adressebeskyttelseTilEnhetnummer() = when {
         this.toUpperCase() in tilSykdomIFamilien -> Enhet.SykdomIFamilien
-        else -> Enhet.Viken
+        else -> Enhet.Vikafossen
     }.nummer
 
-    internal fun Collection<String>.fellesEnhetsnummer() = when (map { it.fraEnhetsnummer() }.any { it == Enhet.Viken }) {
-        true -> Enhet.Viken.nummer
+    internal fun Collection<String>.fellesEnhetsnummer() = when (map { it.fraEnhetsnummer() }.any { it == Enhet.Vikafossen }) {
+        true -> Enhet.Vikafossen.nummer
         false -> Enhet.SykdomIFamilien.nummer
     }
 
     internal enum class Enhet(internal val nummer: String) {
         SykdomIFamilien("4487"),
-        Viken("2103");
+        Vikafossen("2103");
 
         internal companion object {
             internal fun String.fraEnhetsnummer() = values().firstOrNull {
