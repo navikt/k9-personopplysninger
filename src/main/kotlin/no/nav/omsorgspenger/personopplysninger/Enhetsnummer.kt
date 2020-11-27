@@ -22,7 +22,7 @@ internal object Enhetsnummer {
         internal companion object {
             internal fun String.fraEnhetsnummer() = values().firstOrNull {
                 it.nummer == this
-            } ?: throw IllegalStateException("Finner ikke enhet med enhetsnummer $this")
+            } ?: throw IllegalArgumentException("Finner ikke enhet med enhetsnummer $this")
         }
     }
 }
