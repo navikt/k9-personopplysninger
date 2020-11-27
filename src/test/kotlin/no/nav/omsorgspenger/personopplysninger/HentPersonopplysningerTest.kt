@@ -8,13 +8,12 @@ import no.nav.k9.rapid.behov.Behovssekvens
 import no.nav.omsorgspenger.ApplicationContext
 import no.nav.omsorgspenger.registerApplicationContext
 import no.nav.omsorgspenger.testutils.ApplicationContextExtension
+import org.intellij.lang.annotations.Language
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertNotNull
-import org.junit.jupiter.api.Assertions.assertNull
-import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.skyscreamer.jsonassert.JSONAssert
 
 @ExtendWith(ApplicationContextExtension::class)
 internal class HentPersonopplysningerTest(
@@ -35,9 +34,38 @@ internal class HentPersonopplysningerTest(
                 setOf("navn", "fødselsdato", "adressebeskyttelse", "aktørId", "gjeldendeIdentitetsnummer"))
         rapid.sendTestMessage(behovssekvens)
 
-        val expectedJson = """{"navn":{"etternavn":"MASKIN","fornavn":"LITEN","mellomnavn":null},"fødselsdato":"1990-07-04","adressebeskyttelse":"UGRADERT","aktørId":"2722577091065","gjeldendeIdentitetsnummer":"01019911111"}"""
+        @Language("JSON")
+        val expectedJson = """
+        {
+            "navn": {
+                "etternavn": "MASKIN",
+                "fornavn": "LITEN",
+                "mellomnavn": null
+            },
+            "fødselsdato": "1990-07-04",
+            "adressebeskyttelse": "UGRADERT",
+            "aktørId": "2722577091065",
+            "gjeldendeIdentitetsnummer": "01019911111"
+        }
+        """.trimIndent()
 
-        assertEquals(expectedJson, rapid.hentLøsning("01019911111"))
+        expectedJson.assertJsonEquals(rapid.hentLøsning("01019911111"))
+        assertEquals(1, rapid.antalLøsninger())
+    }
+
+    @Test
+    fun `River tar emot och løser behov om aktørId og enhetsnummer`() {
+        val (_, behovssekvens) = nyBehovsSekvens(setOf("01019911111"),
+            setOf("aktørId", "enhetsnummer"))
+        rapid.sendTestMessage(behovssekvens)
+
+        """{"enhetsnummer":"4487","aktørId":"2722577091065"}""".assertJsonEquals(
+            rapid.hentLøsning("01019911111")
+        )
+        """{"enhetsnummer":"4487"}""".assertJsonEquals(
+            rapid.hentFellesopplysninger()
+        )
+        assertEquals(1, rapid.antalLøsninger())
     }
 
     @Test
@@ -59,9 +87,21 @@ internal class HentPersonopplysningerTest(
         val (_, behovssekvens) = nyBehovsSekvens(setOf("12345678910", "12345678911"))
         rapid.sendTestMessage(behovssekvens)
 
-        val expectedJson = """{"navn":{"etternavn":"MASKIN","fornavn":"LITEN","mellomnavn":null},"fødselsdato":"1990-07-04","adressebeskyttelse":"UGRADERT","aktørId":"2722577091065"}"""
+        @Language("JSON")
+        val expectedJson = """
+        {
+            "navn": {
+                "etternavn": "MASKIN",
+                "fornavn": "LITEN",
+                "mellomnavn": null
+            },
+            "fødselsdato": "1990-07-04",
+            "adressebeskyttelse": "UGRADERT",
+            "aktørId": "2722577091065"
+        }
+        """.trimIndent()
 
-        assertEquals(expectedJson, rapid.hentLøsning("12345678910"))
+        expectedJson.assertJsonEquals(rapid.hentLøsning("12345678910"))
         assertEquals(1, rapid.antalLøsninger())
     }
 
@@ -70,9 +110,10 @@ internal class HentPersonopplysningerTest(
         val (_, behovssekvens) = nyBehovsSekvens(setOf("123123"), setOf("navn", "fødselsdato"))
         rapid.sendTestMessage(behovssekvens)
 
-        val expectedJson = """{"navn":{"etternavn":"MASKIN","fornavn":"STOR","mellomnavn":"MELLAN"},"fødselsdato":"1999-01-01"}"""
+        """{"navn":{"etternavn":"MASKIN","fornavn":"STOR","mellomnavn":"MELLAN"},"fødselsdato":"1999-01-01"}""".assertJsonEquals(
+            rapid.hentLøsning("123123")
+        )
 
-        assertEquals(expectedJson, rapid.hentLøsning("123123"))
     }
 
     @Test
@@ -80,9 +121,10 @@ internal class HentPersonopplysningerTest(
         val (_, behovssekvens) = nyBehovsSekvens(setOf("123123"), setOf("navn"))
         rapid.sendTestMessage(behovssekvens)
 
-        val expectedJson = """{"navn":{"etternavn":"MASKIN","fornavn":"STOR","mellomnavn":"MELLAN"}}"""
-
-        assertEquals(expectedJson, rapid.hentLøsning("123123"))
+        """{"navn":{"etternavn":"MASKIN","fornavn":"STOR","mellomnavn":"MELLAN"}}""".assertJsonEquals(
+            rapid.hentLøsning("123123")
+        )
+        assertEquals(1, rapid.antalLøsninger())
     }
 
     @Test
@@ -100,14 +142,30 @@ internal class HentPersonopplysningerTest(
         val(_, behovssekvens) = nyBehovsSekvens(setOf("21108424239", "15098422273"))
         rapid.sendTestMessage(behovssekvens)
 
-        val expectedJson = """{"navn":{"etternavn":"MASKIN","fornavn":"LITEN","mellomnavn":null},"fødselsdato":"1990-07-04","adressebeskyttelse":"UGRADERT","aktørId":"1168457597360"}"""
+        @Language("JSON")
+        val expectedJson = """
+        {
+            "navn": {
+                "etternavn": "MASKIN",
+                "fornavn": "LITEN",
+                "mellomnavn": null
+            },
+            "fødselsdato": "1990-07-04",
+            "adressebeskyttelse": "UGRADERT",
+            "aktørId": "1168457597360"
+        }      
+        """.trimIndent()
 
-        assertEquals(expectedJson, rapid.hentLøsning("15098422273"))
+        expectedJson.assertJsonEquals(rapid.hentLøsning("15098422273"))
         assertEquals(1, rapid.antalLøsninger())
     }
 
     internal companion object {
         const val BEHOV = "HentPersonopplysninger"
+    }
+
+    private fun TestRapid.hentFellesopplysninger(): String {
+        return this.inspektør.message(0)["@løsninger"]["HentPersonopplysninger"]["fellesopplysninger"].toString()
     }
 
     private fun TestRapid.hentLøsning(ident: String): String {
@@ -118,22 +176,22 @@ internal class HentPersonopplysningerTest(
         return this.inspektør.message(0)["@løsninger"]["HentPersonopplysninger"]["personopplysninger"].size()
     }
 
+    private fun String.assertJsonEquals(actual: String) = JSONAssert.assertEquals(this, actual, true)
 
     private fun nyBehovsSekvens(
             ident: Set<String>,
             attributer: Set<String>? = setOf("navn", "fødselsdato", "adressebeskyttelse", "aktørId")
     ) = Behovssekvens(
-            id = "01BX5ZZKBKACTAV9WEVGEMMVS0",
-            correlationId = UUID.randomUUID().toString(),
-            behov = arrayOf(
-                    Behov(
-                            navn = BEHOV,
-                            input = mapOf(
-                                    "identitetsnummer" to ident,
-                                    "attributter" to attributer
-                            )
-                    )
+        id = "01BX5ZZKBKACTAV9WEVGEMMVS0",
+        correlationId = UUID.randomUUID().toString(),
+        behov = arrayOf(
+            Behov(
+                navn = BEHOV,
+                input = mapOf(
+                    "identitetsnummer" to ident,
+                    "attributter" to attributer
+                )
             )
+        )
     ).keyValue
-
 }

@@ -1,5 +1,7 @@
 package no.nav.omsorgspenger.personopplysninger
 
+import no.nav.omsorgspenger.personopplysninger.Enhetsnummer.adressebeskyttelseTilEnhetnummer
+import no.nav.omsorgspenger.personopplysninger.Enhetsnummer.fellesEnhetsnummer
 import kotlin.reflect.full.memberProperties
 import no.nav.omsorgspenger.personopplysninger.pdl.HentPdlResponse
 import no.nav.omsorgspenger.personopplysninger.pdl.PdlClient
@@ -18,36 +20,51 @@ internal class PersonopplysningerMediator(
             throw IllegalStateException("Fann feil vid hent av data fra PDL")
         }
 
+        val personopplysninger = identitetsnummer
+            .map { it to response.toLøsning(it, behovsAttributer) }
+            .filter { it.second.keys.containsAll(behovsAttributer) }
+            .toMap()
+
         val resultat = mapOf(
-                "personopplysninger" to identitetsnummer
-                        .map { it to response.toLøsning(it, behovsAttributer) }
-                        .filter { it.second.keys.containsAll(behovsAttributer) }
-                        .toMap())
+            "personopplysninger" to personopplysninger
+        ).let { it ->
+            when (behovsAttributer.contains(EnhetsnummerAttributt)) {
+                true -> it.plus("fellesopplysninger" to mapOf(
+                    EnhetsnummerAttributt to personopplysninger.map { it.value[EnhetsnummerAttributt].toString() }.fellesEnhetsnummer()
+                ))
+                false -> it
+            }
+        }
 
         return resultat
     }
 
     private fun HentPdlResponse.toLøsning(identitetsnummer: String, behovsAttributer: Set<String>): Map<String, Any?> {
-        var attributer = mutableMapOf<String, Any?>()
+        val attributer = mutableMapOf<String, Any?>()
 
         this.data.hentPersonBolk?.filter { it.ident == identitetsnummer && it.code == "ok" }
                 ?.map {
                     it.person?.let { person ->
-                        person.navn?.firstOrNull()?.let { navn ->
+                        person.navn.firstOrNull()?.let { navn ->
                             navn.asMap().let { attributer.put("navn", it) }
                         }
-                        person.foedsel?.firstOrNull()?.let { foedsel ->
+                        person.foedsel.firstOrNull()?.let { foedsel ->
                             foedsel.foedselsdato.let { attributer.put("fødselsdato", it) }
                         }
-                        attributer.put("adressebeskyttelse", person.gradering.name)
+                        attributer["adressebeskyttelse"] = person.gradering.name
+                        attributer[EnhetsnummerAttributt] = person.gradering.name.adressebeskyttelseTilEnhetnummer()
                     }
                 }
 
         this.data.hentIdenterBolk?.filter { it.ident == identitetsnummer && it.code == "ok" }
                 ?.map {
                     it.identer?.map { ident ->
-                        if(ident.gruppe == "AKTORID") { attributer.put("aktørId", ident.ident) }
-                        if(ident.gruppe == "FOLKEREGISTERIDENT") { attributer.put("gjeldendeIdentitetsnummer", ident.ident) }
+                        if(ident.gruppe == "AKTORID") {
+                            attributer["aktørId"] = ident.ident
+                        }
+                        if(ident.gruppe == "FOLKEREGISTERIDENT") {
+                            attributer["gjeldendeIdentitetsnummer"] = ident.ident
+                        }
                     }
                 }
         return attributer.toMap().filterKeys { behov ->
@@ -56,9 +73,13 @@ internal class PersonopplysningerMediator(
 
     }
 
-    inline fun <reified T : Any> T.asMap(): Map<String, Any?> {
+    private inline fun <reified T : Any> T.asMap(): Map<String, Any?> {
         val props = T::class.memberProperties.associateBy { it.name }
         return props.keys.associateWith { props[it]?.get(this) }
+    }
+
+    private companion object {
+        private const val EnhetsnummerAttributt = "enhetsnummer"
     }
 
 }
