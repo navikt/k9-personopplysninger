@@ -5,6 +5,7 @@
   "team": "omsorgspenger",
   "minReplicas": "1",
   "maxReplicas": "2",
+  "azureTenant": "nav.no",
   "ingresses": [
     "https://k9-personopplysninger.intern.nav.no"
   ],
