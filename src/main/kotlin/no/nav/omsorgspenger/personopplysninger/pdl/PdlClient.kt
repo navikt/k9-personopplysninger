@@ -13,29 +13,30 @@ import io.ktor.http.contentType
 import no.nav.helse.dusseldorf.ktor.health.HealthCheck
 import no.nav.helse.dusseldorf.ktor.health.Healthy
 import no.nav.helse.dusseldorf.ktor.health.UnHealthy
-import no.nav.omsorgspenger.client.StsRestClient
+import no.nav.helse.dusseldorf.oauth2.client.AccessTokenClient
+import no.nav.helse.dusseldorf.oauth2.client.CachedAccessTokenClient
 import no.nav.omsorgspenger.config.ServiceUser
 import no.nav.k9.rapid.river.Environment
 import no.nav.k9.rapid.river.hentRequiredEnv
 
 internal class PdlClient(
         private val env: Environment,
-        private val stsRestClient: StsRestClient,
+        accessTokenClient: AccessTokenClient,
         private val serviceUser: ServiceUser,
         private val httpClient: HttpClient
 ) : HealthCheck {
 
+    private val cachedAccessTokenClient = CachedAccessTokenClient(accessTokenClient)
     private val pdlBaseUrl = env.hentRequiredEnv("PDL_BASE_URL")
-    private val apiKey = env.hentRequiredEnv("PDL_API_GW_KEY")
+    private val proxyScope = setOf(env.hentRequiredEnv("PROXY_SCOPES"))
 
     suspend fun getPersonInfo(ident: Set<String>, correlationId: String): HentPdlResponse {
         return httpClient.post<HttpStatement>("$pdlBaseUrl") {
-            header(HttpHeaders.Authorization, "Bearer ${stsRestClient.token()}")
-            header("Nav-Consumer-Token", "Bearer ${stsRestClient.token()}")
+            header(HttpHeaders.Authorization, getAuthorizationHeader())
+            header("Nav-Consumer-Token", getAuthorizationHeader())
             header("Nav-Consumer-Id", serviceUser.username)
             header("Nav-Call-Id", correlationId)
             header("TEMA", "OMS")
-            header("x-nav-apiKey", apiKey)
             accept(ContentType.Application.Json)
             contentType(ContentType.Application.Json)
             body = hentPersonInfoQuery(ident)
@@ -43,10 +44,11 @@ internal class PdlClient(
 
     }
 
+    private fun getAuthorizationHeader() = cachedAccessTokenClient.getAccessToken(proxyScope).asAuthoriationHeader()
+
     override suspend fun check() = kotlin.runCatching {
         httpClient.options<HttpStatement>(pdlBaseUrl) {
-            header(HttpHeaders.Authorization, "Bearer ${stsRestClient.token()}")
-            header("x-nav-apiKey", apiKey)
+            header(HttpHeaders.Authorization, getAuthorizationHeader())
         }.execute().status
     }.fold(
             onSuccess = { statusCode ->
