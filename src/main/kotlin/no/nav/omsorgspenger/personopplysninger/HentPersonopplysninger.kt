@@ -30,7 +30,7 @@ internal class HentPersonopplysninger(
     }
 
     override fun handlePacket(id: String, packet: JsonMessage): Boolean {
-        logger.info("Mottatt $BEHOV med id $id").also { incMottattBehov() }
+        logger.info("Mottatt $BEHOV").also { incMottattBehov(BEHOV) }
 
         val identitetsnummer = (packet[IDENTITETSNUMMER] as ArrayNode)
                 .map { it.asText() }
@@ -55,7 +55,7 @@ internal class HentPersonopplysninger(
     }
 
     override fun onSent(id: String, packet: JsonMessage) {
-        logger.info("Løst behov $BEHOV med id $id").also { incLostBehov() }
+        logger.info("Løst behov $BEHOV").also { incLostBehov(BEHOV) }
     }
 
     private fun hentPersonopplysningerFor(identitetsnummer: Set<String>, behovsAttributer: Set<String>, correlationId: String) = try {
@@ -66,7 +66,7 @@ internal class HentPersonopplysninger(
                     correlationId = correlationId)
         }
     } catch (cause: Throwable) {
-        incPdlFeil()
+        incBehandlingFeil(BEHOV)
         throw cause
     }
 
