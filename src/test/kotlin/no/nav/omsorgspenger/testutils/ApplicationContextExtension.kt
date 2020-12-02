@@ -1,8 +1,12 @@
 package no.nav.omsorgspenger.testutils
 
 import io.ktor.util.KtorExperimentalAPI
+import java.net.URI
+import no.nav.helse.dusseldorf.oauth2.client.ClientSecretAccessTokenClient
+import no.nav.helse.dusseldorf.testsupport.jws.Azure
 import no.nav.helse.dusseldorf.testsupport.wiremock.WireMockBuilder
-import no.nav.helse.dusseldorf.testsupport.wiremock.getNaisStsTokenUrl
+import no.nav.helse.dusseldorf.testsupport.wiremock.getAzureV2JwksUrl
+import no.nav.helse.dusseldorf.testsupport.wiremock.getAzureV2TokenUrl
 import no.nav.omsorgspenger.ApplicationContext
 import no.nav.omsorgspenger.config.ServiceUser
 import no.nav.omsorgspenger.testutils.wiremock.pdlApiBaseUrl
@@ -16,21 +20,34 @@ internal class ApplicationContextExtension : ParameterResolver {
     @KtorExperimentalAPI
     internal companion object {
         private val wireMockServer = WireMockBuilder()
-            .withNaisStsSupport()
-            .build()
-            .stubPdlApi()
+                .withAzureSupport()
+                .build()
+                .stubPdlApi()
 
         private val applicationContextBuilder = ApplicationContext.Builder(
-            env = mapOf(
-                "PDL_BASE_URL" to wireMockServer.pdlApiBaseUrl(),
-                "PDL_API_GW_KEY" to "testApiKeyJoark",
-                "STS_TOKEN_ENDPOINT" to wireMockServer.getNaisStsTokenUrl(),
-                "STS_API_GW_KEY" to "testApiKeySts"
-            ),
-            serviceUser = ServiceUser(
-                username = "foo",
-                password = "bar"
-            )
+                env = mapOf(
+                        "PDL_BASE_URL" to wireMockServer.pdlApiBaseUrl(),
+                        "PROXY_SCOPES" to "test/.default"
+                ).let {
+                    if (wireMockServer != null) {
+                        it.plus(
+                                mapOf(
+                                        "AZURE_V2_ISSUER" to Azure.V2_0.getIssuer(),
+                                        "AZURE_V2_JWKS_URI" to (wireMockServer.getAzureV2JwksUrl()),
+                                        "AZURE_APP_CLIENT_ID" to "k9-personopplysninger"
+                                )
+                        )
+                    } else it
+                },
+                serviceUser = ServiceUser(
+                        username = "foo",
+                        password = "bar"
+                ),
+                accessTokenClient = ClientSecretAccessTokenClient(
+                        clientId = "k9-personopplysninger",
+                        clientSecret = "azureSecret",
+                        tokenEndpoint = URI(wireMockServer.getAzureV2TokenUrl())
+                )
         )
 
         private val applicationContext = applicationContextBuilder.build()
@@ -42,7 +59,7 @@ internal class ApplicationContextExtension : ParameterResolver {
         }
 
         private val støttedeParametre = listOf(
-            ApplicationContext::class.java
+                ApplicationContext::class.java
         )
     }
 
