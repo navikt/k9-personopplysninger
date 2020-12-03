@@ -9,7 +9,7 @@ val jsonassertVersion = "1.5.0"
 val mainClass = "no.nav.omsorgspenger.AppKt"
 
 plugins {
-    kotlin("jvm") version "1.4.10"
+    kotlin("jvm") version "1.4.20"
     id("com.github.johnrengelman.shadow") version "6.1.0"
 }
 
@@ -75,7 +75,7 @@ tasks {
     }
 
     withType<Wrapper> {
-        gradleVersion = "6.7"
+        gradleVersion = "6.7.1"
     }
 
 }
