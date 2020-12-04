@@ -69,6 +69,21 @@ internal class HentPersonopplysningerTest(
     }
 
     @Test
+    fun `River tar emot och løser behov om enhetsnummer og adressebeskyttelse`() {
+        val (_, behovssekvens) = nyBehovsSekvens(setOf("01019911111"),
+            setOf("enhetsnummer","adressebeskyttelse"))
+        rapid.sendTestMessage(behovssekvens)
+
+        """{"enhetsnummer":"4487","adressebeskyttelse":"UGRADERT"}""".assertJsonEquals(
+            rapid.hentLøsning("01019911111")
+        )
+        """{"enhetsnummer":"4487","adressebeskyttelse":"UGRADERT"}""".assertJsonEquals(
+            rapid.hentFellesopplysninger()
+        )
+        assertEquals(1, rapid.antalLøsninger())
+    }
+
+    @Test
     fun `Hanterar http 500 fra PDL`() {
         val (_, behovssekvens) = nyBehovsSekvens(setOf("500"))
         rapid.sendTestMessage(behovssekvens)

@@ -2,6 +2,7 @@ package no.nav.omsorgspenger.personopplysninger
 
 import no.nav.omsorgspenger.personopplysninger.Enhetsnummer.adressebeskyttelseTilEnhetnummer
 import no.nav.omsorgspenger.personopplysninger.Enhetsnummer.fellesEnhetsnummer
+import no.nav.omsorgspenger.personopplysninger.pdl.AdressebeskyttelseGradering.Companion.fellesAdressebeskyttelse
 import kotlin.reflect.full.memberProperties
 import no.nav.omsorgspenger.personopplysninger.pdl.HentPdlResponse
 import no.nav.omsorgspenger.personopplysninger.pdl.PdlClient
@@ -13,8 +14,8 @@ internal class PersonopplysningerMediator(
     private val secureLogger = LoggerFactory.getLogger("tjenestekall")
 
     suspend fun hentPersonopplysninger(identitetsnummer: Set<String>, behovsAttributer: Set<String>, correlationId: String): LøsningsMap {
-
         val response = pdlClient.getPersonInfo(identitetsnummer, correlationId)
+
         if (!response.errors.isNullOrEmpty()) {
             secureLogger.error("Fann feil vid hent av data fra PDL: ", response.errors.toString())
             throw IllegalStateException("Fann feil vid hent av data fra PDL")
@@ -25,15 +26,19 @@ internal class PersonopplysningerMediator(
             .filter { it.second.keys.containsAll(behovsAttributer) }
             .toMap()
 
-        val resultat = mapOf(
-            "personopplysninger" to personopplysninger
-        ).let { it ->
-            when (behovsAttributer.contains(EnhetsnummerAttributt)) {
-                true -> it.plus("fellesopplysninger" to mapOf(
-                    EnhetsnummerAttributt to personopplysninger.map { it.value[EnhetsnummerAttributt].toString() }.fellesEnhetsnummer()
-                ))
-                false -> it
+        val resultat = mutableMapOf<String, Map<String, Any>>(
+            PersonopplysningerKey to personopplysninger
+        )
+
+        if (behovsAttributer.skalLeggeTilFellesOpplysnigner()) {
+            val fellesopplysninger = mutableMapOf<String, Any>()
+            if (behovsAttributer.skalLeggeTilFellesEnhetsnummer()) {
+                fellesopplysninger[EnhetsnummerAttributt] = personopplysninger.map { it.value[EnhetsnummerAttributt].toString() }.fellesEnhetsnummer()
             }
+            if (behovsAttributer.skalLeggetILFellesAdressbeskyttelse()) {
+                fellesopplysninger[AdressebeskyttelseAttributt] = personopplysninger.map { it.value[AdressebeskyttelseAttributt].toString() }.fellesAdressebeskyttelse()
+            }
+            resultat[FellesopplysningerKey] = fellesopplysninger
         }
 
         return resultat
@@ -51,7 +56,7 @@ internal class PersonopplysningerMediator(
                         person.foedsel.firstOrNull()?.let { foedsel ->
                             foedsel.foedselsdato.let { attributer.put("fødselsdato", it) }
                         }
-                        attributer["adressebeskyttelse"] = person.gradering.name
+                        attributer[AdressebeskyttelseAttributt] = person.gradering.name
                         attributer[EnhetsnummerAttributt] = person.gradering.name.adressebeskyttelseTilEnhetnummer()
                     }
                 }
@@ -78,8 +83,17 @@ internal class PersonopplysningerMediator(
         return props.keys.associateWith { props[it]?.get(this) }
     }
 
+    private fun Set<String>.skalLeggeTilFellesOpplysnigner() = any { it == EnhetsnummerAttributt || it == AdressebeskyttelseAttributt }
+    private fun Set<String>.skalLeggeTilFellesEnhetsnummer() = contains(EnhetsnummerAttributt)
+    private fun Set<String>.skalLeggetILFellesAdressbeskyttelse() = contains(AdressebeskyttelseAttributt)
+
     private companion object {
+        private const val PersonopplysningerKey = "personopplysninger"
+        private const val FellesopplysningerKey = "fellesopplysninger"
+
         private const val EnhetsnummerAttributt = "enhetsnummer"
+        private const val AdressebeskyttelseAttributt = "adressebeskyttelse"
+
     }
 
 }

@@ -36,14 +36,26 @@ data class Person(
 }
 
 data class Adressebeskyttelse(
-        val gradering: AdressebeskyttelseGradering?
+    val gradering: AdressebeskyttelseGradering?
 )
 
 enum class AdressebeskyttelseGradering {
     STRENGT_FORTROLIG_UTLAND,
     STRENGT_FORTROLIG,
     FORTROLIG,
-    UGRADERT
+    UGRADERT;
+
+    internal companion object {
+        internal fun Collection<String>.fellesAdressebeskyttelse() : AdressebeskyttelseGradering {
+            val adressebeskyttelse = map { valueOf(it) }
+            return when {
+                adressebeskyttelse.any { it == STRENGT_FORTROLIG_UTLAND } -> STRENGT_FORTROLIG_UTLAND
+                adressebeskyttelse.any { it == STRENGT_FORTROLIG } -> STRENGT_FORTROLIG
+                adressebeskyttelse.any { it == FORTROLIG } -> FORTROLIG
+                else -> UGRADERT
+            }
+        }
+    }
 }
 
 data class Navn(
