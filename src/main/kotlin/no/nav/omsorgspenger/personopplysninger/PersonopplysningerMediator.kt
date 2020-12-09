@@ -1,7 +1,7 @@
 package no.nav.omsorgspenger.personopplysninger
 
-import no.nav.omsorgspenger.personopplysninger.Enhetsnummer.adressebeskyttelseTilEnhetnummer
-import no.nav.omsorgspenger.personopplysninger.Enhetsnummer.fellesEnhetsnummer
+import no.nav.omsorgspenger.personopplysninger.Enhet.Companion.adressebeskyttelseTilEnhet
+import no.nav.omsorgspenger.personopplysninger.Enhet.Companion.fellesEnhet
 import no.nav.omsorgspenger.personopplysninger.pdl.AdressebeskyttelseGradering.Companion.fellesAdressebeskyttelse
 import kotlin.reflect.full.memberProperties
 import no.nav.omsorgspenger.personopplysninger.pdl.HentPdlResponse
@@ -30,13 +30,18 @@ internal class PersonopplysningerMediator(
             PersonopplysningerKey to personopplysninger
         )
 
-        if (behovsAttributer.skalLeggeTilFellesOpplysnigner()) {
+        if (behovsAttributer.skalLeggeTilFellesopplysnigner()) {
             val fellesopplysninger = mutableMapOf<String, Any>()
+            val fellesEnhet = personopplysninger.map { it.value[EnhetsnummerAttributt].toString() }.fellesEnhet()
+
             if (behovsAttributer.skalLeggeTilFellesEnhetsnummer()) {
-                fellesopplysninger[EnhetsnummerAttributt] = personopplysninger.map { it.value[EnhetsnummerAttributt].toString() }.fellesEnhetsnummer()
+                fellesopplysninger[EnhetsnummerAttributt] = fellesEnhet.nummer
             }
-            if (behovsAttributer.skalLeggetILFellesAdressbeskyttelse()) {
-                fellesopplysninger[AdressebeskyttelseAttributt] = personopplysninger.map { it.value[AdressebeskyttelseAttributt].toString() }.fellesAdressebeskyttelse()
+            if (behovsAttributer.skalLeggeTilFellesEnhetstype()) {
+                fellesopplysninger[EnhetstypeAttributt] = fellesEnhet.type
+            }
+            if (behovsAttributer.skalLeggeTilFellesAdressbeskyttelse()) {
+                fellesopplysninger[AdressebeskyttelseAttributt] = personopplysninger.map {it.value[AdressebeskyttelseAttributt].toString() }.fellesAdressebeskyttelse()
             }
             resultat[FellesopplysningerKey] = fellesopplysninger
         }
@@ -57,7 +62,9 @@ internal class PersonopplysningerMediator(
                             foedsel.foedselsdato.let { attributer.put("fødselsdato", it) }
                         }
                         attributer[AdressebeskyttelseAttributt] = person.gradering.name
-                        attributer[EnhetsnummerAttributt] = person.gradering.name.adressebeskyttelseTilEnhetnummer()
+                        val enhet = person.gradering.name.adressebeskyttelseTilEnhet()
+                        attributer[EnhetsnummerAttributt] = enhet.nummer
+                        attributer[EnhetstypeAttributt] = enhet.type
                     }
                 }
 
@@ -83,15 +90,20 @@ internal class PersonopplysningerMediator(
         return props.keys.associateWith { props[it]?.get(this) }
     }
 
-    private fun Set<String>.skalLeggeTilFellesOpplysnigner() = any { it == EnhetsnummerAttributt || it == AdressebeskyttelseAttributt }
     private fun Set<String>.skalLeggeTilFellesEnhetsnummer() = contains(EnhetsnummerAttributt)
-    private fun Set<String>.skalLeggetILFellesAdressbeskyttelse() = contains(AdressebeskyttelseAttributt)
+    private fun Set<String>.skalLeggeTilFellesEnhetstype() = contains(EnhetstypeAttributt)
+    private fun Set<String>.skalLeggeTilFellesAdressbeskyttelse() = contains(AdressebeskyttelseAttributt)
+
+    private fun Set<String>.skalLeggeTilFellesopplysnigner() =
+        skalLeggeTilFellesEnhetsnummer() || skalLeggeTilFellesEnhetsnummer() || skalLeggeTilFellesEnhetsnummer()
 
     private companion object {
         private const val PersonopplysningerKey = "personopplysninger"
         private const val FellesopplysningerKey = "fellesopplysninger"
 
         private const val EnhetsnummerAttributt = "enhetsnummer"
+        private const val EnhetstypeAttributt = "enhetstype"
+
         private const val AdressebeskyttelseAttributt = "adressebeskyttelse"
 
     }
