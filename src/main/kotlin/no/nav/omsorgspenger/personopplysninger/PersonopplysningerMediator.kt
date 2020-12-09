@@ -32,14 +32,18 @@ internal class PersonopplysningerMediator(
 
         if (behovsAttributer.skalLeggeTilFellesopplysnigner()) {
             val fellesopplysninger = mutableMapOf<String, Any>()
-            val fellesEnhet = personopplysninger.map { it.value[EnhetsnummerAttributt].toString() }.fellesEnhet()
 
-            if (behovsAttributer.skalLeggeTilFellesEnhetsnummer()) {
-                fellesopplysninger[EnhetsnummerAttributt] = fellesEnhet.nummer
+            if (behovsAttributer.skalLeggeTilFellesEnhetstype() || behovsAttributer.skalLeggeTilFellesEnhetsnummer()) {
+                val fellesEnhet = personopplysninger.map { it.value[EnhetsnummerAttributt].toString() }.fellesEnhet()
+
+                if (behovsAttributer.skalLeggeTilFellesEnhetsnummer()) {
+                    fellesopplysninger[EnhetsnummerAttributt] = fellesEnhet.nummer
+                }
+                if (behovsAttributer.skalLeggeTilFellesEnhetstype()) {
+                    fellesopplysninger[EnhetstypeAttributt] = fellesEnhet.type
+                }
             }
-            if (behovsAttributer.skalLeggeTilFellesEnhetstype()) {
-                fellesopplysninger[EnhetstypeAttributt] = fellesEnhet.type
-            }
+
             if (behovsAttributer.skalLeggeTilFellesAdressbeskyttelse()) {
                 fellesopplysninger[AdressebeskyttelseAttributt] = personopplysninger.map {it.value[AdressebeskyttelseAttributt].toString() }.fellesAdressebeskyttelse()
             }
@@ -95,7 +99,7 @@ internal class PersonopplysningerMediator(
     private fun Set<String>.skalLeggeTilFellesAdressbeskyttelse() = contains(AdressebeskyttelseAttributt)
 
     private fun Set<String>.skalLeggeTilFellesopplysnigner() =
-        skalLeggeTilFellesEnhetsnummer() || skalLeggeTilFellesEnhetsnummer() || skalLeggeTilFellesEnhetsnummer()
+        skalLeggeTilFellesEnhetsnummer() || skalLeggeTilFellesEnhetstype() || skalLeggeTilFellesAdressbeskyttelse()
 
     private companion object {
         private const val PersonopplysningerKey = "personopplysninger"
