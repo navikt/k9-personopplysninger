@@ -1,5 +1,7 @@
 package no.nav.omsorgspenger.personopplysninger.pdl
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import io.ktor.client.HttpClient
 import io.ktor.client.request.accept
 import io.ktor.client.request.header
@@ -18,12 +20,15 @@ import no.nav.helse.dusseldorf.oauth2.client.CachedAccessTokenClient
 import no.nav.omsorgspenger.config.ServiceUser
 import no.nav.k9.rapid.river.Environment
 import no.nav.k9.rapid.river.hentRequiredEnv
+import org.json.JSONObject
+import org.slf4j.LoggerFactory
 
 internal class PdlClient(
-        private val env: Environment,
+        env: Environment,
         accessTokenClient: AccessTokenClient,
         private val serviceUser: ServiceUser,
-        private val httpClient: HttpClient
+        private val httpClient: HttpClient,
+        private val objectMapper: ObjectMapper
 ) : HealthCheck {
 
     private val cachedAccessTokenClient = CachedAccessTokenClient(accessTokenClient)
@@ -31,7 +36,7 @@ internal class PdlClient(
     private val proxyScope = setOf(env.hentRequiredEnv("PROXY_SCOPES"))
 
     suspend fun getPersonInfo(ident: Set<String>, correlationId: String): HentPdlResponse {
-        return httpClient.post<HttpStatement>("$pdlBaseUrl") {
+        return httpClient.post<HttpStatement>(pdlBaseUrl) {
             header(HttpHeaders.Authorization, getAuthorizationHeader())
             header("Nav-Consumer-Token", getAuthorizationHeader())
             header("Nav-Consumer-Id", serviceUser.username)
@@ -40,8 +45,9 @@ internal class PdlClient(
             accept(ContentType.Application.Json)
             contentType(ContentType.Application.Json)
             body = hentPersonInfoQuery(ident)
-        }.receive()
-
+        }.receive<String>().also {
+            secureLogger.info("PdlResponse=${JSONObject(it)}")
+        }.let { objectMapper.readValue(it) }
     }
 
     private fun getAuthorizationHeader() = cachedAccessTokenClient.getAccessToken(proxyScope).asAuthoriationHeader()
@@ -61,4 +67,8 @@ internal class PdlClient(
                 UnHealthy("PdlClient", "Feil: ${it.message}")
             }
     )
+
+    private companion object {
+        private val secureLogger = LoggerFactory.getLogger("tjenestekall")
+    }
 }

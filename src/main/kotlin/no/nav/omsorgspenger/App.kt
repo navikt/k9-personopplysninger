@@ -94,7 +94,10 @@ internal class ApplicationContext(
                     env = benyttetEnv,
                     accessTokenClient = benyttetAccessTokenClient,
                     serviceUser = benyttetServiceUser,
-                    httpClient = benyttetHttpClient)
+                    httpClient = benyttetHttpClient,
+                    objectMapper = objectMapper
+            )
+
             val benyttetPersonopplysningerMediator = personopplysningerMediator ?: PersonopplysningerMediator(
                     pdlClient = benyttetPdlClient
             )
