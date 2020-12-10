@@ -5,6 +5,7 @@ val k9rapidVersion = "1.6d743f4"
 val ktorVersion = "1.4.3"
 val dusseldorfKtorVersion = "1.4.3.1978e78"
 val jsonassertVersion = "1.5.0"
+val jsonOrgVersion = "20201115"
 
 val mainClass = "no.nav.omsorgspenger.AppKt"
 
@@ -18,7 +19,6 @@ java {
     targetCompatibility = JavaVersion.VERSION_12
 }
 
-
 dependencies {
     implementation("no.nav.k9.rapid:river:$k9rapidVersion")
     implementation("no.nav.helse:dusseldorf-ktor-health:$dusseldorfKtorVersion")
@@ -27,6 +27,7 @@ dependencies {
     implementation("io.ktor:ktor-client-jackson:$ktorVersion")
     implementation("io.ktor:ktor-client-cio:$ktorVersion")
     implementation("io.ktor:ktor-jackson:$ktorVersion")
+    implementation("org.json:json:$jsonOrgVersion")
 
 
     testImplementation ("org.skyscreamer:jsonassert:$jsonassertVersion")
