@@ -21,9 +21,9 @@ data class Ident(
 )
 
 data class Person(
-    val navn: List<Navn>,
-    val adressebeskyttelse: List<Adressebeskyttelse>,
-    val foedsel: List<Foedsel>) {
+        val navn: List<Navn>,
+        val adressebeskyttelse: List<Adressebeskyttelse>,
+        val foedsel: List<Foedsel>) {
     internal val gradering = when {
         adressebeskyttelse.isEmpty() ->
             AdressebeskyttelseGradering.UGRADERT
@@ -36,7 +36,7 @@ data class Person(
 }
 
 data class Adressebeskyttelse(
-    val gradering: AdressebeskyttelseGradering?
+        val gradering: AdressebeskyttelseGradering?
 )
 
 enum class AdressebeskyttelseGradering {
@@ -46,7 +46,7 @@ enum class AdressebeskyttelseGradering {
     UGRADERT;
 
     internal companion object {
-        internal fun Collection<String>.fellesAdressebeskyttelse() : AdressebeskyttelseGradering {
+        internal fun Collection<String>.fellesAdressebeskyttelse(): AdressebeskyttelseGradering {
             val adressebeskyttelse = map { valueOf(it) }
             return when {
                 adressebeskyttelse.any { it == STRENGT_FORTROLIG_UTLAND } -> STRENGT_FORTROLIG_UTLAND
@@ -67,3 +67,4 @@ data class Navn(
 data class Foedsel(
         val foedselsdato: String?
 )
+

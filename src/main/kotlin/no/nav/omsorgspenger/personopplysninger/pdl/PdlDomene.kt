@@ -35,3 +35,8 @@ fun hentPersonInfoQuery(fnr: Set<String>): PersonInfoGraphqlQuery {
     val query = GraphqlQuery::class.java.getResource("/pdl/hentPersonBolkInfo.graphql").readText().replace("[\n\r]", "")
     return PersonInfoGraphqlQuery(query, Variables(fnr.toList()))
 }
+
+fun hentFamilierelasjonQuery(fnr: String): PersonInfoGraphqlQuery {
+    val query = GraphqlQuery::class.java.getResource("/pdl/hentRelasjonerBolkInfo.graphql").readText().replace("[\n\r]", "")
+    return PersonInfoGraphqlQuery(query, Variables(listOf(fnr)))
+}
