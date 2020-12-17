@@ -15,7 +15,7 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.skyscreamer.jsonassert.JSONAssert
 
 @ExtendWith(ApplicationContextExtension::class)
-internal class HentFamilieRelasjonTest(
+internal class HentRelasjonerTest(
         private val applicationContext: ApplicationContext) {
 
     private val rapid = TestRapid().apply {
@@ -28,31 +28,36 @@ internal class HentFamilieRelasjonTest(
     }
 
     @Test
-    fun `Inkluderer bare barn fra PDL familierelasjon`() {
+    fun `Inkluderer alle IDer i request`() {
         val (_, behovssekvens) = nyBehovsSekvens(
-                identitetsnummer = "111222333",
-                til = setOf("1234", "1235", "4444", "5555"))
+                identitetsnummer = "1234",
+                til = setOf("4321", "1111"))
         rapid.sendTestMessage(behovssekvens)
 
         @Language("JSON")
         val expectedJson = """
                 [{
-                    "relasjon": "BARN",
-                    "identitetsnummer": "1234",
+                    "relasjon": "FAR",
+                    "identitetsnummer": "4321",
                     "borSammen": false
+                },
+                {
+                    "relasjon": "BARN",
+                    "identitetsnummer": "1111",
+                    "borSammen": true
                 }]
         """.trimIndent()
 
         expectedJson.assertJsonEquals(rapid.hentLøsning())
-        Assertions.assertEquals(1, rapid.antalLøsninger())
+        Assertions.assertEquals(2, rapid.antalLøsninger())
     }
 
     private fun TestRapid.hentLøsning(): String {
-        return this.inspektør.message(0)["@løsninger"][HentFamilieRelasjon.BEHOV]["relasjoner"].toString()
+        return this.inspektør.message(0)["@løsninger"][HentRelasjoner.BEHOV]["relasjoner"].toString()
     }
 
     private fun TestRapid.antalLøsninger(): Int {
-        return this.inspektør.message(0)["@løsninger"][HentFamilieRelasjon.BEHOV]["relasjoner"].size()
+        return this.inspektør.message(0)["@løsninger"][HentRelasjoner.BEHOV]["relasjoner"].size()
     }
 
     private fun String.assertJsonEquals(actual: String) = JSONAssert.assertEquals(this, actual, true)
@@ -65,7 +70,7 @@ internal class HentFamilieRelasjonTest(
             correlationId = UUID.randomUUID().toString(),
             behov = arrayOf(
                     Behov(
-                            navn = HentFamilieRelasjon.BEHOV,
+                            navn = HentRelasjoner.BEHOV,
                             input = mapOf(
                                     "identitetsnummer" to identitetsnummer,
                                     "til" to til

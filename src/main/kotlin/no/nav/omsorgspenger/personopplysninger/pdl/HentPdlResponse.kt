@@ -67,4 +67,3 @@ data class Navn(
 data class Foedsel(
         val foedselsdato: String?
 )
-

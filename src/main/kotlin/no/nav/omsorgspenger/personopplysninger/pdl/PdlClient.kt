@@ -50,7 +50,7 @@ internal class PdlClient(
         }.let { objectMapper.readValue(it) }
     }
 
-    suspend fun hentFamilierelasjoner(ident: String, correlationId: String): HentRelasjonPdlResponse {
+    suspend fun HentRelasjonInfo(ident: Set<String>, correlationId: String): HentRelasjonPdlResponse {
         return httpClient.post<HttpStatement>(pdlBaseUrl) {
             header(HttpHeaders.Authorization, getAuthorizationHeader())
             header("Nav-Consumer-Token", getAuthorizationHeader())
@@ -59,7 +59,7 @@ internal class PdlClient(
             header("TEMA", "OMS")
             accept(ContentType.Application.Json)
             contentType(ContentType.Application.Json)
-            body = hentFamilierelasjonQuery(ident)
+            body = hentRelasjonInfoQuery(ident)
         }.receive<String>().also {
             secureLogger.info("RelasjonPdlResponse=${JSONObject(it)}")
         }.let { objectMapper.readValue(it) }

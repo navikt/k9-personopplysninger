@@ -13,10 +13,10 @@ import no.nav.k9.rapid.river.requireArray
 import no.nav.k9.rapid.river.skalLøseBehov
 import org.slf4j.LoggerFactory
 
-internal class HentFamilieRelasjon(
+internal class HentRelasjoner(
         rapidsConnection: RapidsConnection,
-        internal val familieRelasjonMediator: FamilieRelasjonMediator) : BehovssekvensPacketListener(
-        logger = LoggerFactory.getLogger(HentFamilieRelasjon::class.java)
+        internal val relasjonMediator: RelasjonMediator) : BehovssekvensPacketListener(
+        logger = LoggerFactory.getLogger(HentRelasjoner::class.java)
 ) {
 
     init {
@@ -38,8 +38,9 @@ internal class HentFamilieRelasjon(
                 .map { it.asText() }
                 .toSet()
 
-        val løsning = hentFamilieRelasjonerFor(
+        val løsning = hentRelasjonerFor(
                 identitetsnummer = identitetsnummer,
+                til = til,
                 correlationId = packet[Behovsformat.CorrelationId].asText())
 
         packet.leggTilLøsning(
@@ -54,10 +55,11 @@ internal class HentFamilieRelasjon(
         logger.info("Løst behov $BEHOV").also { incLostBehov(BEHOV) }
     }
 
-    private fun hentFamilieRelasjonerFor(identitetsnummer: String, correlationId: String) = try {
+    private fun hentRelasjonerFor(identitetsnummer: String, til: Set<String>, correlationId: String) = try {
         runBlocking {
-            familieRelasjonMediator.hentFamilieRelasjon(
+            relasjonMediator.hentRelasjoner(
                 identitetsnummer = identitetsnummer,
+                til = til,
                 correlationId = correlationId)
         }
     } catch (cause: Throwable) {
@@ -66,7 +68,7 @@ internal class HentFamilieRelasjon(
     }
 
     internal companion object {
-        const val BEHOV = "HentFamilierelasjoner"
+        const val BEHOV = "VurderRelasjoner"
         const val IDENTITETSNUMMER = "@behov.$BEHOV.identitetsnummer"
         const val TIL = "@behov.$BEHOV.til"
     }

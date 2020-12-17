@@ -7,6 +7,16 @@ query($identer: [ID!]!) {
                 relatertPersonsRolle
                 minRolleForPerson
             }
+            bostedsadresse {
+                matrikkeladresse {
+                    matrikkelId
+                }
+            }
+            deltBosted {
+                matrikkeladresse {
+                    matrikkelId
+                }
+            }
         },
         code
     }

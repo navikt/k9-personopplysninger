@@ -46,12 +46,18 @@ internal class PdlClientTest(
     @Test
     fun `Parser familierelasjoner`() {
         val response = runBlocking {
-            pdlClient.hentFamilierelasjoner("111222333", "testId")
+            pdlClient.HentRelasjonInfo(setOf("111222333"), "testId")
         }
 
         assert(response.data.hentPersonBolk.toString().contains("111222333"))
     }
 
+    @Test
+    fun `Parser nytt upplegg`() {
+        val response = runBlocking {
+            pdlClient.HentRelasjonInfo(setOf("1234", "4321", "1111"), "testId")
+        }
 
-
+        assert(response.data.hentPersonBolk.toString().contains("1234"))
+    }
 }

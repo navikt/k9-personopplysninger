@@ -10,7 +10,9 @@ data class HentRelasjonPdlResponse(val data: HentPersonBolkInfo, val errors: Lis
     )
 
     data class Person(
-        val familierelasjoner: List<FamilieRelasjoner>
+        val familierelasjoner: List<FamilieRelasjoner>,
+        val bostedsadresse: List<matrikkeladresse>?,
+        val deltBosted: List<matrikkeladresse>?
     )
 
     data class FamilieRelasjoner(
@@ -19,10 +21,15 @@ data class HentRelasjonPdlResponse(val data: HentPersonBolkInfo, val errors: Lis
         val minRolleForPerson: Relasjon?
     )
 
+    data class matrikkeladresse(val matrikkeladresse: matrikkelId?)
+
+    data class matrikkelId(val matrikkelId: String)
+
     enum class Relasjon {
         BARN,
         FAR,
         MOR,
         ANNEN_MOR;
     }
+
 }

@@ -24,8 +24,8 @@ import no.nav.k9.rapid.river.hentRequiredEnv
 import no.nav.omsorgspenger.personopplysninger.pdl.PdlClient
 import no.nav.omsorgspenger.config.ServiceUser
 import no.nav.omsorgspenger.config.readServiceUserCredentials
-import no.nav.omsorgspenger.personopplysninger.FamilieRelasjonMediator
-import no.nav.omsorgspenger.personopplysninger.HentFamilieRelasjon
+import no.nav.omsorgspenger.personopplysninger.RelasjonMediator
+import no.nav.omsorgspenger.personopplysninger.HentRelasjoner
 import no.nav.omsorgspenger.personopplysninger.HentPersonopplysninger
 import no.nav.omsorgspenger.personopplysninger.PersonopplysningerMediator
 
@@ -43,9 +43,9 @@ internal fun RapidsConnection.registerApplicationContext(applicationContext: App
             rapidsConnection = this,
             personopplysningerMediator = applicationContext.personopplysningerMediator
     )
-    HentFamilieRelasjon(
+    HentRelasjoner(
             rapidsConnection = this,
-            familieRelasjonMediator = applicationContext.familieRelasjonMediator
+            relasjonMediator = applicationContext.relasjonMediator
     )
     register(object : RapidsConnection.StatusListener {
         override fun onStartup(rapidsConnection: RapidsConnection) {
@@ -73,7 +73,7 @@ internal class ApplicationContext(
         val httpClient: HttpClient,
         val pdlClient: PdlClient,
         val personopplysningerMediator: PersonopplysningerMediator,
-        val familieRelasjonMediator: FamilieRelasjonMediator,
+        val relasjonMediator: RelasjonMediator,
         val healthService: HealthService) {
 
     internal fun start() {}
@@ -86,7 +86,7 @@ internal class ApplicationContext(
             var accessTokenClient: AccessTokenClient? = null,
             var pdlClient: PdlClient? = null,
             var personopplysningerMediator: PersonopplysningerMediator? = null,
-            var familierelasjonMediator: FamilieRelasjonMediator? = null) {
+            var relasjonMediator: RelasjonMediator? = null) {
         internal fun build(): ApplicationContext {
             val benyttetEnv = env ?: System.getenv()
             val benyttetHttpClient = httpClient ?: HttpClient {
@@ -110,7 +110,7 @@ internal class ApplicationContext(
                     pdlClient = benyttetPdlClient
             )
 
-            val benyttetFamilierelasjonMediator = familierelasjonMediator ?: FamilieRelasjonMediator(
+            val benyttetRelasjonMediator = relasjonMediator ?: RelasjonMediator(
                     pdlClient = benyttetPdlClient
             )
 
@@ -120,7 +120,7 @@ internal class ApplicationContext(
                     httpClient = benyttetHttpClient,
                     pdlClient = benyttetPdlClient,
                     personopplysningerMediator = benyttetPersonopplysningerMediator,
-                    familieRelasjonMediator = benyttetFamilierelasjonMediator,
+                    relasjonMediator = benyttetRelasjonMediator,
                     healthService = HealthService(healthChecks = setOf(
                             benyttetPdlClient
                     ))

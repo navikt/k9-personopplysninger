@@ -1,5 +1,8 @@
 package no.nav.omsorgspenger.personopplysninger.pdl
 
+import no.nav.omsorgspenger.personopplysninger.pdl.Queries.personInfoQuery
+import no.nav.omsorgspenger.personopplysninger.pdl.Queries.relasjonInfoQuery
+
 data class GraphqlQuery(
         val query: String,
         val variables: Variables
@@ -32,11 +35,16 @@ data class PdlErrorExtension(
 )
 
 fun hentPersonInfoQuery(fnr: Set<String>): PersonInfoGraphqlQuery {
-    val query = GraphqlQuery::class.java.getResource("/pdl/hentPersonBolkInfo.graphql").readText().replace("[\n\r]", "")
-    return PersonInfoGraphqlQuery(query, Variables(fnr.toList()))
+    return PersonInfoGraphqlQuery(personInfoQuery, Variables(fnr.toList()))
 }
 
-fun hentFamilierelasjonQuery(fnr: String): PersonInfoGraphqlQuery {
-    val query = GraphqlQuery::class.java.getResource("/pdl/hentRelasjonerBolkInfo.graphql").readText().replace("[\n\r]", "")
-    return PersonInfoGraphqlQuery(query, Variables(listOf(fnr)))
+fun hentRelasjonInfoQuery(fnr: Set<String>): PersonInfoGraphqlQuery {
+    return PersonInfoGraphqlQuery(relasjonInfoQuery, Variables(fnr.toList()))
+}
+
+private object Queries {
+    @JvmStatic
+    val personInfoQuery = GraphqlQuery::class.java.getResource("/pdl/hentRelasjonerBolkInfo.graphql").readText().replace("[\n\r]", "")
+    @JvmStatic
+    val relasjonInfoQuery = GraphqlQuery::class.java.getResource("/pdl/hentRelasjonerBolkInfo.graphql").readText().replace("[\n\r]", "")
 }
