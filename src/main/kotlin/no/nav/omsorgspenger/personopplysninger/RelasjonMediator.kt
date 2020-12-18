@@ -1,8 +1,8 @@
 package no.nav.omsorgspenger.personopplysninger
 
-import kotlin.reflect.full.memberProperties
 import no.nav.omsorgspenger.personopplysninger.pdl.HentRelasjonPdlResponse
 import no.nav.omsorgspenger.personopplysninger.pdl.HentRelasjonPdlResponse.Relasjon
+import no.nav.omsorgspenger.personopplysninger.pdl.HentRelasjonPdlResponse.Person
 import no.nav.omsorgspenger.personopplysninger.pdl.PdlClient
 import org.slf4j.LoggerFactory
 
@@ -21,15 +21,15 @@ internal class RelasjonMediator(
 
         var relasjonsListe = mutableListOf<Map<String, Any>>()
 
-        val søkersMatrikkelId = response.data.hentPersonBolk
-                .filter { it.ident == identitetsnummer && it.code == "ok" }
-                .first().person?.bostedsadresse?.first()?.matrikkeladresse?.matrikkelId.orEmpty()
+        val søkersAdresse = response.data.hentPersonBolk
+                .filter { it.ident == identitetsnummer && it.code == "ok" && it.person != null }
+                .first().person!!.hentAdresse()
 
         response.data.hentPersonBolk
                 .filter { it.code == "ok" && it.ident != identitetsnummer && it.person != null }
                 .map { personBolk ->
-                    personBolk.håndterResponse(identitetsnummer, søkersMatrikkelId).let {
-                        if (!it.isNullOrEmpty()) relasjonsListe.add(it)
+                    personBolk.håndterResponse(identitetsnummer, søkersAdresse).let {
+                        relasjonsListe.add(it)
                     }
                 }
 
@@ -37,29 +37,27 @@ internal class RelasjonMediator(
 
     }
 
-    private fun HentRelasjonPdlResponse.PersonBolk.håndterResponse(søkersIdentitetsnummer: String, søkersMatrikkelId: String): Map<String, Any> {
+    private fun HentRelasjonPdlResponse.PersonBolk.håndterResponse(søkersIdentitetsnummer: String, søkersAdresse: Adresse): Map<String, Any> {
         var resultat = mutableMapOf<String, Any>()
 
-        this.person!!.familierelasjoner
-                .filter { it.relatertPersonsIdent != søkersIdentitetsnummer }
-                .forEach { relatertPerson ->
-                    when {
-                        relatertPerson.relatertPersonsRolle!!.erBarn() -> resultat["relasjon"] = relatertPerson.minRolleForPerson.toString()
-                        relatertPerson.relatertPersonsRolle.erForelder() -> resultat["relasjon"] = relatertPerson.minRolleForPerson.toString()
-                        else -> resultat["relasjon"] = "INGEN"
+        if (!this.person!!.familierelasjoner.isNullOrEmpty()) {
+            this.person.familierelasjoner
+                    ?.filter { it.relatertPersonsIdent != søkersIdentitetsnummer }
+                    ?.forEach { relatertPerson ->
+                        relatertPerson.relatertPersonsRolle?.let {
+                            if (it.erBarn()) resultat["relasjon"] = relatertPerson.minRolleForPerson.toString()
+                        }
+                        relatertPerson.relatertPersonsRolle?.let {
+                            if (it.erForelder()) resultat["relasjon"] = relatertPerson.minRolleForPerson.toString()
+                        }
                     }
-                }
-
-        resultat["identitetsnummer"] = this.ident
-
-        val harDeltBosted = !this.person.deltBosted?.firstOrNull()?.matrikkeladresse?.matrikkelId.isNullOrEmpty()
-        val harBostadsAdresse = !this.person.bostedsadresse?.firstOrNull()?.matrikkeladresse?.matrikkelId.isNullOrEmpty()
-        when {
-            harDeltBosted -> resultat["borSammen"] = this.person.deltBosted?.firstOrNull()?.matrikkeladresse?.matrikkelId.toString() == søkersMatrikkelId
-            harBostadsAdresse -> resultat["borSammen"] = this.person.bostedsadresse?.firstOrNull()?.matrikkeladresse?.matrikkelId.toString() == søkersMatrikkelId
-            else -> resultat["borSammen"] = false
+        }
+        if (resultat["relasjon"] == null) {
+            resultat["relasjon"] = "INGEN"
         }
 
+        resultat["identitetsnummer"] = this.ident
+        resultat["borSammen"] = this.person.hentAdresse() == søkersAdresse
 
         return resultat.toMap()
     }
@@ -68,12 +66,40 @@ internal class RelasjonMediator(
         private const val RelasjonerKey = "relasjoner"
     }
 
-    private fun Relasjon.erForelder(): Boolean {
-        return (this == Relasjon.FAR || this == Relasjon.MOR)
+    private fun Relasjon.erForelder(): Boolean = (this == Relasjon.FAR || this == Relasjon.MOR)
+    private fun Relasjon.erBarn(): Boolean = (this == Relasjon.BARN)
+
+    private fun Person.hentAdresse(): Adresse {
+        return Adresse(
+                bostedMatrikkelId = bostedsadresse.firstOrNull { it.matrikkeladresse?.matrikkelId != null }?.matrikkeladresse?.matrikkelId,
+                bostedVegadresse = bostedsadresse.firstOrNull { it.vegadresse?.adressenavn != null }?.vegadresse?.adressenavn,
+                deltBostedMatrikkelId = deltBosted.firstOrNull { it.matrikkeladresse?.matrikkelId != null }?.matrikkeladresse?.matrikkelId,
+                deltBostedVegadresse = deltBosted.firstOrNull { it.vegadresse?.adressenavn != null }?.vegadresse?.adressenavn
+        )
     }
 
-    private fun Relasjon.erBarn(): Boolean {
-        return (this == Relasjon.BARN)
+    internal data class Adresse(
+            private val bostedMatrikkelId: String?,
+            private val bostedVegadresse: String?,
+            private val deltBostedMatrikkelId: String?,
+            private val deltBostedVegadresse: String?) {
+        override fun equals(other: Any?) = when {
+            other !is Adresse -> false
+            erLike(bostedMatrikkelId, other.bostedMatrikkelId) -> true
+            erLike(bostedMatrikkelId, other.deltBostedMatrikkelId) -> true
+            erLike(deltBostedMatrikkelId, other.bostedMatrikkelId) -> true
+            erLike(deltBostedMatrikkelId, other.deltBostedMatrikkelId) -> true
+            erLike(bostedVegadresse, other.bostedVegadresse) -> true
+            erLike(bostedVegadresse, other.deltBostedVegadresse) -> true
+            erLike(deltBostedVegadresse, other.deltBostedVegadresse) -> true
+            erLike(deltBostedVegadresse, other.bostedVegadresse) -> true
+            else -> false
+        }
+
+        private fun erLike(a: String?, b: String?): Boolean {
+            val beggeSatt = (a != null && a.isNotBlank()) && (b != null && b.isNotBlank())
+            return beggeSatt && (a == b)
+        }
     }
 
 }

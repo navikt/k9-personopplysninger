@@ -4,26 +4,35 @@ data class HentRelasjonPdlResponse(val data: HentPersonBolkInfo, val errors: Lis
     data class HentPersonBolkInfo(val hentPersonBolk: List<PersonBolk>)
 
     data class PersonBolk(
-        val ident: String,
-        val person: Person?,
-        val code: String
+            val ident: String,
+            val person: Person?,
+            val code: String
     )
 
     data class Person(
-        val familierelasjoner: List<FamilieRelasjoner>,
-        val bostedsadresse: List<matrikkeladresse>?,
-        val deltBosted: List<matrikkeladresse>?
+            val familierelasjoner: List<FamilieRelasjoner> = emptyList(),
+            val bostedsadresse: List<Adresse> = emptyList(),
+            val deltBosted: List<Adresse> = emptyList(),
     )
 
     data class FamilieRelasjoner(
-        val relatertPersonsIdent: String,
-        val relatertPersonsRolle: Relasjon,
-        val minRolleForPerson: Relasjon?
+            val relatertPersonsIdent: String?,
+            val relatertPersonsRolle: Relasjon?,
+            val minRolleForPerson: Relasjon
     )
 
-    data class matrikkeladresse(val matrikkeladresse: matrikkelId?)
+    data class Adresse(
+            val matrikkeladresse: MatrikkelId?,
+            val vegadresse: AdresseNavn?
+    )
 
-    data class matrikkelId(val matrikkelId: String)
+    data class MatrikkelId(
+            val matrikkelId: String
+    )
+
+    data class AdresseNavn(
+            val adressenavn: String
+    )
 
     enum class Relasjon {
         BARN,

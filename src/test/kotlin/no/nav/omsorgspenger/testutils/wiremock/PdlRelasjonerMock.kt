@@ -10,7 +10,7 @@ import com.github.tomakehurst.wiremock.matching.AnythingPattern
 private const val pdlApiBasePath = "/pdlapi-mock"
 private const val pdlApiMockPath = "/"
 
-private fun WireMockServer.stubPdlHentFamilieFarMedEttBarn(): WireMockServer {
+private fun WireMockServer.stubPdlHentFamilieFarMedTvaBarn(): WireMockServer {
     WireMock.stubFor(
             WireMock.post(WireMock
                     .urlPathMatching(".*$pdlApiMockPath.*"))
@@ -32,10 +32,21 @@ private fun WireMockServer.stubPdlHentFamilieFarMedEttBarn(): WireMockServer {
                                                             "familierelasjoner": [
                                                                 {
                                                                     "relatertPersonsIdent": "1234",
-                                                                    "relatertPersonsRolle": "FAR",
-                                                                    "minRolleForPerson": "BARN"
+                                                                    "relatertPersonsRolle": "BARN",
+                                                                    "minRolleForPerson": "FAR"
+                                                                },
+                                                                {
+                                                                    "minRolleForPerson": "FAR"
                                                                 }
-                                                            ]
+                                                            ],
+                                                            "bostedsadresse": [
+                                                                {
+                                                                    "vegadresse": {
+                                                                        "adressenavn": "testveien"
+                                                                    }
+                                                                }
+                                                            ],
+                                                            "deltBosted": []
                                                         },
                                                         "code": "ok"
                                                     }
@@ -127,11 +138,7 @@ private fun WireMockServer.stubPdlHentFamilieFarOchMorMedEttBarn(): WireMockServ
                                                             "minRolleForPerson": "BARN"
                                                         }
                                                     ],
-                                                    "bostedsadresse": [
-                                                        {
-                                                            "matrikkeladresse": null
-                                                        }
-                                                    ],
+                                                    "bostedsadresse": [ ],
                                                     "deltBosted": [
                                                         {
                                                             "matrikkeladresse": {
@@ -154,5 +161,5 @@ private fun WireMockServer.stubPdlHentFamilieFarOchMorMedEttBarn(): WireMockServ
 
 
 internal fun WireMockServer.stubPdlFamilierelasjoner() =
-        stubPdlHentFamilieFarMedEttBarn()
+        stubPdlHentFamilieFarMedTvaBarn()
         .stubPdlHentFamilieFarOchMorMedEttBarn()

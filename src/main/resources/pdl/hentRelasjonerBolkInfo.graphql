@@ -3,18 +3,20 @@ query($identer: [ID!]!) {
         ident,
         person {
             familierelasjoner {
-                relatertPersonsIdent
-                relatertPersonsRolle
+                relatertPersonsIdent,
+                relatertPersonsRolle,
                 minRolleForPerson
-            }
-            bostedsadresse {
-                matrikkeladresse {
-                    matrikkelId
+            },
+            bostedsadresse (historikk: false) {
+                vegadresse {
+                    matrikkelId,
+                    adressenavn
                 }
-            }
-            deltBosted {
-                matrikkeladresse {
-                    matrikkelId
+            },
+            deltBosted (historikk: false) {
+                vegadresse {
+                    matrikkelId,
+                    adressenavn
                 }
             }
         },

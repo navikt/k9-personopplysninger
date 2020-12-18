@@ -28,7 +28,7 @@ internal class HentRelasjonerTest(
     }
 
     @Test
-    fun `Inkluderer alle IDer i request`() {
+    fun `Parser och inkluderer alle IDer fra request`() {
         val (_, behovssekvens) = nyBehovsSekvens(
                 identitetsnummer = "1234",
                 til = setOf("4321", "1111"))
