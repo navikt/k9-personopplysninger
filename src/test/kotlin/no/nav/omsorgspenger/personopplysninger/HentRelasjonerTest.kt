@@ -37,7 +37,7 @@ internal class HentRelasjonerTest(
         @Language("JSON")
         val expectedJson = """
                 [{
-                    "relasjon": "FAR",
+                    "relasjon": "INGEN",
                     "identitetsnummer": "4321",
                     "borSammen": false
                 },
