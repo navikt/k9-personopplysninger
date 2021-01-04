@@ -44,7 +44,7 @@ fun hentRelasjonInfoQuery(fnr: Set<String>): PersonInfoGraphqlQuery {
 
 private object Queries {
     @JvmStatic
-    val personInfoQuery = GraphqlQuery::class.java.getResource("/pdl/hentRelasjonerBolkInfo.graphql").readText().replace("[\n\r]", "")
+    val personInfoQuery = GraphqlQuery::class.java.getResource("/pdl/hentPersonBolkInfo.graphql").readText().replace("[\n\r]", "")
     @JvmStatic
     val relasjonInfoQuery = GraphqlQuery::class.java.getResource("/pdl/hentRelasjonerBolkInfo.graphql").readText().replace("[\n\r]", "")
 }

@@ -1,6 +1,5 @@
 package no.nav.omsorgspenger.personopplysninger
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import io.mockk.coEvery
 import io.mockk.mockk
