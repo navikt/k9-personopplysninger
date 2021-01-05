@@ -175,6 +175,42 @@ internal class HentPersonopplysningerTest(
         assertEquals(1, rapid.antalLøsninger())
     }
 
+    @Test
+    fun `Sender inte ukomplett løsning ifall optional måFinneAllePersoner er true`() {
+        val (_, behovssekvens) = Behovssekvens(
+            id = "01BX5ZZKBKACTAV9WEVGEMMVS0",
+            correlationId = UUID.randomUUID().toString(),
+            behov = arrayOf(
+                Behov(
+                    navn = BEHOV,
+                    input = mapOf(
+                        "identitetsnummer" to setOf("21108424239", "15098422273"),
+                        "attributter" to setOf("navn","aktørId"),
+                        "måFinneAllePersoner" to true
+                    )
+                )
+            )
+        ).keyValue
+        val (_, behovssekvens2) = Behovssekvens(
+            id = "01BX5ZZKBKACTAV9WEVGEMMVS0",
+            correlationId = UUID.randomUUID().toString(),
+            behov = arrayOf(
+                Behov(
+                    navn = BEHOV,
+                    input = mapOf(
+                        "identitetsnummer" to setOf("21108424239", "15098422273"),
+                        "attributter" to setOf("navn","aktørId"),
+                        "måFinneAllePersoner" to false
+                    )
+                )
+            )
+        ).keyValue
+        rapid.sendTestMessage(behovssekvens)
+        rapid.sendTestMessage(behovssekvens2)
+
+        assertEquals(1, rapid.inspektør.size)
+    }
+
     internal companion object {
         const val BEHOV = "HentPersonopplysninger"
     }
@@ -195,7 +231,7 @@ internal class HentPersonopplysningerTest(
 
     private fun nyBehovsSekvens(
             ident: Set<String>,
-            attributer: Set<String>? = setOf("navn", "fødselsdato", "adressebeskyttelse", "aktørId")
+            attributer: Set<String>? = setOf("navn", "fødselsdato", "adressebeskyttelse", "aktørId"),
     ) = Behovssekvens(
         id = "01BX5ZZKBKACTAV9WEVGEMMVS0",
         correlationId = UUID.randomUUID().toString(),
