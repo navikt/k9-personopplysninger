@@ -50,6 +50,21 @@ internal class PdlClient(
         }.let { objectMapper.readValue(it) }
     }
 
+    suspend fun HentRelasjonInfo(ident: Set<String>, correlationId: String): HentRelasjonPdlResponse {
+        return httpClient.post<HttpStatement>(pdlBaseUrl) {
+            header(HttpHeaders.Authorization, getAuthorizationHeader())
+            header("Nav-Consumer-Token", getAuthorizationHeader())
+            header("Nav-Consumer-Id", serviceUser.username)
+            header("Nav-Call-Id", correlationId)
+            header("TEMA", "OMS")
+            accept(ContentType.Application.Json)
+            contentType(ContentType.Application.Json)
+            body = hentRelasjonInfoQuery(ident)
+        }.receive<String>().also {
+            secureLogger.info("RelasjonPdlResponse=${JSONObject(it)}")
+        }.let { objectMapper.readValue(it) }
+    }
+
     private fun getAuthorizationHeader() = cachedAccessTokenClient.getAccessToken(proxyScope).asAuthoriationHeader()
 
     override suspend fun check() = kotlin.runCatching {

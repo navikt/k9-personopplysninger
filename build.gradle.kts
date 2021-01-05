@@ -3,6 +3,7 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 val junitJupiterVersion = "5.7.0"
 val k9rapidVersion = "1.6d743f4"
 val ktorVersion = "1.4.3"
+val mockkVersion = "1.10.3"
 val dusseldorfKtorVersion = "1.4.3.1978e78"
 val jsonassertVersion = "1.5.0"
 val jsonOrgVersion = "20201115"
@@ -33,6 +34,7 @@ dependencies {
     testImplementation ("org.skyscreamer:jsonassert:$jsonassertVersion")
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junitJupiterVersion")
     testImplementation("no.nav.helse:dusseldorf-test-support:$dusseldorfKtorVersion")
+    testImplementation("io.mockk:mockk:$mockkVersion")
     testImplementation("io.ktor:ktor-server-test-host:$ktorVersion") {
         exclude(group = "org.eclipse.jetty")
     }

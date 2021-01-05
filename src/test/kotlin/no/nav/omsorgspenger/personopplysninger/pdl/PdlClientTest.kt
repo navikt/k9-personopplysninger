@@ -43,5 +43,16 @@ internal class PdlClientTest(
 
     }
 
+    @Test
+    fun `Parser flere identer`() {
+        val response = runBlocking {
+            pdlClient.HentRelasjonInfo(setOf("1234", "4321", "1111"), "testId")
+        }
+
+        assert(response.data.hentPersonBolk.toString().contains("1234"))
+        assert(response.data.hentPersonBolk.toString().contains("4321"))
+        assert(response.data.hentPersonBolk.toString().contains("1111"))
+    }
+
 
 }

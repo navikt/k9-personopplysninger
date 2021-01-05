@@ -1,0 +1,25 @@
+query($identer: [ID!]!) {
+    hentPersonBolk(identer: $identer) {
+        ident,
+        person {
+            familierelasjoner {
+                relatertPersonsIdent,
+                relatertPersonsRolle,
+                minRolleForPerson
+            },
+            bostedsadresse (historikk: false) {
+                vegadresse {
+                    matrikkelId,
+                    adressenavn
+                }
+            },
+            deltBosted (historikk: false) {
+                vegadresse {
+                    matrikkelId,
+                    adressenavn
+                }
+            }
+        },
+        code
+    }
+}

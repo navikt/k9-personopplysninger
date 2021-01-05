@@ -11,6 +11,7 @@ import no.nav.omsorgspenger.ApplicationContext
 import no.nav.omsorgspenger.config.ServiceUser
 import no.nav.omsorgspenger.testutils.wiremock.pdlApiBaseUrl
 import no.nav.omsorgspenger.testutils.wiremock.stubPdlApi
+import no.nav.omsorgspenger.testutils.wiremock.stubPdlFamilierelasjoner
 import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.jupiter.api.extension.ParameterContext
 import org.junit.jupiter.api.extension.ParameterResolver
@@ -23,6 +24,7 @@ internal class ApplicationContextExtension : ParameterResolver {
                 .withAzureSupport()
                 .build()
                 .stubPdlApi()
+                .stubPdlFamilierelasjoner()
 
         private val applicationContextBuilder = ApplicationContext.Builder(
                 env = mapOf(

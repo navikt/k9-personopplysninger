@@ -24,6 +24,8 @@ import no.nav.k9.rapid.river.hentRequiredEnv
 import no.nav.omsorgspenger.personopplysninger.pdl.PdlClient
 import no.nav.omsorgspenger.config.ServiceUser
 import no.nav.omsorgspenger.config.readServiceUserCredentials
+import no.nav.omsorgspenger.personopplysninger.RelasjonMediator
+import no.nav.omsorgspenger.personopplysninger.HentRelasjoner
 import no.nav.omsorgspenger.personopplysninger.HentPersonopplysninger
 import no.nav.omsorgspenger.personopplysninger.PersonopplysningerMediator
 
@@ -40,6 +42,10 @@ internal fun RapidsConnection.registerApplicationContext(applicationContext: App
     HentPersonopplysninger(
             rapidsConnection = this,
             personopplysningerMediator = applicationContext.personopplysningerMediator
+    )
+    HentRelasjoner(
+            rapidsConnection = this,
+            relasjonMediator = applicationContext.relasjonMediator
     )
     register(object : RapidsConnection.StatusListener {
         override fun onStartup(rapidsConnection: RapidsConnection) {
@@ -67,6 +73,7 @@ internal class ApplicationContext(
         val httpClient: HttpClient,
         val pdlClient: PdlClient,
         val personopplysningerMediator: PersonopplysningerMediator,
+        val relasjonMediator: RelasjonMediator,
         val healthService: HealthService) {
 
     internal fun start() {}
@@ -78,14 +85,15 @@ internal class ApplicationContext(
             var httpClient: HttpClient? = null,
             var accessTokenClient: AccessTokenClient? = null,
             var pdlClient: PdlClient? = null,
-            var personopplysningerMediator: PersonopplysningerMediator? = null) {
+            var personopplysningerMediator: PersonopplysningerMediator? = null,
+            var relasjonMediator: RelasjonMediator? = null) {
         internal fun build(): ApplicationContext {
             val benyttetEnv = env ?: System.getenv()
             val benyttetHttpClient = httpClient ?: HttpClient {
                 install(JsonFeature) { serializer = JacksonSerializer(objectMapper) }
             }
             val benyttetServiceUser = serviceUser ?: serviceUser ?: readServiceUserCredentials()
-            val benyttetAccessTokenClient = accessTokenClient?: ClientSecretAccessTokenClient(
+            val benyttetAccessTokenClient = accessTokenClient ?: ClientSecretAccessTokenClient(
                     clientId = benyttetEnv.hentRequiredEnv("AZURE_APP_CLIENT_ID"),
                     clientSecret = benyttetEnv.hentRequiredEnv("AZURE_APP_CLIENT_SECRET"),
                     tokenEndpoint = URI(benyttetEnv.hentRequiredEnv("AZURE_APP_TOKEN_ENDPOINT"))
@@ -102,12 +110,17 @@ internal class ApplicationContext(
                     pdlClient = benyttetPdlClient
             )
 
+            val benyttetRelasjonMediator = relasjonMediator ?: RelasjonMediator(
+                    pdlClient = benyttetPdlClient
+            )
+
             return ApplicationContext(
                     env = benyttetEnv,
                     serviceUser = benyttetServiceUser,
                     httpClient = benyttetHttpClient,
                     pdlClient = benyttetPdlClient,
                     personopplysningerMediator = benyttetPersonopplysningerMediator,
+                    relasjonMediator = benyttetRelasjonMediator,
                     healthService = HealthService(healthChecks = setOf(
                             benyttetPdlClient
                     ))
