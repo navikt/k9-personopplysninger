@@ -177,8 +177,34 @@ internal class HentPersonopplysningerTest(
 
     @Test
     fun `Sender inte ukomplett løsning ifall optional måFinneAllePersoner er true`() {
-        val (_, behovssekvens) = nyBehovsSekvens(ident = setOf("21108424239", "15098422273"), attributer = setOf("navn","aktørId"), måFinneAlle = true)
-        val (_, behovssekvens2) = nyBehovsSekvens(ident = setOf("21108424239", "15098422273"), attributer = setOf("navn","aktørId"), måFinneAlle = false)
+        val (_, behovssekvens) = Behovssekvens(
+            id = "01BX5ZZKBKACTAV9WEVGEMMVS0",
+            correlationId = UUID.randomUUID().toString(),
+            behov = arrayOf(
+                Behov(
+                    navn = BEHOV,
+                    input = mapOf(
+                        "identitetsnummer" to setOf("21108424239", "15098422273"),
+                        "attributter" to setOf("navn","aktørId"),
+                        "måFinneAllePersoner" to true
+                    )
+                )
+            )
+        ).keyValue
+        val (_, behovssekvens2) = Behovssekvens(
+            id = "01BX5ZZKBKACTAV9WEVGEMMVS0",
+            correlationId = UUID.randomUUID().toString(),
+            behov = arrayOf(
+                Behov(
+                    navn = BEHOV,
+                    input = mapOf(
+                        "identitetsnummer" to setOf("21108424239", "15098422273"),
+                        "attributter" to setOf("navn","aktørId"),
+                        "måFinneAllePersoner" to false
+                    )
+                )
+            )
+        ).keyValue
         rapid.sendTestMessage(behovssekvens)
         rapid.sendTestMessage(behovssekvens2)
 
@@ -206,7 +232,6 @@ internal class HentPersonopplysningerTest(
     private fun nyBehovsSekvens(
             ident: Set<String>,
             attributer: Set<String>? = setOf("navn", "fødselsdato", "adressebeskyttelse", "aktørId"),
-            måFinneAlle: Boolean = false
     ) = Behovssekvens(
         id = "01BX5ZZKBKACTAV9WEVGEMMVS0",
         correlationId = UUID.randomUUID().toString(),
@@ -215,8 +240,7 @@ internal class HentPersonopplysningerTest(
                 navn = BEHOV,
                 input = mapOf(
                     "identitetsnummer" to ident,
-                    "attributter" to attributer,
-                    "måFinneAllePersoner" to måFinneAlle
+                    "attributter" to attributer
                 )
             )
         )

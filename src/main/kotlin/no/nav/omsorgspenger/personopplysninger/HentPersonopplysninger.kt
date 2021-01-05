@@ -6,6 +6,7 @@ import kotlinx.coroutines.runBlocking
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.helse.rapids_rivers.River
+import no.nav.helse.rapids_rivers.isMissingOrNull
 import no.nav.k9.rapid.behov.Behovsformat
 import no.nav.k9.rapid.river.BehovssekvensPacketListener
 import no.nav.k9.rapid.river.leggTilLøsning
@@ -42,7 +43,10 @@ internal class HentPersonopplysninger(
             .map { it.asText() }
             .toSet()
 
-        val måSettes = packet[MÅSETTES].asBoolean()
+        val måSettes = when(packet[MÅSETTES].isMissingOrNull()) {
+            true -> false
+            false -> packet[MÅSETTES].asBoolean(false)
+        }
 
         logger.info("Løser behov før ${identitetsnummer.size} person(er).")
 
