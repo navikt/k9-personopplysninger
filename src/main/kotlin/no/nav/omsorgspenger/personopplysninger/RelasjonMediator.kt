@@ -89,23 +89,48 @@ internal class RelasjonMediator(
         private val deltBostedMatrikkelId: String?,
         private val deltBostedVegadresse: String?
     ) {
-        override fun equals(other: Any?) = when {
-            other !is Adresse -> false
-            erLike(bostedMatrikkelId, other.bostedMatrikkelId) -> true
-            erLike(bostedMatrikkelId, other.deltBostedMatrikkelId) -> true
-            erLike(deltBostedMatrikkelId, other.bostedMatrikkelId) -> true
-            erLike(deltBostedMatrikkelId, other.deltBostedMatrikkelId) -> true
-            erLike(bostedVegadresse, other.bostedVegadresse) -> true
-            erLike(bostedVegadresse, other.deltBostedVegadresse) -> true
-            erLike(deltBostedVegadresse, other.deltBostedVegadresse) -> true
-            erLike(deltBostedVegadresse, other.bostedVegadresse) -> true
-            else -> false
+        override fun equals(other: Any?) : Boolean {
+            if(other !is Adresse) return false
+            val sammeVegAdresse = when {
+                erLike(bostedVegadresse, other.bostedVegadresse) -> true
+                erLike(bostedVegadresse, other.deltBostedVegadresse) -> true
+                erLike(deltBostedVegadresse, other.deltBostedVegadresse) -> true
+                erLike(deltBostedVegadresse, other.bostedVegadresse) -> true
+                else -> false
+            }
+            val sammeMatrikkelId = when {
+                erLike(bostedMatrikkelId, other.bostedMatrikkelId) -> true
+                erLike(bostedMatrikkelId, other.deltBostedMatrikkelId) -> true
+                erLike(deltBostedMatrikkelId, other.bostedMatrikkelId) -> true
+                erLike(deltBostedMatrikkelId, other.deltBostedMatrikkelId) -> true
+                else -> false
+            }
+
+            if(sammeVegAdresse) {
+                return if(bådeHarMatrikkelId(other)) {
+                    sammeMatrikkelId
+                } else {
+                    sammeVegAdresse
+                }
+            }
+
+            return sammeMatrikkelId
         }
 
         private fun erLike(a: String?, b: String?): Boolean {
             val beggeSatt = (a != null && a.isNotBlank()) && (b != null && b.isNotBlank())
             return beggeSatt && (a == b)
         }
+
+        private fun bådeHarMatrikkelId(other: Any?): Boolean {
+            if(other !is Adresse) return false
+            if(!bostedMatrikkelId.isNullOrEmpty() && !other.bostedMatrikkelId.isNullOrEmpty()) return true
+            if(!deltBostedMatrikkelId.isNullOrEmpty() && !other.deltBostedMatrikkelId.isNullOrEmpty()) return true
+            if(!bostedMatrikkelId.isNullOrEmpty() && !other.deltBostedMatrikkelId.isNullOrEmpty()) return true
+            if(!deltBostedMatrikkelId.isNullOrEmpty() && !other.bostedMatrikkelId.isNullOrEmpty()) return true
+            return false
+        }
+
     }
 
 }

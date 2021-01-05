@@ -1,11 +1,13 @@
 package no.nav.omsorgspenger.personopplysninger
 
 import org.junit.jupiter.api.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertNotEquals
 
 class AdresseTest {
 
     @Test
-    fun `Tolker adresser som tenkt`() {
+    fun `Sammenligner adresser`() {
         val tomAdresse = RelasjonMediator.Adresse(
                 bostedMatrikkelId = null,
                 bostedVegadresse = null,
@@ -57,6 +59,40 @@ class AdresseTest {
         assert(bostedVegAdresse != annenBostedVegAdresse) { "Ulike vegadresse "}
         assert(deltBostedVegAdresse == bostedVegAdresse) { "Like vegadresse andre veien"}
         assert(bostedMatrikkelId != bostedVegAdresse) { "matrikkelId ikke like vegadresse "}
+    }
+
+    @Test
+    fun `Sjekker matrikkelId først ifall både har det`() {
+        val sammeVegAdresse1 = RelasjonMediator.Adresse(
+            bostedMatrikkelId = "11111",
+            bostedVegadresse = "sannergate 2",
+            deltBostedMatrikkelId = null,
+            deltBostedVegadresse = null
+        )
+
+        val sammeVegAdresse2 = RelasjonMediator.Adresse(
+            bostedMatrikkelId = "22222",
+            bostedVegadresse = "sannergate 2",
+            deltBostedMatrikkelId = null,
+            deltBostedVegadresse = null
+        )
+
+        val sammeMatrikkelId1 = RelasjonMediator.Adresse(
+            bostedMatrikkelId = "11111",
+            bostedVegadresse = "sannergate 1",
+            deltBostedMatrikkelId = null,
+            deltBostedVegadresse = null
+        )
+
+        val sammeMatrikkelId2 = RelasjonMediator.Adresse(
+            bostedMatrikkelId = "11111",
+            bostedVegadresse = "sannergate 5",
+            deltBostedMatrikkelId = null,
+            deltBostedVegadresse = null
+        )
+
+        assertNotEquals(sammeVegAdresse1, sammeVegAdresse2)
+        assertEquals(sammeMatrikkelId1, sammeMatrikkelId2)
     }
 
 }
