@@ -108,4 +108,85 @@ private fun WireMockServer.stubPdlHentFamilieFarOchMorMedEttBarn(): WireMockServ
     return this
 }
 
-internal fun WireMockServer.stubPdlFamilierelasjoner() = stubPdlHentFamilieFarOchMorMedEttBarn()
+private fun WireMockServer.stubPdlTvaPersonerEnNotFound(): WireMockServer {
+    WireMock.stubFor(
+        WireMock.post(WireMock
+            .urlPathMatching(".*$pdlApiMockPath.*"))
+            .withHeader("Authorization", containing("Bearer"))
+            .withHeader("Content-Type", equalTo("application/json"))
+            .withHeader("Nav-Consumer-Token", AnythingPattern())
+            .withRequestBody(matchingJsonPath("$.variables.identer", containing("77777")))
+            .withRequestBody(matchingJsonPath("$.variables.identer", containing("88888")))
+            .withRequestBody(matchingJsonPath("$.variables.identer", containing("99999")))
+            .willReturn(
+                WireMock.aResponse()
+                    .withStatus(200)
+                    .withHeader("Content-Type", "application/json")
+                    .withBody("""
+                                {
+                                   "data":{
+                                      "hentPersonBolk":[
+                                         {
+                                            "code":"not_found",
+                                            "ident":"77777",
+                                            "person":null
+                                         },
+                                         {
+                                            "code":"ok",
+                                            "ident":"88888",
+                                            "person":{
+                                               "familierelasjoner":[
+                                                  {
+                                                     "minRolleForPerson":"BARN",
+                                                     "relatertPersonsRolle":"MOR",
+                                                     "relatertPersonsIdent":"99999"
+                                                  }
+                                               ],
+                                               "bostedsadresse":[
+                                                  {
+                                                     "vegadresse":{
+                                                        "matrikkelId":null,
+                                                        "adressenavn":"SKRUBBENESVEGEN"
+                                                     }
+                                                  }
+                                               ],
+                                               "deltBosted":[
+                                               ]
+                                            }
+                                         },
+{
+                                            "code":"ok",
+                                            "ident":"99999",
+                                            "person":{
+                                               "familierelasjoner":[
+                                                  {
+                                                     "minRolleForPerson":"MOR",
+                                                     "relatertPersonsRolle":"BARN",
+                                                     "relatertPersonsIdent":"77777"
+                                                  }
+                                               ],
+                                               "bostedsadresse":[
+                                                  {
+                                                     "vegadresse":{
+                                                        "matrikkelId":null,
+                                                        "adressenavn":null
+                                                     }
+                                                  }
+                                               ],
+                                               "deltBosted":[
+                                               ]
+                                            }
+                                         }
+                                      ]
+                                   }
+                                }
+                            """.trimIndent())
+            )
+    )
+
+    return this
+}
+
+internal fun WireMockServer.stubPdlFamilierelasjoner() =
+    stubPdlHentFamilieFarOchMorMedEttBarn()
+    .stubPdlTvaPersonerEnNotFound()

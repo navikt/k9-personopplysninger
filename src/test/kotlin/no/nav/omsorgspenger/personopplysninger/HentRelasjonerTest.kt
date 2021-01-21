@@ -52,6 +52,31 @@ internal class HentRelasjonerTest(
         Assertions.assertEquals(2, rapid.antalLøsninger())
     }
 
+    @Test
+    fun `Sender ingen-relasjon der PDL ikke finner en person`() {
+        val (_, behovssekvens) = nyBehovsSekvens(
+            identitetsnummer = "99999",
+            til = setOf("77777", "88888"))
+        rapid.sendTestMessage(behovssekvens)
+
+        @Language("JSON")
+        val expectedJson = """
+                [{
+                    "relasjon": "BARN",
+                    "identitetsnummer": "88888",
+                    "borSammen": false
+                },
+                {
+                    "relasjon": "INGEN",
+                    "identitetsnummer": "77777",
+                    "borSammen": false
+                }]
+        """.trimIndent()
+
+        expectedJson.assertJsonEquals(rapid.hentLøsning())
+        Assertions.assertEquals(2, rapid.antalLøsninger())
+    }
+
     private fun TestRapid.hentLøsning(): String {
         return this.inspektør.message(0)["@løsninger"][HentRelasjoner.BEHOV]["relasjoner"].toString()
     }
