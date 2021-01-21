@@ -37,6 +37,16 @@ internal class RelasjonMediator(
                 )
             }
 
+        response.data.hentPersonBolk
+            .filter { it.person == null || it.code != "ok" }
+            .forEach {
+                relasjonsListe.add(
+                    mapOf("relasjon" to "INGEN",
+                        "borSammen" to false,
+                        "identitetsnummer" to it.ident)
+                )
+            }
+
         require(relasjonsListe.size == til.size) { "Uventet feil: forventede ${til.size} relasjoner i svar, fick ${relasjonsListe.size}!" }
         return mapOf(RelasjonerKey to relasjonsListe)
 
