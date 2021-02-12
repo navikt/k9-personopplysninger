@@ -4,14 +4,14 @@ val junitJupiterVersion = "5.7.0"
 val k9rapidVersion = "1.0e6a99e"
 val ktorVersion = "1.5.1"
 val mockkVersion = "1.10.5"
-val dusseldorfKtorVersion = "1.5.1.9b0fee0"
+val dusseldorfKtorVersion = "1.5.1.fa7db77"
 val jsonassertVersion = "1.5.0"
 val jsonOrgVersion = "20201115"
 
 val mainClass = "no.nav.omsorgspenger.AppKt"
 
 plugins {
-    kotlin("jvm") version "1.4.21"
+    kotlin("jvm") version "1.4.30"
     id("com.github.johnrengelman.shadow") version "6.1.0"
 }
 
@@ -53,7 +53,6 @@ repositories {
         }
     }
     mavenCentral()
-    jcenter()
 }
 
 tasks {
@@ -78,7 +77,7 @@ tasks {
     }
 
     withType<Wrapper> {
-        gradleVersion = "6.8.1"
+        gradleVersion = "6.8.2"
     }
 
 }
