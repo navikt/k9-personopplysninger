@@ -1,17 +1,17 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
-val junitJupiterVersion = "5.7.0"
-val k9rapidVersion = "1.0e6a99e"
-val ktorVersion = "1.5.1"
-val mockkVersion = "1.10.5"
-val dusseldorfKtorVersion = "1.5.1.fa7db77"
+val junitJupiterVersion = "5.7.1"
+val k9rapidVersion = "1.db39724"
+val ktorVersion = "1.5.2"
+val dusseldorfKtorVersion = "1.5.2.fa18872"
 val jsonassertVersion = "1.5.0"
-val jsonOrgVersion = "20201115"
+val orgJsonVersion = "20210307"
+val mockkVersion = "1.10.6"
 
 val mainClass = "no.nav.omsorgspenger.AppKt"
 
 plugins {
-    kotlin("jvm") version "1.4.30"
+    kotlin("jvm") version "1.4.31"
     id("com.github.johnrengelman.shadow") version "6.1.0"
 }
 
@@ -28,7 +28,7 @@ dependencies {
     implementation("io.ktor:ktor-client-jackson:$ktorVersion")
     implementation("io.ktor:ktor-client-cio:$ktorVersion")
     implementation("io.ktor:ktor-jackson:$ktorVersion")
-    implementation("org.json:json:$jsonOrgVersion")
+    implementation("org.json:json:$orgJsonVersion")
 
 
     testImplementation ("org.skyscreamer:jsonassert:$jsonassertVersion")
