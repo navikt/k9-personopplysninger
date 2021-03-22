@@ -191,7 +191,7 @@ internal class HentPersonopplysningerTest(
                 )
             )
         ).keyValue
-        val (_, behovssekvens2) = Behovssekvens(
+        val (id2, behovssekvens2) = Behovssekvens(
             id = "01BX5ZZKBKACTAV9WEVGEMMVS0",
             correlationId = UUID.randomUUID().toString(),
             behov = arrayOf(
@@ -209,6 +209,7 @@ internal class HentPersonopplysningerTest(
         rapid.sendTestMessage(behovssekvens2)
 
         assertEquals(1, rapid.inspektør.size)
+        assertEquals(rapid.inspektør.message(0).get("@id").asText(), id2)
     }
 
     internal companion object {

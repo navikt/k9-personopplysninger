@@ -12,14 +12,14 @@ import no.nav.k9.rapid.river.BehovssekvensPacketListener
 import no.nav.k9.rapid.river.leggTilLøsning
 import no.nav.k9.rapid.river.requireArray
 import no.nav.k9.rapid.river.skalLøseBehov
+import no.nav.omsorgspenger.personopplysninger.PersonopplysningerMediator.Companion.PersonopplysningerKey
 import org.slf4j.LoggerFactory
 
 internal class HentPersonopplysninger(
     rapidsConnection: RapidsConnection,
     internal val personopplysningerMediator: PersonopplysningerMediator
 ) : BehovssekvensPacketListener(
-    logger = LoggerFactory.getLogger(HentPersonopplysninger::class.java)
-) {
+    logger = LoggerFactory.getLogger(HentPersonopplysninger::class.java)) {
 
     init {
         River(rapidsConnection).apply {
@@ -27,7 +27,7 @@ internal class HentPersonopplysninger(
                 packet.skalLøseBehov(BEHOV)
                 packet.require(IDENTITETSNUMMER) { it.requireArray { entry -> entry is TextNode } }
                 packet.require(ATTRIBUTER) { it.require() }
-                packet.interestedIn(MÅSETTES)
+                packet.interestedIn(MÅ_FINNE_ALLE_PERSONER)
             }
         }.register(this)
     }
@@ -43,12 +43,12 @@ internal class HentPersonopplysninger(
             .map { it.asText() }
             .toSet()
 
-        val måSettes = when(packet[MÅSETTES].isMissingOrNull()) {
+        val måFinneAllePersoner = when(packet[MÅ_FINNE_ALLE_PERSONER].isMissingOrNull()) {
             true -> false
-            false -> packet[MÅSETTES].asBoolean(false)
+            false -> packet[MÅ_FINNE_ALLE_PERSONER].asBoolean(false)
         }
 
-        logger.info("Løser behov før ${identitetsnummer.size} person(er).")
+        logger.info("Løser behov før ${identitetsnummer.size} person(er). måFinneAllePersoner=$måFinneAllePersoner")
 
         val løsning = hentPersonopplysningerFor(
             identitetsnummer = identitetsnummer,
@@ -56,9 +56,14 @@ internal class HentPersonopplysninger(
             correlationId = packet[Behovsformat.CorrelationId].asText()
         )
 
-        if (måSettes) {
-            require(identitetsnummer.size == løsning.values.size) {
-                "Uventet feil: måFinneAllePersoner. Forventet opplysninger for ${identitetsnummer.size} identitetsnummer men fann ${løsning.values.size}"
+        val funnetPersonopplysningerFor = løsning.getValue(PersonopplysningerKey).keys
+
+        when (måFinneAllePersoner) {
+            true -> require(funnetPersonopplysningerFor == identitetsnummer) {
+                "Fant ikke personopplysninger for alle etterspurte personer."
+            }
+            false -> require(identitetsnummer.containsAll(funnetPersonopplysningerFor)) {
+                "Fant personopplysninger for ikke-etterspurte personer."
             }
         }
 
@@ -92,6 +97,6 @@ internal class HentPersonopplysninger(
         const val BEHOV = "HentPersonopplysninger"
         const val IDENTITETSNUMMER = "@behov.$BEHOV.identitetsnummer"
         const val ATTRIBUTER = "@behov.$BEHOV.attributter"
-        const val MÅSETTES = "@behov.$BEHOV.måFinneAllePersoner"
+        const val MÅ_FINNE_ALLE_PERSONER = "@behov.$BEHOV.måFinneAllePersoner"
     }
 }

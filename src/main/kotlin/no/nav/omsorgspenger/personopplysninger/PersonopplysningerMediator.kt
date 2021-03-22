@@ -101,8 +101,8 @@ internal class PersonopplysningerMediator(
     private fun Set<String>.skalLeggeTilFellesopplysnigner() =
         skalLeggeTilFellesEnhetsnummer() || skalLeggeTilFellesEnhetstype() || skalLeggeTilFellesAdressbeskyttelse()
 
-    private companion object {
-        private const val PersonopplysningerKey = "personopplysninger"
+    internal companion object {
+        internal const val PersonopplysningerKey = "personopplysninger"
         private const val FellesopplysningerKey = "fellesopplysninger"
 
         private const val EnhetsnummerAttributt = "enhetsnummer"
