@@ -63,4 +63,4 @@ spec:
     - name: KAFKA_RAPID_TOPIC
       value: k9-rapid-v2
     - name: KAFKA_CONSUMER_GROUP_ID
-      value: omsorgspenger-journalforing
+      value: k9-personopplysninger
