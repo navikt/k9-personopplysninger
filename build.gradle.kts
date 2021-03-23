@@ -1,9 +1,9 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 val junitJupiterVersion = "5.7.1"
-val k9rapidVersion = "1.db39724"
+val k9rapidVersion = "1.afab3a1"
 val ktorVersion = "1.5.2"
-val dusseldorfKtorVersion = "1.5.2.fa18872"
+val dusseldorfKtorVersion = "1.5.2.1303b90"
 val jsonassertVersion = "1.5.0"
 val orgJsonVersion = "20210307"
 val mockkVersion = "1.10.6"
@@ -56,14 +56,6 @@ repositories {
 }
 
 tasks {
-    withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-        kotlinOptions.jvmTarget = "15"
-    }
-
-    named<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>("compileTestKotlin") {
-        kotlinOptions.jvmTarget = "15"
-    }
-
     withType<Test> {
         useJUnitPlatform()
         testLogging {
@@ -84,7 +76,7 @@ tasks {
     }
 
     withType<Wrapper> {
-        gradleVersion = "6.8.2"
+        gradleVersion = "6.8.3"
     }
 
 }
