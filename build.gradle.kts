@@ -1,23 +1,24 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-val junitJupiterVersion = "5.7.0"
-val k9rapidVersion = "1.0e6a99e"
-val ktorVersion = "1.5.1"
-val mockkVersion = "1.10.5"
-val dusseldorfKtorVersion = "1.5.1.fa7db77"
+val junitJupiterVersion = "5.7.1"
+val k9rapidVersion = "1.afab3a1"
+val ktorVersion = "1.5.2"
+val dusseldorfKtorVersion = "1.5.2.1303b90"
 val jsonassertVersion = "1.5.0"
-val jsonOrgVersion = "20201115"
+val orgJsonVersion = "20210307"
+val mockkVersion = "1.11.0"
 
 val mainClass = "no.nav.omsorgspenger.AppKt"
 
 plugins {
-    kotlin("jvm") version "1.4.30"
+    kotlin("jvm") version "1.4.31"
     id("com.github.johnrengelman.shadow") version "6.1.0"
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_12
-    targetCompatibility = JavaVersion.VERSION_12
+    sourceCompatibility = JavaVersion.VERSION_15
+    targetCompatibility = JavaVersion.VERSION_15
 }
 
 dependencies {
@@ -28,7 +29,7 @@ dependencies {
     implementation("io.ktor:ktor-client-jackson:$ktorVersion")
     implementation("io.ktor:ktor-client-cio:$ktorVersion")
     implementation("io.ktor:ktor-jackson:$ktorVersion")
-    implementation("org.json:json:$jsonOrgVersion")
+    implementation("org.json:json:$orgJsonVersion")
 
 
     testImplementation ("org.skyscreamer:jsonassert:$jsonassertVersion")
@@ -56,6 +57,13 @@ repositories {
 }
 
 tasks {
+    withType<KotlinCompile> {
+        kotlinOptions.jvmTarget = "15"
+    }
+
+    named<KotlinCompile>("compileTestKotlin") {
+        kotlinOptions.jvmTarget = "15"
+    }
 
     withType<Test> {
         useJUnitPlatform()
@@ -77,7 +85,7 @@ tasks {
     }
 
     withType<Wrapper> {
-        gradleVersion = "6.8.2"
+        gradleVersion = "6.8.3"
     }
 
 }
