@@ -17,7 +17,9 @@ data class HentRelasjonPdlResponse(
     data class Person(
         val familierelasjoner: List<FamilieRelasjoner> = emptyList(),
         val bostedsadresse: List<VegAdresse> = emptyList(),
-        val deltBosted: List<VegAdresse> = emptyList()
+        val deltBosted: List<VegAdresse> = emptyList(),
+        val oppholdsadresse: List<VegAdresse> = emptyList(),
+        val kontaktadresse: List<VegAdresse> = emptyList()
     )
 
     data class FamilieRelasjoner(
@@ -27,10 +29,10 @@ data class HentRelasjonPdlResponse(
     )
 
     data class VegAdresse(
-        val vegadresse: AdresseNavn?
+        val vegadresse: VegAdresseInfo?
     )
 
-    data class AdresseNavn(
+    data class VegAdresseInfo(
         val matrikkelId: String?,
         val adressenavn: String?
     )

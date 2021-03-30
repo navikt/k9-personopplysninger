@@ -1,6 +1,7 @@
 package no.nav.omsorgspenger.personopplysninger
 
 import no.nav.omsorgspenger.personopplysninger.Adresse.Companion.inneholderMinstEn
+import no.nav.omsorgspenger.personopplysninger.Adresse.Companion.somAdresse
 import no.nav.omsorgspenger.personopplysninger.pdl.HentRelasjonPdlResponse
 import no.nav.omsorgspenger.personopplysninger.pdl.HentRelasjonPdlResponse.Relasjon
 import no.nav.omsorgspenger.personopplysninger.pdl.HentRelasjonPdlResponse.Person
@@ -85,16 +86,12 @@ internal class RelasjonMediator(
         return minRolleForPerson == Relasjon.BARN && relatertPersonsIdent == identitetsnummer
     }
 
-    private fun HentRelasjonPdlResponse.AdresseNavn.matrikkelIdEllerAdressenavnSatt() = matrikkelId != null || adressenavn != null
-    private fun Person.hentAdresser() : List<Adresse> {
-        val bostedsadresse = bostedsadresse.firstOrNull()?.vegadresse?.takeIf { it.matrikkelIdEllerAdressenavnSatt() }?.let {
-            Adresse(matrikkelId = it.matrikkelId, adressenavn = it.adressenavn)
-        }
-        val deltbosted = deltBosted.firstOrNull()?.vegadresse?.takeIf { it.matrikkelIdEllerAdressenavnSatt() }?.let {
-            Adresse(matrikkelId = it.matrikkelId, adressenavn = it.adressenavn)
-        }
-        return listOfNotNull(bostedsadresse, deltbosted)
-    }
+    private fun Person.hentAdresser() = listOfNotNull(
+        bostedsadresse.firstOrNull()?.somAdresse(),
+        deltBosted.firstOrNull()?.somAdresse(),
+        oppholdsadresse.firstOrNull()?.somAdresse(),
+        kontaktadresse.firstOrNull()?.somAdresse()
+    )
 }
 
 typealias RelasjonsLøsningsMap = Map<String, List<Map<String, Any>>>
