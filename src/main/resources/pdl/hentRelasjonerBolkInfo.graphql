@@ -29,6 +29,11 @@ query($identer: [ID!]!) {
                 vegadresse {
                     matrikkelId,
                     adressenavn
+                },
+                postadresseIFrittFormat {
+                    adresselinje1,
+                    adresselinje2,
+                    adresselinje3
                 }
             }
         },

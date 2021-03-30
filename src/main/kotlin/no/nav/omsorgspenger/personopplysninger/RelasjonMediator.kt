@@ -1,10 +1,9 @@
 package no.nav.omsorgspenger.personopplysninger
 
+import no.nav.omsorgspenger.personopplysninger.Adresse.Companion.adresser
 import no.nav.omsorgspenger.personopplysninger.Adresse.Companion.inneholderMinstEn
-import no.nav.omsorgspenger.personopplysninger.Adresse.Companion.somAdresse
 import no.nav.omsorgspenger.personopplysninger.pdl.HentRelasjonPdlResponse
 import no.nav.omsorgspenger.personopplysninger.pdl.HentRelasjonPdlResponse.Relasjon
-import no.nav.omsorgspenger.personopplysninger.pdl.HentRelasjonPdlResponse.Person
 import no.nav.omsorgspenger.personopplysninger.pdl.PdlClient
 import org.slf4j.LoggerFactory
 
@@ -28,7 +27,7 @@ internal class RelasjonMediator(
 
         val søkersAdresser = response.data.hentPersonBolk.first {
             it.ident == identitetsnummer && it.code == "ok" && it.person != null
-        }.person!!.hentAdresser()
+        }.person!!.adresser()
 
         response.data.hentPersonBolk
             .filter { it.code == "ok" && it.ident != identitetsnummer && it.person != null }
@@ -73,7 +72,7 @@ internal class RelasjonMediator(
             resultat["relasjon"] = "INGEN"
         }
         resultat["identitetsnummer"] = this.ident
-        resultat["borSammen"] = søkersAdresser.inneholderMinstEn(this.person.hentAdresser())
+        resultat["borSammen"] = søkersAdresser.inneholderMinstEn(this.person.adresser())
 
         return resultat.toMap()
     }
@@ -85,13 +84,6 @@ internal class RelasjonMediator(
     private fun HentRelasjonPdlResponse.FamilieRelasjoner.erSøkersBarn(identitetsnummer: String): Boolean {
         return minRolleForPerson == Relasjon.BARN && relatertPersonsIdent == identitetsnummer
     }
-
-    private fun Person.hentAdresser() = listOfNotNull(
-        bostedsadresse.firstOrNull()?.somAdresse(),
-        deltBosted.firstOrNull()?.somAdresse(),
-        oppholdsadresse.firstOrNull()?.somAdresse(),
-        kontaktadresse.firstOrNull()?.somAdresse()
-    )
 }
 
 typealias RelasjonsLøsningsMap = Map<String, List<Map<String, Any>>>
