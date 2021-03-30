@@ -24,7 +24,12 @@ internal data class Adresse(
 
     internal companion object {
         private val Digits = "\\d".toRegex()
-
+        private fun String.blankToNull() = when (isBlank()) {
+            true -> null
+            false -> this
+        }
+        private fun String.trimAdressenavn() = blankToNull()?.trim()?.toUpperCase()
+        
         internal fun List<Adresse>.inneholderMinstEn(andreAdresser: List<Adresse>) =
             intersect(andreAdresser).isNotEmpty()
 
@@ -40,19 +45,18 @@ internal data class Adresse(
         }
 
         internal fun HentRelasjonPdlResponse.VegAdresse.somAdresse() = when {
-            matrikkelId.isNullOrBlank() && adressenavn.isNullOrBlank()-> null
+            matrikkelId.isNullOrBlank() && adressenavn.isNullOrBlank() -> null
             else -> Adresse(
-                matrikkelId = matrikkelId,
-                adressenavn = adressenavn?.trimToUppercase()
+                matrikkelId = matrikkelId?.blankToNull(),
+                adressenavn = adressenavn?.trimAdressenavn()
             )
         }
 
-        private fun String.trimToUppercase() = trim().toUpperCase()
         private fun String.adresselinjeSomAdresse() : Adresse? {
             val førTall = split(Digits)[0]
             return when (førTall.isBlank()) {
                 true -> null
-                false -> Adresse(matrikkelId = null, adressenavn = førTall.trimToUppercase())
+                false -> Adresse(matrikkelId = null, adressenavn = førTall.trimAdressenavn())
             }
         }
 
