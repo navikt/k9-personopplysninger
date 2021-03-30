@@ -35,7 +35,7 @@ internal data class Adresse(
                 oppholdsadresse.firstOrNull()?.vegadresse?.somAdresse(),
                 kontaktadresse.firstOrNull()?.vegadresse?.somAdresse()
             )
-            val postadresser = kontaktadresse.firstOrNull()?.postAdresseIFrittFormat?.somAdresser() ?: emptyList()
+            val postadresser = kontaktadresse.firstOrNull()?.postadresseIFrittFormat?.somAdresser() ?: emptyList()
             return vegadresser.plus(postadresser)
         }
 

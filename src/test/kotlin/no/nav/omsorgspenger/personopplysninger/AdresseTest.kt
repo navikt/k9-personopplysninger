@@ -99,7 +99,7 @@ internal class AdresseTest {
             )),
             kontaktadresse = listOf(HentRelasjonPdlResponse.Adresse(
                 vegadresse = HentRelasjonPdlResponse.VegAdresse(matrikkelId = null, adressenavn = " kontaktadresse "),
-                postAdresseIFrittFormat = HentRelasjonPdlResponse.PostAdresseIFrittFormat(
+                postadresseIFrittFormat = HentRelasjonPdlResponse.PostAdresseIFrittFormat(
                     adresselinje1 = " Ola Nordmann C/O Kari",
                     adresselinje2 = "postadresse i FRITT format 127A",
                     adresselinje3 = "0475 Grünerløkka, Oslo"

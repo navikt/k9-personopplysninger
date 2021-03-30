@@ -30,7 +30,7 @@ data class HentRelasjonPdlResponse(
 
     data class Adresse(
         val vegadresse: VegAdresse?,
-        val postAdresseIFrittFormat: PostAdresseIFrittFormat? = null
+        val postadresseIFrittFormat: PostAdresseIFrittFormat? = null
     )
 
     data class VegAdresse(
