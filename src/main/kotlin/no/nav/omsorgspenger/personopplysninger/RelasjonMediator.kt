@@ -1,14 +1,14 @@
 package no.nav.omsorgspenger.personopplysninger
 
+import no.nav.omsorgspenger.personopplysninger.Adresse.Companion.adresser
+import no.nav.omsorgspenger.personopplysninger.Adresse.Companion.inneholderMinstEn
 import no.nav.omsorgspenger.personopplysninger.pdl.HentRelasjonPdlResponse
 import no.nav.omsorgspenger.personopplysninger.pdl.HentRelasjonPdlResponse.Relasjon
-import no.nav.omsorgspenger.personopplysninger.pdl.HentRelasjonPdlResponse.Person
 import no.nav.omsorgspenger.personopplysninger.pdl.PdlClient
 import org.slf4j.LoggerFactory
 
 internal class RelasjonMediator(
-    internal val pdlClient: PdlClient
-) {
+    internal val pdlClient: PdlClient) {
     private val secureLogger = LoggerFactory.getLogger("tjenestekall")
 
     suspend fun hentRelasjoner(
@@ -23,17 +23,17 @@ internal class RelasjonMediator(
             throw IllegalStateException("Fann feil vid hent av data fra PDL")
         }
 
-        var relasjonsListe = mutableListOf<Map<String, Any>>()
+        val relasjonsListe = mutableListOf<Map<String, Any>>()
 
-        val søkersAdresse = response.data.hentPersonBolk
-            .filter { it.ident == identitetsnummer && it.code == "ok" && it.person != null }
-            .first().person!!.hentAdresse()
+        val søkersAdresser = response.data.hentPersonBolk.first {
+            it.ident == identitetsnummer && it.code == "ok" && it.person != null
+        }.person!!.adresser()
 
         response.data.hentPersonBolk
             .filter { it.code == "ok" && it.ident != identitetsnummer && it.person != null }
             .map { personBolk ->
                 relasjonsListe.add(
-                    personBolk.håndterResponse(identitetsnummer, søkersAdresse)
+                    personBolk.håndterResponse(identitetsnummer, søkersAdresser)
                 )
             }
 
@@ -43,7 +43,8 @@ internal class RelasjonMediator(
                 relasjonsListe.add(
                     mapOf("relasjon" to "INGEN",
                         "borSammen" to false,
-                        "identitetsnummer" to it.ident)
+                        "identitetsnummer" to it.ident
+                    )
                 )
             }
 
@@ -54,9 +55,9 @@ internal class RelasjonMediator(
 
     private fun HentRelasjonPdlResponse.PersonBolk.håndterResponse(
         søkersIdentitetsnummer: String,
-        søkersAdresse: Adresse
+        søkersAdresser: List<Adresse>
     ): Map<String, Any> {
-        var resultat = mutableMapOf<String, Any>()
+        val resultat = mutableMapOf<String, Any>()
 
         if (this.person!!.familierelasjoner.isNotEmpty()) {
             this.person.familierelasjoner
@@ -71,7 +72,7 @@ internal class RelasjonMediator(
             resultat["relasjon"] = "INGEN"
         }
         resultat["identitetsnummer"] = this.ident
-        resultat["borSammen"] = this.person.hentAdresse() == søkersAdresse
+        resultat["borSammen"] = søkersAdresser.inneholderMinstEn(this.person.adresser())
 
         return resultat.toMap()
     }
@@ -83,66 +84,6 @@ internal class RelasjonMediator(
     private fun HentRelasjonPdlResponse.FamilieRelasjoner.erSøkersBarn(identitetsnummer: String): Boolean {
         return minRolleForPerson == Relasjon.BARN && relatertPersonsIdent == identitetsnummer
     }
-
-    private fun Person.hentAdresse(): Adresse {
-        return Adresse(
-            bostedMatrikkelId = bostedsadresse.firstOrNull { it?.vegadresse?.matrikkelId != null }?.vegadresse?.matrikkelId,
-            bostedVegadresse = bostedsadresse.firstOrNull { it.vegadresse?.adressenavn != null }?.vegadresse?.adressenavn,
-            deltBostedMatrikkelId = deltBosted.firstOrNull { it.vegadresse?.matrikkelId != null }?.vegadresse?.matrikkelId,
-            deltBostedVegadresse = deltBosted.firstOrNull { it.vegadresse?.adressenavn != null }?.vegadresse?.adressenavn
-        )
-    }
-
-    internal data class Adresse(
-        private val bostedMatrikkelId: String?,
-        private val bostedVegadresse: String?,
-        private val deltBostedMatrikkelId: String?,
-        private val deltBostedVegadresse: String?
-    ) {
-        override fun equals(other: Any?) : Boolean {
-            if(other !is Adresse) return false
-            val sammeVegAdresse = when {
-                erLike(bostedVegadresse, other.bostedVegadresse) -> true
-                erLike(bostedVegadresse, other.deltBostedVegadresse) -> true
-                erLike(deltBostedVegadresse, other.deltBostedVegadresse) -> true
-                erLike(deltBostedVegadresse, other.bostedVegadresse) -> true
-                else -> false
-            }
-            val sammeMatrikkelId = when {
-                erLike(bostedMatrikkelId, other.bostedMatrikkelId) -> true
-                erLike(bostedMatrikkelId, other.deltBostedMatrikkelId) -> true
-                erLike(deltBostedMatrikkelId, other.bostedMatrikkelId) -> true
-                erLike(deltBostedMatrikkelId, other.deltBostedMatrikkelId) -> true
-                else -> false
-            }
-
-            if(sammeVegAdresse) {
-                return if(bådeHarMatrikkelId(other)) {
-                    sammeMatrikkelId
-                } else {
-                    sammeVegAdresse
-                }
-            }
-
-            return sammeMatrikkelId
-        }
-
-        private fun erLike(a: String?, b: String?): Boolean {
-            val beggeSatt = (a != null && a.isNotBlank()) && (b != null && b.isNotBlank())
-            return beggeSatt && (a == b)
-        }
-
-        private fun bådeHarMatrikkelId(other: Any?): Boolean {
-            if(other !is Adresse) return false
-            if(!bostedMatrikkelId.isNullOrEmpty() && !other.bostedMatrikkelId.isNullOrEmpty()) return true
-            if(!deltBostedMatrikkelId.isNullOrEmpty() && !other.deltBostedMatrikkelId.isNullOrEmpty()) return true
-            if(!bostedMatrikkelId.isNullOrEmpty() && !other.deltBostedMatrikkelId.isNullOrEmpty()) return true
-            if(!deltBostedMatrikkelId.isNullOrEmpty() && !other.bostedMatrikkelId.isNullOrEmpty()) return true
-            return false
-        }
-
-    }
-
 }
 
 typealias RelasjonsLøsningsMap = Map<String, List<Map<String, Any>>>

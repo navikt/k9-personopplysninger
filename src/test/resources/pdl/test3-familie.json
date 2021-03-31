@@ -1,0 +1,117 @@
+{
+  "data": {
+    "hentPersonBolk": [
+      {
+        "ident": "08027622446",
+        "person": {
+          "familierelasjoner": [
+            {
+              "relatertPersonsIdent": "24021350083",
+              "relatertPersonsRolle": "BARN",
+              "minRolleForPerson": "MOR"
+            }
+          ],
+          "bostedsadresse": [
+            {
+              "vegadresse": {
+                "matrikkelId": null,
+                "adressenavn": "ØKLANDSVEGEN"
+              }
+            }
+          ],
+          "deltBosted": []
+        },
+        "code": "ok"
+      },
+      {
+        "ident": "24021350083",
+        "person": {
+          "familierelasjoner": [
+            {
+              "relatertPersonsIdent": "08027622446",
+              "relatertPersonsRolle": "MOR",
+              "minRolleForPerson": "BARN"
+            }
+          ],
+          "bostedsadresse": [
+            {
+              "vegadresse": {
+                "matrikkelId": "1234",
+                "adressenavn": null
+              }
+            }
+          ],
+          "deltBosted": [
+            {
+              "vegadresse": {
+                "matrikkelId": null,
+                "adressenavn": " ØKLANDSVEGEN"
+              }
+            }
+          ]
+        },
+        "code": "ok"
+      },
+      {
+        "ident": "24021350084",
+        "person": {
+          "familierelasjoner": [
+            {
+              "relatertPersonsIdent": "08027622446",
+              "relatertPersonsRolle": "MOR",
+              "minRolleForPerson": "BARN"
+            }
+          ],
+          "kontaktadresse": [
+            {
+              "postadresseIFrittFormat": {
+                "adresselinje3": " øklandsvegen 1234A OSLO"
+              }
+            }
+          ]
+        },
+        "code": "ok"
+      },
+      {
+        "ident": "29087623775",
+        "person": {
+          "familierelasjoner": [
+            {
+              "relatertPersonsIdent": "01041450025",
+              "relatertPersonsRolle": "BARN",
+              "minRolleForPerson": "FAR"
+            },
+            {
+              "relatertPersonsIdent": "11081350126",
+              "relatertPersonsRolle": "BARN",
+              "minRolleForPerson": "FAR"
+            },
+            {
+              "relatertPersonsIdent": "27121950125",
+              "relatertPersonsRolle": "BARN",
+              "minRolleForPerson": "FAR"
+            }
+          ],
+          "bostedsadresse": [
+            {
+              "vegadresse": {
+                "matrikkelId": null,
+                "adressenavn": "FOSSEKROAVEGEN"
+              }
+            }
+          ],
+          "deltBosted": [],
+          "oppholdsadresse": [
+            {
+              "vegadresse": {
+                "matrikkelId": null,
+                "adressenavn": "øklandsvegen "
+              }
+            }
+          ]
+        },
+        "code": "ok"
+      }
+    ]
+  }
+}

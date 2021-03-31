@@ -8,6 +8,8 @@ val dusseldorfKtorVersion = "1.5.2.1303b90"
 val jsonassertVersion = "1.5.0"
 val orgJsonVersion = "20210307"
 val mockkVersion = "1.11.0"
+val assertjVersion = "3.19.0"
+
 
 val mainClass = "no.nav.omsorgspenger.AppKt"
 
@@ -39,6 +41,8 @@ dependencies {
     testImplementation("io.ktor:ktor-server-test-host:$ktorVersion") {
         exclude(group = "org.eclipse.jetty")
     }
+    testImplementation("org.assertj:assertj-core:$assertjVersion")
+
 
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junitJupiterVersion")
 }
@@ -77,9 +81,9 @@ tasks {
         archiveClassifier.set("")
         manifest {
             attributes(
-                    mapOf(
-                            "Main-Class" to mainClass
-                    )
+                mapOf(
+                    "Main-Class" to mainClass
+                )
             )
         }
     }

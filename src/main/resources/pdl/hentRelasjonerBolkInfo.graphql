@@ -18,6 +18,23 @@ query($identer: [ID!]!) {
                     matrikkelId,
                     adressenavn
                 }
+            },
+            oppholdsadresse (historikk: false) {
+                vegadresse {
+                    matrikkelId,
+                    adressenavn
+                }
+            },
+            kontaktadresse (historikk: false) {
+                vegadresse {
+                    matrikkelId,
+                    adressenavn
+                },
+                postadresseIFrittFormat {
+                    adresselinje1,
+                    adresselinje2,
+                    adresselinje3
+                }
             }
         },
         code
