@@ -8,7 +8,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.*
 
 import org.junit.jupiter.api.Test
-import kotlin.test.assertNotEquals
+import org.junit.jupiter.api.assertThrows
 
 internal class AdresseTest {
 
@@ -62,6 +62,14 @@ internal class AdresseTest {
         val adresse1 = Adresse(matrikkelId = null, adressenavn = "ØKLANDSVEGEN")
         val adresse2 = Adresse(matrikkelId = null, adressenavn = "FOSSEKROAVEGEN")
         assertNotEquals(adresse1, adresse2)
+    }
+
+    @Test
+    fun `ugyldige adresser`() {
+        assertThrows<IllegalArgumentException> {Adresse(matrikkelId = null, adressenavn = null)}
+        assertThrows<IllegalArgumentException> {Adresse(matrikkelId = "", adressenavn = "")}
+        assertThrows<IllegalArgumentException> {Adresse(matrikkelId = "   ", adressenavn = "   ")}
+        assertThrows<IllegalArgumentException> {Adresse(matrikkelId = null, adressenavn = "   ")}
     }
 
     @Test

@@ -46,7 +46,7 @@ internal class PdlClient(
             contentType(ContentType.Application.Json)
             body = hentPersonInfoQuery(ident)
         }.receive<String>().also {
-            secureLogger.info("PdlResponse=${JSONObject(it)}")
+            secureLogger.info("PdlResponse[Person]=${JSONObject(it)}")
         }.let { objectMapper.readValue(it) }
     }
 
@@ -61,7 +61,7 @@ internal class PdlClient(
             contentType(ContentType.Application.Json)
             body = hentRelasjonInfoQuery(ident)
         }.receive<String>().also {
-            secureLogger.info("RelasjonPdlResponse=${JSONObject(it)}")
+            secureLogger.info("PdlResponse[Relasjon]=${JSONObject(it)}")
         }.let { objectMapper.readValue(it) }
     }
 
@@ -72,15 +72,15 @@ internal class PdlClient(
             header(HttpHeaders.Authorization, getAuthorizationHeader())
         }.execute().status
     }.fold(
-            onSuccess = { statusCode ->
-                when (HttpStatusCode.OK == statusCode) {
-                    true -> Healthy("PdlClient", "OK")
-                    false -> UnHealthy("PdlClient", "Feil: Mottok Http Status Code ${statusCode.value}")
-                }
-            },
-            onFailure = {
-                UnHealthy("PdlClient", "Feil: ${it.message}")
+        onSuccess = { statusCode ->
+            when (HttpStatusCode.OK == statusCode) {
+                true -> Healthy("PdlClient", "OK")
+                false -> UnHealthy("PdlClient", "Feil: Mottok Http Status Code ${statusCode.value}")
             }
+        },
+        onFailure = {
+            UnHealthy("PdlClient", "Feil: ${it.message}")
+        }
     )
 
     private companion object {

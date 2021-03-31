@@ -6,7 +6,7 @@ internal data class Adresse(
     internal val matrikkelId: String?,
     internal val adressenavn: String?) {
 
-    init { require(matrikkelId != null || adressenavn != null) {
+    init { require(!matrikkelId.isNullOrBlank() || !adressenavn.isNullOrBlank()) {
         "Adressen må inneholde enten matrikkelId eller adressenavn"
     }}
 
