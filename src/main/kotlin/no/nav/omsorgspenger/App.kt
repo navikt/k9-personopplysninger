@@ -12,14 +12,14 @@ import io.ktor.client.features.json.JsonFeature
 import io.ktor.features.ContentNegotiation
 import io.ktor.jackson.jackson
 import io.ktor.routing.routing
+import no.nav.helse.dusseldorf.ktor.health.*
 import java.net.URI
-import no.nav.helse.dusseldorf.ktor.health.HealthRoute
-import no.nav.helse.dusseldorf.ktor.health.HealthService
 import no.nav.helse.dusseldorf.oauth2.client.AccessTokenClient
 import no.nav.helse.dusseldorf.oauth2.client.ClientSecretAccessTokenClient
 import no.nav.helse.rapids_rivers.RapidApplication
 import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.k9.rapid.river.Environment
+import no.nav.k9.rapid.river.RapidsStateListener
 import no.nav.k9.rapid.river.hentRequiredEnv
 import no.nav.omsorgspenger.personopplysninger.pdl.PdlClient
 import no.nav.omsorgspenger.config.ServiceUser
@@ -32,7 +32,7 @@ import no.nav.omsorgspenger.personopplysninger.PersonopplysningerMediator
 fun main() {
     val applicationContext = ApplicationContext.Builder().build()
     RapidApplication.Builder(RapidApplication.RapidApplicationConfig.fromEnv(applicationContext.env))
-            .withKtorModule { omsorgspengerPersonopplysninger(applicationContext) }
+            .withKtorModule { k9Personopplysninger(applicationContext) }
             .build()
             .apply { registerApplicationContext(applicationContext) }
             .start()
@@ -56,25 +56,46 @@ internal fun RapidsConnection.registerApplicationContext(applicationContext: App
             applicationContext.stop()
         }
     })
+
+    register(RapidsStateListener(onStateChange = { state -> applicationContext.rapidsState = state }))
 }
 
-internal fun Application.omsorgspengerPersonopplysninger(applicationContext: ApplicationContext) {
+internal fun Application.k9Personopplysninger(applicationContext: ApplicationContext) {
     install(ContentNegotiation) {
         jackson()
     }
+
+    val healthService = HealthService(
+        healthChecks = applicationContext.healthChecks.plus(object : HealthCheck {
+            override suspend fun check() : Result {
+                val currentState = applicationContext.rapidsState
+                return when (currentState.isHealthy()) {
+                    true -> Healthy("RapidsConnection", currentState.asMap)
+                    false -> UnHealthy("RapidsConnection", currentState.asMap)
+                }
+            }
+        })
+    )
+
+    HealthReporter(
+        app = "k9-personopplysninger",
+        healthService = healthService
+    )
+
     routing {
-        HealthRoute(healthService = applicationContext.healthService)
+        HealthRoute(healthService = healthService)
     }
 }
 
 internal class ApplicationContext(
-        val env: Environment,
-        val serviceUser: ServiceUser,
-        val httpClient: HttpClient,
-        val pdlClient: PdlClient,
-        val personopplysningerMediator: PersonopplysningerMediator,
-        val relasjonMediator: RelasjonMediator,
-        val healthService: HealthService) {
+    val env: Environment,
+    val serviceUser: ServiceUser,
+    val httpClient: HttpClient,
+    val pdlClient: PdlClient,
+    val personopplysningerMediator: PersonopplysningerMediator,
+    val relasjonMediator: RelasjonMediator,
+    val healthChecks: Set<HealthCheck>) {
+    internal var rapidsState = RapidsStateListener.RapidsState.initialState()
 
     internal fun start() {}
     internal fun stop() {}
@@ -94,43 +115,43 @@ internal class ApplicationContext(
             }
             val benyttetServiceUser = serviceUser ?: serviceUser ?: readServiceUserCredentials()
             val benyttetAccessTokenClient = accessTokenClient ?: ClientSecretAccessTokenClient(
-                    clientId = benyttetEnv.hentRequiredEnv("AZURE_APP_CLIENT_ID"),
-                    clientSecret = benyttetEnv.hentRequiredEnv("AZURE_APP_CLIENT_SECRET"),
-                    tokenEndpoint = URI(benyttetEnv.hentRequiredEnv("AZURE_APP_TOKEN_ENDPOINT"))
+                clientId = benyttetEnv.hentRequiredEnv("AZURE_APP_CLIENT_ID"),
+                clientSecret = benyttetEnv.hentRequiredEnv("AZURE_APP_CLIENT_SECRET"),
+                tokenEndpoint = URI(benyttetEnv.hentRequiredEnv("AZURE_APP_TOKEN_ENDPOINT"))
             )
             val benyttetPdlClient = pdlClient ?: PdlClient(
-                    env = benyttetEnv,
-                    accessTokenClient = benyttetAccessTokenClient,
-                    serviceUser = benyttetServiceUser,
-                    httpClient = benyttetHttpClient,
-                    objectMapper = objectMapper
+                env = benyttetEnv,
+                accessTokenClient = benyttetAccessTokenClient,
+                serviceUser = benyttetServiceUser,
+                httpClient = benyttetHttpClient,
+                objectMapper = objectMapper
             )
 
             val benyttetPersonopplysningerMediator = personopplysningerMediator ?: PersonopplysningerMediator(
-                    pdlClient = benyttetPdlClient
+                pdlClient = benyttetPdlClient
             )
 
             val benyttetRelasjonMediator = relasjonMediator ?: RelasjonMediator(
-                    pdlClient = benyttetPdlClient
+                pdlClient = benyttetPdlClient
             )
 
             return ApplicationContext(
-                    env = benyttetEnv,
-                    serviceUser = benyttetServiceUser,
-                    httpClient = benyttetHttpClient,
-                    pdlClient = benyttetPdlClient,
-                    personopplysningerMediator = benyttetPersonopplysningerMediator,
-                    relasjonMediator = benyttetRelasjonMediator,
-                    healthService = HealthService(healthChecks = setOf(
-                            benyttetPdlClient
-                    ))
+                env = benyttetEnv,
+                serviceUser = benyttetServiceUser,
+                httpClient = benyttetHttpClient,
+                pdlClient = benyttetPdlClient,
+                personopplysningerMediator = benyttetPersonopplysningerMediator,
+                relasjonMediator = benyttetRelasjonMediator,
+                healthChecks = setOf(
+                    benyttetPdlClient
+                )
             )
         }
 
         private companion object {
             val objectMapper: ObjectMapper = jacksonObjectMapper()
-                    .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-                    .registerModule(JavaTimeModule())
+                .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                .registerModule(JavaTimeModule())
         }
     }
 }
