@@ -59,8 +59,8 @@ internal class RelasjonMediator(
     ): Map<String, Any> {
         val resultat = mutableMapOf<String, Any>()
 
-        if (this.person!!.familierelasjoner.isNotEmpty()) {
-            this.person.familierelasjoner
+        if (this.person!!.forelderBarnRelasjon.isNotEmpty()) {
+            this.person.forelderBarnRelasjon
                 .forEach { relatertPerson ->
                     if (relatertPerson.erSøkersBarn(søkersIdentitetsnummer)) {
                         resultat["relasjon"] = "BARN"
@@ -81,7 +81,7 @@ internal class RelasjonMediator(
         private const val RelasjonerKey = "relasjoner"
     }
 
-    private fun HentRelasjonPdlResponse.FamilieRelasjoner.erSøkersBarn(identitetsnummer: String): Boolean {
+    private fun HentRelasjonPdlResponse.ForelderBarnRelasjon.erSøkersBarn(identitetsnummer: String): Boolean {
         return minRolleForPerson == Relasjon.BARN && relatertPersonsIdent == identitetsnummer
     }
 }

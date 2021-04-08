@@ -15,14 +15,14 @@ data class HentRelasjonPdlResponse(
     )
 
     data class Person(
-        val familierelasjoner: List<FamilieRelasjoner> = emptyList(),
+        val forelderBarnRelasjon: List<ForelderBarnRelasjon> = emptyList(),
         val bostedsadresse: List<Adresse> = emptyList(),
         val deltBosted: List<Adresse> = emptyList(),
         val oppholdsadresse: List<Adresse> = emptyList(),
         val kontaktadresse: List<Adresse> = emptyList()
     )
 
-    data class FamilieRelasjoner(
+    data class ForelderBarnRelasjon(
         val relatertPersonsIdent: String?,
         val relatertPersonsRolle: Relasjon?,
         val minRolleForPerson: Relasjon
