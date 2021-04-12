@@ -3,8 +3,8 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 val junitJupiterVersion = "5.7.1"
 val k9rapidVersion = "1.04849d5"
-val ktorVersion = "1.5.2"
-val dusseldorfKtorVersion = "1.5.2.c37225a"
+val ktorVersion = "1.5.3"
+val dusseldorfKtorVersion = "1.5.3.d73b2af"
 val jsonassertVersion = "1.5.0"
 val orgJsonVersion = "20210307"
 val mockkVersion = "1.11.0"
@@ -14,7 +14,7 @@ val assertjVersion = "3.19.0"
 val mainClass = "no.nav.omsorgspenger.AppKt"
 
 plugins {
-    kotlin("jvm") version "1.4.31"
+    kotlin("jvm") version "1.4.32"
     id("com.github.johnrengelman.shadow") version "6.1.0"
 }
 

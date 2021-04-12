@@ -35,7 +35,7 @@ private fun WireMockServer.stubPdlHentFamilieFarOchMorMedEttBarn(): WireMockServ
                                             {
                                                 "ident": "1234",
                                                 "person": {
-                                                    "familierelasjoner": [
+                                                    "forelderBarnRelasjon": [
                                                         {
                                                             "relatertPersonsIdent": "1111",
                                                             "relatertPersonsRolle": "BARN",
@@ -56,7 +56,7 @@ private fun WireMockServer.stubPdlHentFamilieFarOchMorMedEttBarn(): WireMockServ
                                             {
                                                 "ident": "4321",
                                                 "person": {
-                                                    "familierelasjoner": [
+                                                    "forelderBarnRelasjon": [
                                                         {
                                                             "relatertPersonsIdent": "1111",
                                                             "relatertPersonsRolle": "BARN",
@@ -75,7 +75,7 @@ private fun WireMockServer.stubPdlHentFamilieFarOchMorMedEttBarn(): WireMockServ
                                             {
                                                 "ident": "1111",
                                                 "person": {
-                                                    "familierelasjoner": [
+                                                    "forelderBarnRelasjon": [
                                                         {
                                                             "relatertPersonsIdent": "4321",
                                                             "relatertPersonsRolle": "FAR",
@@ -135,7 +135,7 @@ private fun WireMockServer.stubPdlTvaPersonerEnNotFound(): WireMockServer {
                                             "code":"ok",
                                             "ident":"88888",
                                             "person":{
-                                               "familierelasjoner":[
+                                               "forelderBarnRelasjon":[
                                                   {
                                                      "minRolleForPerson":"BARN",
                                                      "relatertPersonsRolle":"MOR",
@@ -158,7 +158,7 @@ private fun WireMockServer.stubPdlTvaPersonerEnNotFound(): WireMockServer {
                                             "code":"ok",
                                             "ident":"99999",
                                             "person":{
-                                               "familierelasjoner":[
+                                               "forelderBarnRelasjon":[
                                                   {
                                                      "minRolleForPerson":"MOR",
                                                      "relatertPersonsRolle":"BARN",
