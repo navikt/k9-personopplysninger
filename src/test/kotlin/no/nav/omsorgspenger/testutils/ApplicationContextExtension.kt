@@ -29,7 +29,7 @@ internal class ApplicationContextExtension : ParameterResolver {
         private val applicationContextBuilder = ApplicationContext.Builder(
                 env = mapOf(
                     "PDL_BASE_URL" to wireMockServer.pdlApiBaseUrl(),
-                    "PROXY_SCOPES" to "test/.default",
+                    "PDL_SCOPES" to "test/.default",
                     "AZURE_V2_ISSUER" to Azure.V2_0.getIssuer(),
                     "AZURE_V2_JWKS_URI" to (wireMockServer.getAzureV2JwksUrl()),
                     "AZURE_APP_CLIENT_ID" to "k9-personopplysninger"

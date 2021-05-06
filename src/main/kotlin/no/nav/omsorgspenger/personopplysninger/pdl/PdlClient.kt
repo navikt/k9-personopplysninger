@@ -26,20 +26,17 @@ import org.slf4j.LoggerFactory
 internal class PdlClient(
         env: Environment,
         accessTokenClient: AccessTokenClient,
-        private val serviceUser: ServiceUser,
         private val httpClient: HttpClient,
         private val objectMapper: ObjectMapper
 ) : HealthCheck {
 
     private val cachedAccessTokenClient = CachedAccessTokenClient(accessTokenClient)
     private val pdlBaseUrl = env.hentRequiredEnv("PDL_BASE_URL")
-    private val proxyScope = setOf(env.hentRequiredEnv("PROXY_SCOPES"))
+    private val pdlScope = setOf(env.hentRequiredEnv("PDL_SCOPES"))
 
     suspend fun getPersonInfo(ident: Set<String>, correlationId: String): HentPdlResponse {
         return httpClient.post<HttpStatement>(pdlBaseUrl) {
             header(HttpHeaders.Authorization, getAuthorizationHeader())
-            header("Nav-Consumer-Token", getAuthorizationHeader())
-            header("Nav-Consumer-Id", serviceUser.username)
             header("Nav-Call-Id", correlationId)
             header("TEMA", "OMS")
             accept(ContentType.Application.Json)
@@ -53,8 +50,6 @@ internal class PdlClient(
     suspend fun HentRelasjonInfo(ident: Set<String>, correlationId: String): HentRelasjonPdlResponse {
         return httpClient.post<HttpStatement>(pdlBaseUrl) {
             header(HttpHeaders.Authorization, getAuthorizationHeader())
-            header("Nav-Consumer-Token", getAuthorizationHeader())
-            header("Nav-Consumer-Id", serviceUser.username)
             header("Nav-Call-Id", correlationId)
             header("TEMA", "OMS")
             accept(ContentType.Application.Json)
@@ -65,7 +60,7 @@ internal class PdlClient(
         }.let { objectMapper.readValue(it) }
     }
 
-    private fun getAuthorizationHeader() = cachedAccessTokenClient.getAccessToken(proxyScope).asAuthoriationHeader()
+    private fun getAuthorizationHeader() = cachedAccessTokenClient.getAccessToken(pdlScope).asAuthoriationHeader()
 
     override suspend fun check() = kotlin.runCatching {
         httpClient.options<HttpStatement>(pdlBaseUrl) {
