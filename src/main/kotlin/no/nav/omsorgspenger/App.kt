@@ -122,7 +122,6 @@ internal class ApplicationContext(
             val benyttetPdlClient = pdlClient ?: PdlClient(
                 env = benyttetEnv,
                 accessTokenClient = benyttetAccessTokenClient,
-                serviceUser = benyttetServiceUser,
                 httpClient = benyttetHttpClient,
                 objectMapper = objectMapper
             )
