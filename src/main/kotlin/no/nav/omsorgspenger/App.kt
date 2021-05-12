@@ -22,8 +22,6 @@ import no.nav.k9.rapid.river.Environment
 import no.nav.k9.rapid.river.RapidsStateListener
 import no.nav.k9.rapid.river.hentRequiredEnv
 import no.nav.omsorgspenger.personopplysninger.pdl.PdlClient
-import no.nav.omsorgspenger.config.ServiceUser
-import no.nav.omsorgspenger.config.readServiceUserCredentials
 import no.nav.omsorgspenger.personopplysninger.RelasjonMediator
 import no.nav.omsorgspenger.personopplysninger.HentRelasjoner
 import no.nav.omsorgspenger.personopplysninger.HentPersonopplysninger
@@ -89,7 +87,6 @@ internal fun Application.k9Personopplysninger(applicationContext: ApplicationCon
 
 internal class ApplicationContext(
     val env: Environment,
-    val serviceUser: ServiceUser,
     val httpClient: HttpClient,
     val pdlClient: PdlClient,
     val personopplysningerMediator: PersonopplysningerMediator,
@@ -102,7 +99,6 @@ internal class ApplicationContext(
 
     internal class Builder(
             var env: Environment? = null,
-            var serviceUser: ServiceUser? = null,
             var httpClient: HttpClient? = null,
             var accessTokenClient: AccessTokenClient? = null,
             var pdlClient: PdlClient? = null,
@@ -113,11 +109,10 @@ internal class ApplicationContext(
             val benyttetHttpClient = httpClient ?: HttpClient {
                 install(JsonFeature) { serializer = JacksonSerializer(objectMapper) }
             }
-            val benyttetServiceUser = serviceUser ?: serviceUser ?: readServiceUserCredentials()
             val benyttetAccessTokenClient = accessTokenClient ?: ClientSecretAccessTokenClient(
                 clientId = benyttetEnv.hentRequiredEnv("AZURE_APP_CLIENT_ID"),
                 clientSecret = benyttetEnv.hentRequiredEnv("AZURE_APP_CLIENT_SECRET"),
-                tokenEndpoint = URI(benyttetEnv.hentRequiredEnv("AZURE_APP_TOKEN_ENDPOINT"))
+                tokenEndpoint = URI(benyttetEnv.hentRequiredEnv("AZURE_OPENID_CONFIG_TOKEN_ENDPOINT"))
             )
             val benyttetPdlClient = pdlClient ?: PdlClient(
                 env = benyttetEnv,
@@ -136,7 +131,6 @@ internal class ApplicationContext(
 
             return ApplicationContext(
                 env = benyttetEnv,
-                serviceUser = benyttetServiceUser,
                 httpClient = benyttetHttpClient,
                 pdlClient = benyttetPdlClient,
                 personopplysningerMediator = benyttetPersonopplysningerMediator,

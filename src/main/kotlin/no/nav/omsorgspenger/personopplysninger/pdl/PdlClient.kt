@@ -17,7 +17,6 @@ import no.nav.helse.dusseldorf.ktor.health.Healthy
 import no.nav.helse.dusseldorf.ktor.health.UnHealthy
 import no.nav.helse.dusseldorf.oauth2.client.AccessTokenClient
 import no.nav.helse.dusseldorf.oauth2.client.CachedAccessTokenClient
-import no.nav.omsorgspenger.config.ServiceUser
 import no.nav.k9.rapid.river.Environment
 import no.nav.k9.rapid.river.hentRequiredEnv
 import org.json.JSONObject
