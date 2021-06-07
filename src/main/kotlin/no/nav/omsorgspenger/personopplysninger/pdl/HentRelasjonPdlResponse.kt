@@ -48,6 +48,6 @@ data class HentRelasjonPdlResponse(
         BARN,
         FAR,
         MOR,
-        ANNEN_MOR;
+        MEDMOR;
     }
 }
