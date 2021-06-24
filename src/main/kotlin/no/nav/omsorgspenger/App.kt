@@ -1,14 +1,7 @@
 package no.nav.omsorgspenger
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.SerializationFeature
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import io.ktor.application.Application
 import io.ktor.application.install
-import io.ktor.client.HttpClient
-import io.ktor.client.features.json.JacksonSerializer
-import io.ktor.client.features.json.JsonFeature
 import io.ktor.features.ContentNegotiation
 import io.ktor.jackson.jackson
 import io.ktor.routing.routing
@@ -87,7 +80,6 @@ internal fun Application.k9Personopplysninger(applicationContext: ApplicationCon
 
 internal class ApplicationContext(
     val env: Environment,
-    val httpClient: HttpClient,
     val pdlClient: PdlClient,
     val personopplysningerMediator: PersonopplysningerMediator,
     val relasjonMediator: RelasjonMediator,
@@ -98,17 +90,15 @@ internal class ApplicationContext(
     internal fun stop() {}
 
     internal class Builder(
-            var env: Environment? = null,
-            var httpClient: HttpClient? = null,
-            var accessTokenClient: AccessTokenClient? = null,
-            var pdlClient: PdlClient? = null,
-            var personopplysningerMediator: PersonopplysningerMediator? = null,
-            var relasjonMediator: RelasjonMediator? = null) {
+        var env: Environment? = null,
+        var accessTokenClient: AccessTokenClient? = null,
+        var pdlClient: PdlClient? = null,
+        var personopplysningerMediator: PersonopplysningerMediator? = null,
+        var relasjonMediator: RelasjonMediator? = null) {
+
         internal fun build(): ApplicationContext {
             val benyttetEnv = env ?: System.getenv()
-            val benyttetHttpClient = httpClient ?: HttpClient {
-                install(JsonFeature) { serializer = JacksonSerializer(objectMapper) }
-            }
+
             val benyttetAccessTokenClient = accessTokenClient ?: ClientSecretAccessTokenClient(
                 clientId = benyttetEnv.hentRequiredEnv("AZURE_APP_CLIENT_ID"),
                 clientSecret = benyttetEnv.hentRequiredEnv("AZURE_APP_CLIENT_SECRET"),
@@ -116,9 +106,7 @@ internal class ApplicationContext(
             )
             val benyttetPdlClient = pdlClient ?: PdlClient(
                 env = benyttetEnv,
-                accessTokenClient = benyttetAccessTokenClient,
-                httpClient = benyttetHttpClient,
-                objectMapper = objectMapper
+                accessTokenClient = benyttetAccessTokenClient
             )
 
             val benyttetPersonopplysningerMediator = personopplysningerMediator ?: PersonopplysningerMediator(
@@ -131,7 +119,6 @@ internal class ApplicationContext(
 
             return ApplicationContext(
                 env = benyttetEnv,
-                httpClient = benyttetHttpClient,
                 pdlClient = benyttetPdlClient,
                 personopplysningerMediator = benyttetPersonopplysningerMediator,
                 relasjonMediator = benyttetRelasjonMediator,
@@ -139,12 +126,6 @@ internal class ApplicationContext(
                     benyttetPdlClient
                 )
             )
-        }
-
-        private companion object {
-            val objectMapper: ObjectMapper = jacksonObjectMapper()
-                .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-                .registerModule(JavaTimeModule())
         }
     }
 }

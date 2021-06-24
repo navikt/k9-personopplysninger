@@ -34,8 +34,8 @@ internal class PdlClientTest(
     }
 
     @Test
-    fun `Inget svar fra PDL kaster illegalstate exception`() {
-        assertThrows(IllegalStateException::class.java) {
+    fun `Inget svar fra PDL kaster illegalargument exception`() {
+        assertThrows(IllegalArgumentException::class.java){
              runBlocking {
                 pdlClient.getPersonInfo(setOf("500"), "testId")
             }
