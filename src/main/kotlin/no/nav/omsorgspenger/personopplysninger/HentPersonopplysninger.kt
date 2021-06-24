@@ -18,13 +18,11 @@ internal class HentPersonopplysninger(
     init {
         River(rapidsConnection).apply {
             validate { packet ->
-                packet.skalLøseBehov(BEHOV)
-                packet.aktueltBehovOrNull()?.also { aktueltBehov ->
+                packet.skalLøseBehov(BEHOV)?.also { aktueltBehov ->
                     packet.require(aktueltBehov.IDENTITETSNUMMER()) { it.requireArray { entry -> entry is TextNode } }
                     packet.require(aktueltBehov.ATTRIBUTER()) { it.require() }
                     packet.interestedIn(aktueltBehov.MÅ_FINNE_ALLE_PERSONER())
                 }
-
             }
         }.register(this)
     }
