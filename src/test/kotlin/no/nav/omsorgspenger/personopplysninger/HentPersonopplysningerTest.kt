@@ -54,6 +54,32 @@ internal class HentPersonopplysningerTest(
     }
 
     @Test
+    fun `Hente navn med suffixed behov`() {
+        val behov = "$BEHOV@journalføring"
+
+        val (_, behovssekvens) = nyBehovsSekvens(
+            ident = setOf("01019911111"),
+            attributer = setOf("navn"),
+            behov = behov
+        )
+        rapid.sendTestMessage(behovssekvens)
+
+        @Language("JSON")
+        val expectedJson = """
+        {
+            "navn": {
+                "etternavn": "MASKIN",
+                "fornavn": "LITEN",
+                "mellomnavn": null
+            }
+        }
+        """.trimIndent()
+
+        expectedJson.assertJsonEquals(rapid.hentLøsning(ident = "01019911111", behov = behov))
+        assertEquals(1, rapid.antalLøsninger(behov = behov))
+    }
+
+    @Test
     fun `River tar emot och løser behov om aktørId og enhetsnummer`() {
         val (_, behovssekvens) = nyBehovsSekvens(setOf("01019911111"),
             setOf("aktørId", "enhetsnummer"))
@@ -220,25 +246,26 @@ internal class HentPersonopplysningerTest(
         return this.inspektør.message(0)["@løsninger"]["HentPersonopplysninger"]["fellesopplysninger"].toString()
     }
 
-    private fun TestRapid.hentLøsning(ident: String): String {
-        return this.inspektør.message(0)["@løsninger"]["HentPersonopplysninger"]["personopplysninger"].get(ident).toString()
+    private fun TestRapid.hentLøsning(ident: String, behov: String = BEHOV): String {
+        return this.inspektør.message(0)["@løsninger"][behov]["personopplysninger"].get(ident).toString()
     }
 
-    private fun TestRapid.antalLøsninger(): Int {
-        return this.inspektør.message(0)["@løsninger"]["HentPersonopplysninger"]["personopplysninger"].size()
+    private fun TestRapid.antalLøsninger(behov: String = BEHOV): Int {
+        return this.inspektør.message(0)["@løsninger"][behov]["personopplysninger"].size()
     }
 
     private fun String.assertJsonEquals(actual: String) = JSONAssert.assertEquals(this, actual, true)
 
     private fun nyBehovsSekvens(
-            ident: Set<String>,
-            attributer: Set<String>? = setOf("navn", "fødselsdato", "adressebeskyttelse", "aktørId"),
+        ident: Set<String>,
+        attributer: Set<String>? = setOf("navn", "fødselsdato", "adressebeskyttelse", "aktørId"),
+        behov: String = BEHOV
     ) = Behovssekvens(
         id = "01BX5ZZKBKACTAV9WEVGEMMVS0",
         correlationId = UUID.randomUUID().toString(),
         behov = arrayOf(
             Behov(
-                navn = BEHOV,
+                navn = behov,
                 input = mapOf(
                     "identitetsnummer" to ident,
                     "attributter" to attributer
