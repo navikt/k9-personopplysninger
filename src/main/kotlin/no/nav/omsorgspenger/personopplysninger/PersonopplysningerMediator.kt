@@ -60,7 +60,11 @@ internal class PersonopplysningerMediator(
                 ?.map {
                     it.person?.let { person ->
                         person.navn.firstOrNull()?.let { navn ->
-                            navn.asMap().let { attributer.put("navn", it) }
+                            val sammensatt = when (navn.mellomnavn) {
+                                null -> "${navn.fornavn} ${navn.etternavn}"
+                                else -> "${navn.fornavn} ${navn.mellomnavn} ${navn.etternavn}"
+                            }
+                            navn.asMap().plus("sammensatt" to sammensatt).let { attributer.put("navn", it) }
                         }
                         person.foedsel.firstOrNull()?.let { foedsel ->
                             foedsel.foedselsdato.let { attributer.put("fødselsdato", it) }

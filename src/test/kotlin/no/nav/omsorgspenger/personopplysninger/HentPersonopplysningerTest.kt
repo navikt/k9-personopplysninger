@@ -40,7 +40,8 @@ internal class HentPersonopplysningerTest(
             "navn": {
                 "etternavn": "MASKIN",
                 "fornavn": "LITEN",
-                "mellomnavn": null
+                "mellomnavn": null,
+                "sammensatt": "LITEN MASKIN"
             },
             "fødselsdato": "1990-07-04",
             "adressebeskyttelse": "UGRADERT",
@@ -70,7 +71,8 @@ internal class HentPersonopplysningerTest(
             "navn": {
                 "etternavn": "MASKIN",
                 "fornavn": "LITEN",
-                "mellomnavn": null
+                "mellomnavn": null,
+                "sammensatt": "LITEN MASKIN"
             }
         }
         """.trimIndent()
@@ -134,7 +136,8 @@ internal class HentPersonopplysningerTest(
             "navn": {
                 "etternavn": "MASKIN",
                 "fornavn": "LITEN",
-                "mellomnavn": null
+                "mellomnavn": null,
+                "sammensatt": "LITEN MASKIN"
             },
             "fødselsdato": "1990-07-04",
             "adressebeskyttelse": "UGRADERT",
@@ -151,7 +154,7 @@ internal class HentPersonopplysningerTest(
         val (_, behovssekvens) = nyBehovsSekvens(setOf("123123"), setOf("navn", "fødselsdato"))
         rapid.sendTestMessage(behovssekvens)
 
-        """{"navn":{"etternavn":"MASKIN","fornavn":"STOR","mellomnavn":"MELLAN"},"fødselsdato":"1999-01-01"}""".assertJsonEquals(
+        """{"navn":{"etternavn":"MASKIN","fornavn":"STOR","mellomnavn":"MELLAN","sammensatt":"STOR MELLAN MASKIN"},"fødselsdato":"1999-01-01"}""".assertJsonEquals(
             rapid.hentLøsning("123123")
         )
 
@@ -162,7 +165,7 @@ internal class HentPersonopplysningerTest(
         val (_, behovssekvens) = nyBehovsSekvens(setOf("123123"), setOf("navn"))
         rapid.sendTestMessage(behovssekvens)
 
-        """{"navn":{"etternavn":"MASKIN","fornavn":"STOR","mellomnavn":"MELLAN"}}""".assertJsonEquals(
+        """{"navn":{"etternavn":"MASKIN","fornavn":"STOR","mellomnavn":"MELLAN", "sammensatt":"STOR MELLAN MASKIN"}}""".assertJsonEquals(
             rapid.hentLøsning("123123")
         )
         assertEquals(1, rapid.antalLøsninger())
@@ -189,7 +192,8 @@ internal class HentPersonopplysningerTest(
             "navn": {
                 "etternavn": "MASKIN",
                 "fornavn": "LITEN",
-                "mellomnavn": null
+                "mellomnavn": null,
+                "sammensatt": "LITEN MASKIN"
             },
             "fødselsdato": "1990-07-04",
             "adressebeskyttelse": "UGRADERT",
