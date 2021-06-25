@@ -40,7 +40,8 @@ internal class HentPersonopplysningerTest(
             "navn": {
                 "etternavn": "MASKIN",
                 "fornavn": "LITEN",
-                "mellomnavn": null
+                "mellomnavn": null,
+                "sammensatt": "LITEN MASKIN"
             },
             "fødselsdato": "1990-07-04",
             "adressebeskyttelse": "UGRADERT",
@@ -51,6 +52,33 @@ internal class HentPersonopplysningerTest(
 
         expectedJson.assertJsonEquals(rapid.hentLøsning("01019911111"))
         assertEquals(1, rapid.antalLøsninger())
+    }
+
+    @Test
+    fun `Hente navn med suffixed behov`() {
+        val behov = "$BEHOV@journalføring"
+
+        val (_, behovssekvens) = nyBehovsSekvens(
+            ident = setOf("01019911111"),
+            attributer = setOf("navn"),
+            behov = behov
+        )
+        rapid.sendTestMessage(behovssekvens)
+
+        @Language("JSON")
+        val expectedJson = """
+        {
+            "navn": {
+                "etternavn": "MASKIN",
+                "fornavn": "LITEN",
+                "mellomnavn": null,
+                "sammensatt": "LITEN MASKIN"
+            }
+        }
+        """.trimIndent()
+
+        expectedJson.assertJsonEquals(rapid.hentLøsning(ident = "01019911111", behov = behov))
+        assertEquals(1, rapid.antalLøsninger(behov = behov))
     }
 
     @Test
@@ -108,7 +136,8 @@ internal class HentPersonopplysningerTest(
             "navn": {
                 "etternavn": "MASKIN",
                 "fornavn": "LITEN",
-                "mellomnavn": null
+                "mellomnavn": null,
+                "sammensatt": "LITEN MASKIN"
             },
             "fødselsdato": "1990-07-04",
             "adressebeskyttelse": "UGRADERT",
@@ -125,7 +154,7 @@ internal class HentPersonopplysningerTest(
         val (_, behovssekvens) = nyBehovsSekvens(setOf("123123"), setOf("navn", "fødselsdato"))
         rapid.sendTestMessage(behovssekvens)
 
-        """{"navn":{"etternavn":"MASKIN","fornavn":"STOR","mellomnavn":"MELLAN"},"fødselsdato":"1999-01-01"}""".assertJsonEquals(
+        """{"navn":{"etternavn":"MASKIN","fornavn":"STOR","mellomnavn":"MELLAN","sammensatt":"STOR MELLAN MASKIN"},"fødselsdato":"1999-01-01"}""".assertJsonEquals(
             rapid.hentLøsning("123123")
         )
 
@@ -136,7 +165,7 @@ internal class HentPersonopplysningerTest(
         val (_, behovssekvens) = nyBehovsSekvens(setOf("123123"), setOf("navn"))
         rapid.sendTestMessage(behovssekvens)
 
-        """{"navn":{"etternavn":"MASKIN","fornavn":"STOR","mellomnavn":"MELLAN"}}""".assertJsonEquals(
+        """{"navn":{"etternavn":"MASKIN","fornavn":"STOR","mellomnavn":"MELLAN", "sammensatt":"STOR MELLAN MASKIN"}}""".assertJsonEquals(
             rapid.hentLøsning("123123")
         )
         assertEquals(1, rapid.antalLøsninger())
@@ -163,7 +192,8 @@ internal class HentPersonopplysningerTest(
             "navn": {
                 "etternavn": "MASKIN",
                 "fornavn": "LITEN",
-                "mellomnavn": null
+                "mellomnavn": null,
+                "sammensatt": "LITEN MASKIN"
             },
             "fødselsdato": "1990-07-04",
             "adressebeskyttelse": "UGRADERT",
@@ -220,25 +250,26 @@ internal class HentPersonopplysningerTest(
         return this.inspektør.message(0)["@løsninger"]["HentPersonopplysninger"]["fellesopplysninger"].toString()
     }
 
-    private fun TestRapid.hentLøsning(ident: String): String {
-        return this.inspektør.message(0)["@løsninger"]["HentPersonopplysninger"]["personopplysninger"].get(ident).toString()
+    private fun TestRapid.hentLøsning(ident: String, behov: String = BEHOV): String {
+        return this.inspektør.message(0)["@løsninger"][behov]["personopplysninger"].get(ident).toString()
     }
 
-    private fun TestRapid.antalLøsninger(): Int {
-        return this.inspektør.message(0)["@løsninger"]["HentPersonopplysninger"]["personopplysninger"].size()
+    private fun TestRapid.antalLøsninger(behov: String = BEHOV): Int {
+        return this.inspektør.message(0)["@løsninger"][behov]["personopplysninger"].size()
     }
 
     private fun String.assertJsonEquals(actual: String) = JSONAssert.assertEquals(this, actual, true)
 
     private fun nyBehovsSekvens(
-            ident: Set<String>,
-            attributer: Set<String>? = setOf("navn", "fødselsdato", "adressebeskyttelse", "aktørId"),
+        ident: Set<String>,
+        attributer: Set<String>? = setOf("navn", "fødselsdato", "adressebeskyttelse", "aktørId"),
+        behov: String = BEHOV
     ) = Behovssekvens(
         id = "01BX5ZZKBKACTAV9WEVGEMMVS0",
         correlationId = UUID.randomUUID().toString(),
         behov = arrayOf(
             Behov(
-                navn = BEHOV,
+                navn = behov,
                 input = mapOf(
                     "identitetsnummer" to ident,
                     "attributter" to attributer

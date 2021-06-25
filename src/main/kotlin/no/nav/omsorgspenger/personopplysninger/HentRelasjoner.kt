@@ -14,10 +14,9 @@ import no.nav.k9.rapid.river.skalLøseBehov
 import org.slf4j.LoggerFactory
 
 internal class HentRelasjoner(
-        rapidsConnection: RapidsConnection,
-        internal val relasjonMediator: RelasjonMediator) : BehovssekvensPacketListener(
-        logger = LoggerFactory.getLogger(HentRelasjoner::class.java)
-) {
+    rapidsConnection: RapidsConnection,
+    internal val relasjonMediator: RelasjonMediator) : BehovssekvensPacketListener(
+    logger = LoggerFactory.getLogger(HentRelasjoner::class.java)) {
 
     init {
         River(rapidsConnection).apply {
@@ -30,7 +29,7 @@ internal class HentRelasjoner(
     }
 
     override fun handlePacket(id: String, packet: JsonMessage): Boolean {
-        logger.info("Mottatt $BEHOV").also { incMottattBehov(BEHOV) }
+        logger.info("Mottatt $BEHOV")
 
         val identitetsnummer = packet[IDENTITETSNUMMER].asText()
 
@@ -52,19 +51,14 @@ internal class HentRelasjoner(
     }
 
     override fun onSent(id: String, packet: JsonMessage) {
-        logger.info("Løst behov $BEHOV").also { incLostBehov(BEHOV) }
+        logger.info("Løst behov $BEHOV")
     }
 
-    private fun hentRelasjonerFor(identitetsnummer: String, til: Set<String>, correlationId: String) = try {
-        runBlocking {
-            relasjonMediator.hentRelasjoner(
-                identitetsnummer = identitetsnummer,
-                til = til,
-                correlationId = correlationId)
-        }
-    } catch (cause: Throwable) {
-        incBehandlingFeil(BEHOV)
-        throw cause
+    private fun hentRelasjonerFor(identitetsnummer: String, til: Set<String>, correlationId: String) = runBlocking {
+        relasjonMediator.hentRelasjoner(
+            identitetsnummer = identitetsnummer,
+            til = til,
+            correlationId = correlationId)
     }
 
     internal companion object {
