@@ -3,11 +3,11 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 val junitJupiterVersion = "5.7.2"
 val k9rapidVersion = "1.20210625095239-653e3a9"
-val ktorVersion = "1.6.0"
+val ktorVersion = "1.6.1"
 val dusseldorfKtorVersion = "2.1.6.0-1516d10"
 val jsonassertVersion = "1.5.0"
 val orgJsonVersion = "20210307"
-val mockkVersion = "1.11.0"
+val mockkVersion = "1.12.0"
 val assertjVersion = "3.20.2"
 
 
@@ -19,8 +19,8 @@ plugins {
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_15
-    targetCompatibility = JavaVersion.VERSION_15
+    sourceCompatibility = JavaVersion.VERSION_16
+    targetCompatibility = JavaVersion.VERSION_16
 }
 
 dependencies {
@@ -58,17 +58,17 @@ repositories {
             password = project.findProperty("gpr.key") as String? ?: System.getenv("GITHUB_TOKEN")
         }
     }
-    maven { url = uri("https://jitpack.io") }
+    maven("https://jitpack.io")
     mavenCentral()
 }
 
 tasks {
     withType<KotlinCompile> {
-        kotlinOptions.jvmTarget = "15"
+        kotlinOptions.jvmTarget = "16"
     }
 
     named<KotlinCompile>("compileTestKotlin") {
-        kotlinOptions.jvmTarget = "15"
+        kotlinOptions.jvmTarget = "16"
     }
 
     withType<Test> {
@@ -91,7 +91,7 @@ tasks {
     }
 
     withType<Wrapper> {
-        gradleVersion = "7.1"
+        gradleVersion = "7.1.1"
     }
 
 }

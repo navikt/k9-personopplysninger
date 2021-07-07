@@ -1,10 +1,10 @@
 package no.nav.omsorgspenger.personopplysninger.pdl
 
-import kotlin.test.assertNull
 import kotlinx.coroutines.runBlocking
 import no.nav.omsorgspenger.ApplicationContext
 import no.nav.omsorgspenger.testutils.ApplicationContextExtension
 import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith

@@ -1,6 +1,5 @@
 package no.nav.omsorgspenger.testutils
 
-import io.ktor.util.KtorExperimentalAPI
 import no.nav.helse.dusseldorf.testsupport.wiremock.WireMockBuilder
 import no.nav.helse.dusseldorf.testsupport.wiremock.getAzureV2TokenUrl
 import no.nav.omsorgspenger.ApplicationContext
@@ -13,7 +12,6 @@ import org.junit.jupiter.api.extension.ParameterResolver
 
 internal class ApplicationContextExtension : ParameterResolver {
 
-    @KtorExperimentalAPI
     internal companion object {
         private val wireMockServer = WireMockBuilder()
                 .withAzureSupport()
@@ -44,12 +42,10 @@ internal class ApplicationContextExtension : ParameterResolver {
         )
     }
 
-    @KtorExperimentalAPI
     override fun supportsParameter(parameterContext: ParameterContext, extensionContext: ExtensionContext): Boolean {
         return støttedeParametre.contains(parameterContext.parameter.type)
     }
 
-    @KtorExperimentalAPI
     override fun resolveParameter(parameterContext: ParameterContext, extensionContext: ExtensionContext): Any {
         return when (parameterContext.parameter.type) {
             ApplicationContext::class.java -> applicationContext
