@@ -2,9 +2,9 @@ package no.nav.omsorgspenger.personopplysninger
 
 import no.nav.omsorgspenger.personopplysninger.Enhet.Companion.adressebeskyttelseTilEnhet
 import no.nav.omsorgspenger.personopplysninger.Enhet.Companion.fellesEnhet
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
-import kotlin.test.assertEquals
 
 internal class EnhetTest {
 

@@ -1,8 +1,7 @@
 package no.nav.omsorgspenger.personopplysninger.pdl
 
-import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
-import kotlin.test.assertEquals
 
 internal class PdlDomeneTest {
 
