@@ -45,8 +45,8 @@ jobs:
       - uses: docker/login-action@v1
         with:
             registry: ghcr.io
-            username: ${GITHUB_REPOSITORY}
-            password: ${GITHUB_TOKEN}
+            username: ${{ github.actor }}
+            password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Sett tag for docker
         run: |
