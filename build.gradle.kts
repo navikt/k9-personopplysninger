@@ -53,7 +53,7 @@ repositories {
         name = "GitHubPackages"
         url = uri("https://maven.pkg.github.com/navikt/k9-rapid")
         credentials {
-            username = project.findProperty("gpr.user") as String? ?: System.getenv("GITHUB_ACTOR")
+            username = project.findProperty("gpr.user") as String? ?: System.getenv("GITHUB_USERNAME")
             password = project.findProperty("gpr.key") as String? ?: System.getenv("GITHUB_TOKEN")
         }
     }
