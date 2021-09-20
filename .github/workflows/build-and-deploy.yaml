@@ -52,7 +52,7 @@ jobs:
       - name: Bygg & last opp Docker image
         run: |
           docker build --pull --tag ${BASE_IMAGE}:${TAG} --tag ${BASE_IMAGE}:latest .
-          docker push --all-tags
+          docker push ${BASE_IMAGE} --all-tags
 
       - name: Deploy til dev-gcp
         uses: nais/deploy/actions/deploy@v1
