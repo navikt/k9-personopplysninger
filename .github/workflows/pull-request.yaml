@@ -32,6 +32,6 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle.kts') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
-      - name: Bygge JAR
+      - name: Kjør tester & bygg JAR
         run: |
           ./gradlew test shadowjar
