@@ -12,7 +12,7 @@ internal enum class Enhet(internal val nummer: String, internal val type: String
         } ?: throw IllegalArgumentException("Finner ikke enhet med enhetsnummer $this")
 
         internal fun String.adressebeskyttelseTilEnhet() = when {
-            this.toUpperCase() in tilSykdomIFamilien -> SykdomIFamilien
+            this.uppercase() in tilSykdomIFamilien -> SykdomIFamilien
             else -> Vikafossen
         }
 

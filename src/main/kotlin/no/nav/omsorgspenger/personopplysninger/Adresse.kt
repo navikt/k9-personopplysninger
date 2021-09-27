@@ -28,7 +28,7 @@ internal data class Adresse(
             true -> null
             false -> this
         }
-        private fun String.trimAdressenavn() = blankToNull()?.trim()?.toUpperCase()
+        private fun String.trimAdressenavn() = blankToNull()?.trim()?.uppercase()
         
         internal fun List<Adresse>.inneholderMinstEn(andreAdresser: List<Adresse>) =
             intersect(andreAdresser).isNotEmpty()

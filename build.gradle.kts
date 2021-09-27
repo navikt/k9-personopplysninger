@@ -1,10 +1,10 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-val junitJupiterVersion = "5.8.0"
+val junitJupiterVersion = "5.8.1"
 val k9rapidVersion = "1.20210920084849-2ac86f1"
 val ktorVersion = "1.6.3"
-val dusseldorfKtorVersion = "2.1.6.3-bbb6831"
+val dusseldorfKtorVersion = "3.1.6.3-bf04e18"
 val jsonassertVersion = "1.5.0"
 val orgJsonVersion = "20210307"
 val mockkVersion = "1.12.0"
@@ -32,7 +32,6 @@ dependencies {
     implementation("io.ktor:ktor-client-jackson:$ktorVersion")
     implementation("io.ktor:ktor-jackson:$ktorVersion")
     implementation("org.json:json:$orgJsonVersion")
-
 
     testImplementation ("org.skyscreamer:jsonassert:$jsonassertVersion")
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junitJupiterVersion")
