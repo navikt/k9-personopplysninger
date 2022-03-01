@@ -7,7 +7,7 @@ val ktorVersion = "1.6.7"
 val dusseldorfKtorVersion = "3.1.6.7-8665877"
 val jsonassertVersion = "1.5.0"
 val orgJsonVersion = "20211205"
-val mockkVersion = "1.12.2"
+val mockkVersion = "1.12.3"
 val assertjVersion = "3.21.0"
 
 
