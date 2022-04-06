@@ -2,19 +2,18 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 val junitJupiterVersion = "5.8.2"
-val k9rapidVersion = "1.20210920084849-2ac86f1"
-val ktorVersion = "1.6.7"
-val dusseldorfKtorVersion = "3.1.6.7-8665877"
+val k9rapidVersion = "1.20220406090141-f40e84a"
+val ktorVersion = "1.6.8"
+val dusseldorfKtorVersion = "3.1.6.8-248832c"
 val jsonassertVersion = "1.5.0"
-val orgJsonVersion = "20211205"
-val mockkVersion = "1.12.2"
-val assertjVersion = "3.21.0"
-
+val orgJsonVersion = "20220320"
+val mockkVersion = "1.12.3"
+val assertjVersion = "3.22.0"
 
 val mainClass = "no.nav.omsorgspenger.AppKt"
 
 plugins {
-    kotlin("jvm") version "1.6.10"
+    kotlin("jvm") version "1.6.20"
     id("com.github.johnrengelman.shadow") version "7.1.2"
 }
 
@@ -42,7 +41,6 @@ dependencies {
     }
     testImplementation("org.assertj:assertj-core:$assertjVersion")
 
-
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junitJupiterVersion")
 }
 
@@ -52,7 +50,7 @@ repositories {
         name = "GitHubPackages"
         url = uri("https://maven.pkg.github.com/navikt/k9-rapid")
         credentials {
-            username = project.findProperty("gpr.user") as String? ?: System.getenv("GITHUB_USERNAME")
+            username = project.findProperty("gpr.user") as String? ?: "k9-personopplysninger"
             password = project.findProperty("gpr.key") as String? ?: System.getenv("GITHUB_TOKEN")
         }
     }
@@ -89,7 +87,7 @@ tasks {
     }
 
     withType<Wrapper> {
-        gradleVersion = "7.3.3"
+        gradleVersion = "7.4.2"
     }
 
 }
