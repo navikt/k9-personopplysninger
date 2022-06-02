@@ -239,7 +239,7 @@ internal class HentPersonopplysningerTest(
         rapid.sendTestMessage(behovssekvens2)
 
         assertEquals(1, rapid.inspektør.size)
-        assertEquals(rapid.inspektør.message(0).get("@id").asText(), id2)
+        assertEquals(rapid.inspektør.message(0).get("@behovssekvensId").asText(), id2)
     }
 
     internal companion object {
