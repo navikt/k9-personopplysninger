@@ -29,7 +29,6 @@ dependencies {
     implementation("no.nav.helse:dusseldorf-ktor-core:$dusseldorfKtorVersion")
     implementation("no.nav.helse:dusseldorf-ktor-client:$dusseldorfKtorVersion")
     implementation("no.nav.helse:dusseldorf-ktor-jackson:$dusseldorfKtorVersion")
-    implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
     implementation("org.json:json:$orgJsonVersion")
 
     testImplementation ("org.skyscreamer:jsonassert:$jsonassertVersion")

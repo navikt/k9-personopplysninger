@@ -12,16 +12,19 @@ private const val pdlApiMockPath = "/"
 
 private fun WireMockServer.stubPdlApiHentPerson(): WireMockServer {
     WireMock.stubFor(
-            WireMock.post(WireMock
-                    .urlPathMatching(".*$pdlApiMockPath.*"))
-                    .withHeader("Authorization", containing("Bearer"))
-                    .withHeader("Content-Type", equalTo("application/json"))
-                    .withRequestBody(matchingJsonPath("$.variables.identer", containing("01019911111")))
-                    .willReturn(
-                            WireMock.aResponse()
-                                    .withStatus(200)
-                                    .withHeader("Content-Type", "application/json")
-                                    .withBody("""
+        WireMock.post(
+            WireMock
+                .urlPathMatching(".*$pdlApiMockPath.*")
+        )
+            .withHeader("Authorization", containing("Bearer"))
+            .withHeader("Content-Type", equalTo("application/json"))
+            .withRequestBody(matchingJsonPath("$.variables.identer", containing("01019911111")))
+            .willReturn(
+                WireMock.aResponse()
+                    .withStatus(200)
+                    .withHeader("Content-Type", "application/json")
+                    .withBody(
+                        """
                                     {
                                         "data": {
                                             "hentPersonBolk": [
@@ -63,8 +66,9 @@ private fun WireMockServer.stubPdlApiHentPerson(): WireMockServer {
                                             ]
                                         }
                                     }
-                            """.trimIndent())
+                            """.trimIndent()
                     )
+            )
     )
 
     return this
@@ -72,16 +76,19 @@ private fun WireMockServer.stubPdlApiHentPerson(): WireMockServer {
 
 private fun WireMockServer.stubPdlApiHentAnnenPerson(): WireMockServer {
     WireMock.stubFor(
-            WireMock.post(WireMock
-                    .urlPathMatching(".*$pdlApiMockPath.*"))
-                    .withHeader("Authorization", containing("Bearer"))
-                    .withHeader("Content-Type", equalTo("application/json"))
-                    .withRequestBody(matchingJsonPath("$.variables.identer", containing("01019011111")))
-                    .willReturn(
-                            WireMock.aResponse()
-                                    .withStatus(200)
-                                    .withHeader("Content-Type", "application/json")
-                                    .withBody("""
+        WireMock.post(
+            WireMock
+                .urlPathMatching(".*$pdlApiMockPath.*")
+        )
+            .withHeader("Authorization", containing("Bearer"))
+            .withHeader("Content-Type", equalTo("application/json"))
+            .withRequestBody(matchingJsonPath("$.variables.identer", containing("01019011111")))
+            .willReturn(
+                WireMock.aResponse()
+                    .withStatus(200)
+                    .withHeader("Content-Type", "application/json")
+                    .withBody(
+                        """
                                         {
                                             "data": {
                                                 "hentPersonBolk": [
@@ -123,8 +130,9 @@ private fun WireMockServer.stubPdlApiHentAnnenPerson(): WireMockServer {
                                                 ]
                                             }
                                         }
-                            """.trimIndent())
+                            """.trimIndent()
                     )
+            )
     )
 
     return this
@@ -132,16 +140,19 @@ private fun WireMockServer.stubPdlApiHentAnnenPerson(): WireMockServer {
 
 private fun WireMockServer.stubPdlApiPersonUtenPersonInfo(): WireMockServer {
     WireMock.stubFor(
-            WireMock.post(WireMock
-                    .urlPathMatching(".*$pdlApiMockPath.*"))
-                    .withHeader("Authorization", containing("Bearer"))
-                    .withHeader("Content-Type", equalTo("application/json"))
-                    .withRequestBody(matchingJsonPath("$.variables.identer", containing("21108424238")))
-                    .willReturn(
-                            WireMock.aResponse()
-                                    .withStatus(200)
-                                    .withHeader("Content-Type", "application/json")
-                                    .withBody("""
+        WireMock.post(
+            WireMock
+                .urlPathMatching(".*$pdlApiMockPath.*")
+        )
+            .withHeader("Authorization", containing("Bearer"))
+            .withHeader("Content-Type", equalTo("application/json"))
+            .withRequestBody(matchingJsonPath("$.variables.identer", containing("21108424238")))
+            .willReturn(
+                WireMock.aResponse()
+                    .withStatus(200)
+                    .withHeader("Content-Type", "application/json")
+                    .withBody(
+                        """
                                         {
                                           "data": {
                                             "hentPersonBolk": [
@@ -174,8 +185,8 @@ private fun WireMockServer.stubPdlApiPersonUtenPersonInfo(): WireMockServer {
                                           }
                                         }
                                     """.trimIndent()
-                                    )
                     )
+            )
     )
 
     return this
@@ -183,17 +194,20 @@ private fun WireMockServer.stubPdlApiPersonUtenPersonInfo(): WireMockServer {
 
 private fun WireMockServer.stubPdlApiToPersonerEnPersonUtenPersonInfo(): WireMockServer {
     WireMock.stubFor(
-            WireMock.post(WireMock
-                    .urlPathMatching(".*$pdlApiMockPath.*"))
-                    .withHeader("Authorization", containing("Bearer"))
-                    .withHeader("Content-Type", equalTo("application/json"))
-                    .withRequestBody(matchingJsonPath("$.variables.identer", containing("21108424239")))
-                    .withRequestBody(matchingJsonPath("$.variables.identer", containing("15098422273")))
-                    .willReturn(
-                            WireMock.aResponse()
-                                    .withStatus(200)
-                                    .withHeader("Content-Type", "application/json")
-                                    .withBody("""
+        WireMock.post(
+            WireMock
+                .urlPathMatching(".*$pdlApiMockPath.*")
+        )
+            .withHeader("Authorization", containing("Bearer"))
+            .withHeader("Content-Type", equalTo("application/json"))
+            .withRequestBody(matchingJsonPath("$.variables.identer", containing("21108424239")))
+            .withRequestBody(matchingJsonPath("$.variables.identer", containing("15098422273")))
+            .willReturn(
+                WireMock.aResponse()
+                    .withStatus(200)
+                    .withHeader("Content-Type", "application/json")
+                    .withBody(
+                        """
                                         {
                                           "data": {
                                             "hentPersonBolk": [
@@ -263,8 +277,8 @@ private fun WireMockServer.stubPdlApiToPersonerEnPersonUtenPersonInfo(): WireMoc
                                           }
                                         }
                                     """.trimIndent()
-                                    )
                     )
+            )
     )
 
     return this
@@ -272,16 +286,19 @@ private fun WireMockServer.stubPdlApiToPersonerEnPersonUtenPersonInfo(): WireMoc
 
 private fun WireMockServer.stubPdlApiPartialInfo(): WireMockServer {
     WireMock.stubFor(
-            WireMock.post(WireMock
-                    .urlPathMatching(".*$pdlApiMockPath.*"))
-                    .withHeader("Authorization", containing("Bearer"))
-                    .withHeader("Content-Type", equalTo("application/json"))
-                    .withRequestBody(matchingJsonPath("$.variables.identer", containing("123123")))
-                    .willReturn(
-                            WireMock.aResponse()
-                                    .withStatus(200)
-                                    .withHeader("Content-Type", "application/json")
-                                    .withBody("""
+        WireMock.post(
+            WireMock
+                .urlPathMatching(".*$pdlApiMockPath.*")
+        )
+            .withHeader("Authorization", containing("Bearer"))
+            .withHeader("Content-Type", equalTo("application/json"))
+            .withRequestBody(matchingJsonPath("$.variables.identer", containing("123123")))
+            .willReturn(
+                WireMock.aResponse()
+                    .withStatus(200)
+                    .withHeader("Content-Type", "application/json")
+                    .withBody(
+                        """
                                         {
                                           "data": {
                                             "hentPersonBolk": [
@@ -314,8 +331,9 @@ private fun WireMockServer.stubPdlApiPartialInfo(): WireMockServer {
                                             ]
                                           }
                                         }
-                            """.trimIndent())
+                            """.trimIndent()
                     )
+            )
     )
 
     return this
@@ -323,16 +341,19 @@ private fun WireMockServer.stubPdlApiPartialInfo(): WireMockServer {
 
 private fun WireMockServer.stubPdlApiHentPersonError(): WireMockServer {
     WireMock.stubFor(
-            WireMock.post(WireMock
-                    .urlPathMatching(".*$pdlApiMockPath.*"))
-                    .withHeader("Authorization", containing("Bearer"))
-                    .withHeader("Content-Type", equalTo("application/json"))
-                    .withRequestBody(matchingJsonPath("$.variables.identer", containing("404")))
-                    .willReturn(
-                            WireMock.aResponse()
-                                    .withStatus(200)
-                                    .withHeader("Content-Type", "application/json")
-                                    .withBody("""
+        WireMock.post(
+            WireMock
+                .urlPathMatching(".*$pdlApiMockPath.*")
+        )
+            .withHeader("Authorization", containing("Bearer"))
+            .withHeader("Content-Type", equalTo("application/json"))
+            .withRequestBody(matchingJsonPath("$.variables.identer", containing("404")))
+            .willReturn(
+                WireMock.aResponse()
+                    .withStatus(200)
+                    .withHeader("Content-Type", "application/json")
+                    .withBody(
+                        """
                                 {
                                   "errors": [
                                     {
@@ -357,8 +378,9 @@ private fun WireMockServer.stubPdlApiHentPersonError(): WireMockServer {
                                     "hentIdenterBolk": null
                                   }
                                 }
-                            """.trimIndent())
+                            """.trimIndent()
                     )
+            )
     )
 
     return this
@@ -366,17 +388,20 @@ private fun WireMockServer.stubPdlApiHentPersonError(): WireMockServer {
 
 private fun WireMockServer.stubPdlApiHentPersonBolk(): WireMockServer {
     WireMock.stubFor(
-            WireMock.post(WireMock
-                    .urlPathMatching(".*$pdlApiMockPath.*"))
-                    .withHeader("Authorization", containing("Bearer"))
-                    .withHeader("Content-Type", equalTo("application/json"))
-                    .withRequestBody(matchingJsonPath("$.variables.identer", containing("12345678910")))
-                    .withRequestBody(matchingJsonPath("$.variables.identer", containing("12345678911")))
-                    .willReturn(
-                            WireMock.aResponse()
-                                    .withStatus(200)
-                                    .withHeader("Content-Type", "application/json")
-                                    .withBody("""
+        WireMock.post(
+            WireMock
+                .urlPathMatching(".*$pdlApiMockPath.*")
+        )
+            .withHeader("Authorization", containing("Bearer"))
+            .withHeader("Content-Type", equalTo("application/json"))
+            .withRequestBody(matchingJsonPath("$.variables.identer", containing("12345678910")))
+            .withRequestBody(matchingJsonPath("$.variables.identer", containing("12345678911")))
+            .willReturn(
+                WireMock.aResponse()
+                    .withStatus(200)
+                    .withHeader("Content-Type", "application/json")
+                    .withBody(
+                        """
                                         {
                                             "data": {
                                                 "hentPersonBolk": [
@@ -434,8 +459,9 @@ private fun WireMockServer.stubPdlApiHentPersonBolk(): WireMockServer {
                                                 ]
                                             }
                                         }
-                            """.trimIndent())
+                            """.trimIndent()
                     )
+            )
     )
 
     return this
@@ -443,27 +469,42 @@ private fun WireMockServer.stubPdlApiHentPersonBolk(): WireMockServer {
 
 private fun WireMockServer.stubPdlApiServerErrorResponse(): WireMockServer {
     WireMock.stubFor(
-            WireMock.post(WireMock
-                    .urlPathMatching(".*$pdlApiMockPath.*"))
-                    .withHeader("Authorization", containing("Bearer"))
-                    .withHeader("Content-Type", equalTo("application/json"))
-                    .withRequestBody(matchingJsonPath("$.variables.identer", containing("500")))
-                    .willReturn(
-                            WireMock.aResponse()
-                                    .withStatus(500)
-                    )
+        WireMock.post(
+            WireMock
+                .urlPathMatching(".*$pdlApiMockPath.*")
+        )
+            .withHeader("Authorization", containing("Bearer"))
+            .withHeader("Content-Type", equalTo("application/json"))
+            .withRequestBody(matchingJsonPath("$.variables.identer", containing("500")))
+            .willReturn(
+                WireMock.aResponse()
+                    .withStatus(500)
+            )
     )
 
     return this
 }
 
+private fun WireMockServer.mockPdlPing(): WireMockServer {
+    WireMock.stubFor(
+        WireMock.options(
+            WireMock
+                .urlPathMatching(".*$pdlApiMockPath.*")
+        )
+            .withHeader("Authorization", WireMock.containing("Bearer e"))
+            .willReturn(WireMock.aResponse().withStatus(200))
+    )
+    return this
+}
+
 internal fun WireMockServer.stubPdlApi() = stubPdlApiHentPerson()
-        .stubPdlApiHentAnnenPerson()
-        .stubPdlApiHentPersonError()
-        .stubPdlApiHentPersonBolk()
-        .stubPdlApiServerErrorResponse()
-        .stubPdlApiPartialInfo()
-        .stubPdlApiPersonUtenPersonInfo()
-        .stubPdlApiToPersonerEnPersonUtenPersonInfo()
+    .stubPdlApiHentAnnenPerson()
+    .stubPdlApiHentPersonError()
+    .stubPdlApiHentPersonBolk()
+    .stubPdlApiServerErrorResponse()
+    .stubPdlApiPartialInfo()
+    .stubPdlApiPersonUtenPersonInfo()
+    .stubPdlApiToPersonerEnPersonUtenPersonInfo()
+    .mockPdlPing()
 
 internal fun WireMockServer.pdlApiBaseUrl() = baseUrl() + pdlApiBasePath
