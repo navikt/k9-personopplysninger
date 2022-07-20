@@ -82,10 +82,11 @@ internal class PdlClient(
             UnHealthy("PdlClient", "Feil: ${it.message}")
         }
     )
+
     private companion object {
         private val secureLogger = LoggerFactory.getLogger("tjenestekall")
         private val objectMapper: ObjectMapper = jacksonObjectMapper()
-        .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-        .registerModule(JavaTimeModule())
+            .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+            .registerModule(JavaTimeModule())
     }
 }
