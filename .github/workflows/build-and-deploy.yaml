@@ -55,6 +55,7 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v3
       - name: Deploy til dev-gcp
         uses: nais/deploy/actions/deploy@v1
         env:
@@ -69,6 +70,7 @@ jobs:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/master' && !contains(github.event.head_commit.message, 'ci skip')
     steps:
+      - uses: actions/checkout@v3
       - name: Deploy til prod-gcp
         uses: nais/deploy/actions/deploy@v1
         env:
