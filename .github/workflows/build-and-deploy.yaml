@@ -16,7 +16,7 @@ env:
   BASE_IMAGE: ghcr.io/${{ github.repository }}
 
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -32,23 +32,29 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Sett image for docker & deploy
+        run: |
+          echo "IMAGE=ghcr.io/${GITHUB_REPOSITORY}:$(date "+%Y.%m.%d")-$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+          echo "::set-output IMAGE=${IMAGE}"
+
       - uses: docker/login-action@v2
         with:
             registry: ghcr.io
             username: ${{ github.actor }}
             password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Sett tag for docker
-        run: echo "TAG=$(date "+%Y.%m.%d")-$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+      - uses: docker/build-push-action@v3
+        with:
+          context: .
+          push: true
+          tags: ${IMAGE}
 
-      - name: Bygg & last opp Docker image
-        run: |
-          docker build --pull --tag ${BASE_IMAGE}:${TAG} --tag ${BASE_IMAGE}:latest .
-          docker push ${BASE_IMAGE} --all-tags
-
-      - name: Sett image for nais deploy
-        run: echo "IMAGE=${BASE_IMAGE}:${TAG}" >> $GITHUB_ENV
-
+  deploy-to-dev:
+    needs: build-and-deploy
+    runs-on: ubuntu-latest
+    env:
+      IMAGE: ${{ jobs.build.outputs.IMAGE }}
+    steps:
       - name: Deploy til dev-gcp
         uses: nais/deploy/actions/deploy@v1
         env:
@@ -57,8 +63,14 @@ jobs:
           RESOURCE: nais/naiserator.yaml
           VARS: nais/dev-gcp.json
 
+  deploy-to-prod:
+    needs: deploy-to-dev
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master' && !contains(github.event.head_commit.message, 'ci skip')
+    env:
+      IMAGE: ${{ jobs.build.outputs.IMAGE }}
+    steps:
       - name: Deploy til prod-gcp
-        if: github.ref == 'refs/heads/master' && !contains(github.event.head_commit.message, 'ci skip')
         uses: nais/deploy/actions/deploy@v1
         env:
           APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
