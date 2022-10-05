@@ -44,7 +44,7 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${IMAGE}
+          tags: ${{ env.IMAGE }}
 
       - name: Sett image for deploy
         id: image
