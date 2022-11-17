@@ -2,9 +2,9 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 val junitJupiterVersion = "5.9.1"
-val k9rapidVersion = "1.20220923124637-e21a27c"
-val ktorVersion = "2.1.2"
-val dusseldorfKtorVersion = "3.2.1.2-ce40a5b"
+val k9rapidVersion = "1.20221117062635-380517f"
+val ktorVersion = "2.1.3"
+val dusseldorfKtorVersion = "3.2.1.3-bd71b5a"
 val jsonassertVersion = "1.5.1"
 val orgJsonVersion = "20220924"
 val mockkVersion = "1.13.2"
@@ -13,7 +13,7 @@ val assertjVersion = "3.23.1"
 val mainClass = "no.nav.omsorgspenger.AppKt"
 
 plugins {
-    kotlin("jvm") version "1.7.20"
+    kotlin("jvm") version "1.7.21"
     id("com.github.johnrengelman.shadow") version "7.1.2"
 }
 
