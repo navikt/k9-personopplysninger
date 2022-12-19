@@ -84,27 +84,30 @@ jobs:
         with:
           credentials_json: ${{ secrets.SALSA_CREDENTIALS }}
 
+      - name: Set IMAGE for slsa
+        run: echo "IMAGE=${{needs.test-and-build.outputs.build-image}}" >> $GITHUB_ENV
+
       - name: Provenance, upload and sign attestation
         uses: nais/salsa@v0.7
         with:
           key: ${{ secrets.SALSA_KMS_KEY }}
           registry: ghcr.io
           github_token: ${{ secrets.GITHUB_TOKEN }}
-        env:
-          IMAGE: ${{ needs.test-and-build.outputs.build-image }}
+          image: ${{ env.IMAGE }}
+          image_digest: $(docker inspect ${{ env.IMAGE }} | jq -r '.[0].RepoDigests[0]' | cut -d'@' -f2)
 
-  deploy-to-dev-gcp:
-    runs-on: ubuntu-latest
-    needs: test-and-build
-    steps:
-      - uses: actions/checkout@v3
-      - uses: nais/deploy/actions/deploy@v1
-        env:
-          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
-          CLUSTER: dev-gcp
-          RESOURCE: nais/naiserator.yaml
-          VARS: nais/dev-gcp.json
-          IMAGE: ${{ needs.test-and-build.outputs.build-image }}
+#  deploy-to-dev-gcp:
+#    runs-on: ubuntu-latest
+#    needs: test-and-build
+#    steps:
+#      - uses: actions/checkout@v3
+#      - uses: nais/deploy/actions/deploy@v1
+#        env:
+#          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
+#          CLUSTER: dev-gcp
+#          RESOURCE: nais/naiserator.yaml
+#          VARS: nais/dev-gcp.json
+#          IMAGE: ${{ needs.test-and-build.outputs.build-image }}
 
   deploy-to-prod-gcp:
     if: github.ref == 'refs/heads/master' && !contains(github.event.head_commit.message, 'ci skip')
