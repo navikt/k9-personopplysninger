@@ -90,8 +90,8 @@ jobs:
           key: ${{ secrets.SALSA_KMS_KEY }}
           registry: ${{ secrets.GITHUB_TOKEN }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          image: ${{ needs.test-and-build.outputs.build-image }}
-          image_digest: null
+        env:
+          IMAGE: ${{ needs.test-and-build.outputs.build-image }}
 
   deploy-to-dev-gcp:
     runs-on: ubuntu-latest
