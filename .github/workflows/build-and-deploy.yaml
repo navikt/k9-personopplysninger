@@ -61,10 +61,15 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Run Trivy on docker image
+      - name: Generate tarball from docker image
+        run: |
+          docker pull ${{ needs.test-and-build.outputs.build-image }}
+          docker save -o local-image.tar ${{ needs.test-and-build.outputs.build-image }}
+
+      - name: Run Trivy on tarball
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: ${{ needs.test-and-build.outputs.build-image }}
+          image-ref: /github/workspace/local-image.tar
           format: 'sarif'
           output: 'trivy-results.sarif'
 
