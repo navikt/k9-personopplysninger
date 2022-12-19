@@ -55,6 +55,12 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Run Trivy on docker image
         uses: aquasecurity/trivy-action@master
         with:
