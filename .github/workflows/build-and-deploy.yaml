@@ -112,7 +112,7 @@ jobs:
   deploy-to-prod-gcp:
     if: github.ref == 'refs/heads/master' && !contains(github.event.head_commit.message, 'ci skip')
     runs-on: ubuntu-latest
-    needs: [ test-and-build, deploy-to-dev-gcp ]
+    needs: [ test-and-build ]
     steps:
       - uses: actions/checkout@v3
       - uses: nais/deploy/actions/deploy@v1
