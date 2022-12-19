@@ -88,7 +88,7 @@ jobs:
         uses: nais/salsa@v0.7
         with:
           key: ${{ secrets.SALSA_KMS_KEY }}
-          registry: ${{ secrets.GITHUB_TOKEN }}
+          registry: ghcr.io
           github_token: ${{ secrets.GITHUB_TOKEN }}
         env:
           IMAGE: ${{ needs.test-and-build.outputs.build-image }}
