@@ -31,9 +31,9 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Sett IMAGe for docker & github output
+      - name: Sett IMAGE for docker & deploy
         id: generate-id
-        run: echo "IMAGE=ghcr.io/${GITHUB_REPOSITORY}:$(date "+%Y.%m.%d")-$(git rev-parse --short HEAD)" >> $GITHUB_ENV, $GITHUB_OUTPUT
+        run: echo "IMAGE=ghcr.io/${GITHUB_REPOSITORY}:$(date "+%Y.%m.%d")-$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
 
       - uses: docker/login-action@v2
         with:
@@ -46,7 +46,7 @@ jobs:
           context: .
           push: true
           pull: true
-          tags: ${{ env.IMAGE }}
+          tags: ${{ steps.generate-id.outputs.IMAGE }}
 
   deploy-to-dev-gcp:
     runs-on: ubuntu-latest
