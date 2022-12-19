@@ -84,14 +84,17 @@ jobs:
         with:
           credentials_json: ${{ secrets.SALSA_CREDENTIALS }}
 
+      - name: Set docker image & digest in github env for salsa
+        run: |
+          echo "IMAGE_DIGEST=(docker inspect ghcr.io/navikt/omsorgsdager:latest | jq -r '.[0].RepoDigests[0]' | cut -d'@' -f2)" >> $GITHUB_ENV
+          echo "IMAGE=${{ needs.test-and-build.outputs.build-image }}" >> $GITHUB_ENV
+
       - name: Provenance, upload and sign attestation
         uses: nais/salsa@v0.7
         with:
           key: ${{ secrets.SALSA_KMS_KEY }}
           registry: ${{ secrets.GITHUB_TOKEN }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
-        env:
-          IMAGE: ${{ needs.test-and-build.outputs.build-image }}
 
   deploy-to-dev-gcp:
     runs-on: ubuntu-latest
