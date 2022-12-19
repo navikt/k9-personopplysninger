@@ -51,8 +51,6 @@ jobs:
   deploy-to-dev-gcp:
     runs-on: ubuntu-latest
     needs: test-and-build
-    with:
-      build-image: ${{ needs.test-and-build.outputs.build-image }}
     steps:
       - uses: nais/deploy/actions/deploy@v1
         env:
@@ -66,8 +64,6 @@ jobs:
     if: github.ref == 'refs/heads/master' && !contains(github.event.head_commit.message, 'ci skip')
     runs-on: ubuntu-latest
     needs: [ test-and-build, deploy-to-dev-gcp ]
-    with:
-      build-image: ${{ needs.test-and-build.outputs.build-image }}
     steps:
       - name: Run Trivy on docker image
         uses: aquasecurity/trivy-action@master
