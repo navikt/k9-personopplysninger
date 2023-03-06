@@ -1,10 +1,6 @@
 {
   "cluster": "dev-gcp",
-  "azureTenant": "trygdeetaten.no",
   "kafkaPool": "nav-dev",
-  "ingresses": [
-    "https://k9-personopplysninger.dev.intern.nav.no"
-  ],
   "externalHosts": [
     "pdl-api.dev-fss-pub.nais.io"
   ],
