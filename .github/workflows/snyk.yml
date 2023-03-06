@@ -4,6 +4,9 @@ on:
     branches: master
     paths:
       - 'build.gradle.kts'
+    paths-ignore:
+      - '**.md'
+      - '**.MD'
   schedule:
     - cron:  '0 0 * * 1'
   workflow_dispatch:
