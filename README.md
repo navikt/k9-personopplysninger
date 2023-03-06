@@ -1,5 +1,10 @@
 k9-personopplysninger
 ================
+[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=navikt_k9-personopplysninger&metric=reliability_rating)](https://sonarcloud.io/summary/new_code?id=navikt_k9-personopplysninger)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=navikt_k9-personopplysninger&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=navikt_k9-personopplysninger)
+[![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=navikt_k9-personopplysninger&metric=ncloc)](https://sonarcloud.io/summary/new_code?id=navikt_k9-personopplysninger)
+[![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=navikt_k9-personopplysninger&metric=duplicated_lines_density)](https://sonarcloud.io/summary/new_code?id=navikt_k9-personopplysninger)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=navikt_k9-personopplysninger&metric=coverage)](https://sonarcloud.io/summary/new_code?id=navikt_k9-personopplysninger)
 
 Tjänsten bygger på <a href="https://github.com/navikt/k9-rapid">k9-rapid</a> och har två rivers i bruk som löser behov från omsorgspenger-rammemeldinger.
 
