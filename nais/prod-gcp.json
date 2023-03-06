@@ -1,10 +1,6 @@
 {
   "cluster": "prod-gcp",
-  "azureTenant": "nav.no",
   "kafkaPool": "nav-prod",
-  "ingresses": [
-    "https://k9-personopplysninger.intern.nav.no"
-  ],
   "externalHosts": [
     "pdl-api.prod-fss-pub.nais.io"
   ],
