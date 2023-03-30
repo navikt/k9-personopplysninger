@@ -31,7 +31,8 @@ data class PdlErrorLocation(
 
 data class PdlErrorExtension(
         val code: String?,
-        val classification: String
+        val classification: String?,
+        val details: String?
 )
 
 fun hentPersonInfoQuery(fnr: Set<String>): PersonInfoGraphqlQuery {
