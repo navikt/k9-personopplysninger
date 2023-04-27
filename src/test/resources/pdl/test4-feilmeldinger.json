@@ -1,0 +1,50 @@
+{
+  "data": {
+    "hentPersonBolk": [
+      {
+        "ident": "123123",
+        "person": {
+          "navn": [
+            {
+              "fornavn": "STOR",
+              "mellomnavn": "MELLAN",
+              "etternavn": "MASKIN"
+            }
+          ],
+          "foedsel": [
+            {
+              "foedselsdato": "1999-01-01"
+            }
+          ],
+          "adressebeskyttelse": []
+        },
+        "code": "ok"
+      }
+    ],
+    "hentIdenterBolk": [
+      {
+        "ident": "123123",
+        "identer": [],
+        "code": "not_found"
+      }
+    ]
+  },
+  "errors": [
+    {
+      "message": "Ukjent problem oppsto, feilen har blitt logget og følges opp",
+      "locations": [
+        {
+          "line": 2,
+          "column": 5
+        }
+      ],
+      "path": [
+        "hentPersonBolk", "ident"
+      ],
+      "extensions": {
+        "code": "server_error",
+        "classification": "ExecutionAborted"
+      }
+    }
+  ]
+}
