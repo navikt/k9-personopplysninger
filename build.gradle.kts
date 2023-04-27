@@ -4,7 +4,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 val junitJupiterVersion = "5.9.2"
 val k9rapidVersion = "1.20230426095941-a725ff7"
 val ktorVersion = "2.2.4"
-val dusseldorfKtorVersion = "3.2.2.4-98ccf55"
+val dusseldorfKtorVersion = "3.2.3.0-f979367"
 val jsonassertVersion = "1.5.1"
 val orgJsonVersion = "20230227"
 val mockkVersion = "1.13.5"
