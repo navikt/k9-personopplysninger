@@ -26,4 +26,4 @@ jobs:
              :
           gradle-build-configuration: |-
             compileClasspath
-          token: ${{ secrets.READER_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
