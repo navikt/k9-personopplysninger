@@ -26,5 +26,4 @@ jobs:
              :
           gradle-build-configuration: |-
             compileClasspath
-          include-build-environment: true
           token: ${{ secrets.READER_TOKEN }}
