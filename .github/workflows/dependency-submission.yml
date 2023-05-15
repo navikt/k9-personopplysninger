@@ -19,6 +19,7 @@ jobs:
         with:
           java-version: 17
           distribution: corretto
+          cache: gradle
       - uses: mikepenz/gradle-dependency-submission@aa82af7186ba17eb630a7d47c840ba8a3185ac91
         with:
           fail-on-error: true
@@ -26,4 +27,4 @@ jobs:
              :
           gradle-build-configuration: |-
             compileClasspath
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GHAS_TOKEN }}
