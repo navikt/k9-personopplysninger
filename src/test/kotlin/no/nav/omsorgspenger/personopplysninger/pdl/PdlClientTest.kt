@@ -1,8 +1,12 @@
 package no.nav.omsorgspenger.personopplysninger.pdl
 
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import io.mockk.coEvery
+import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import no.nav.omsorgspenger.ApplicationContext
 import no.nav.omsorgspenger.testutils.ApplicationContextExtension
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertThrows
@@ -54,5 +58,27 @@ internal class PdlClientTest(
         assert(response.data.hentPersonBolk.toString().contains("1111"))
     }
 
+    @Test
+    fun `Håndterer ukjente meldinger og felter i errors response fra PDL`() {
+        val response = runBlocking {
+            pdlMock.getPersonInfo(setOf("11"), "feilTest1")
+        }
+
+        assertNotNull(response)
+        assertEquals("ok", response.data.hentPersonBolk?.first()?.code)
+    }
+
+
+    private companion object {
+        private val objectMapper = jacksonObjectMapper()
+
+        private val pdlMock = mockk<PdlClient>().also {
+            val feilTest1 = objectMapper.readValue(
+                this::class.java.getResource("/pdl/test4-feilmeldinger.json").readText(Charsets.UTF_8),
+                HentPdlResponse::class.java)
+
+            coEvery { it.getPersonInfo(any(), eq("feilTest1")) }.returns(feilTest1)
+        }
+    }
 
 }
