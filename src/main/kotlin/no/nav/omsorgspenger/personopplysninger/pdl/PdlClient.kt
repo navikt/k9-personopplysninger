@@ -20,7 +20,6 @@ import no.nav.helse.dusseldorf.oauth2.client.AccessTokenClient
 import no.nav.helse.dusseldorf.oauth2.client.CachedAccessTokenClient
 import no.nav.k9.rapid.river.Environment
 import no.nav.k9.rapid.river.hentRequiredEnv
-import org.json.JSONObject
 import org.slf4j.LoggerFactory
 
 internal class PdlClient(
@@ -45,7 +44,6 @@ internal class PdlClient(
             "HTTP ${httpStatusCode.value} fra $pdlBaseUrl"
         }
 
-        secureLogger.info("PdlResponse[Person]=${JSONObject(response)}")
         return objectMapper.readValue(response)
 
     }
@@ -62,8 +60,6 @@ internal class PdlClient(
         require(httpStatusCode.isSuccess()) {
             "HTTP ${httpStatusCode.value} fra $pdlBaseUrl"
         }
-
-        secureLogger.info("PdlResponse[Relasjon]=${JSONObject(response)}")
 
         return objectMapper.readValue(response)
     }
