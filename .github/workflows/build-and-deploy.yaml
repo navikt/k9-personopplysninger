@@ -1,4 +1,4 @@
-name: Bygg og deploy
+name: Test, bygg, scan og deploy
 
 on:
   push:
@@ -14,13 +14,13 @@ on:
 
 jobs:
   test:
-    uses: sif-gha-workflows/.github/workflows/gradle/test.yml@main
+    uses: sif-gha-workflows/.github/workflows/gradle-test.yml@main
     secrets: inherit
     with:
       readertoken: false
 
   build:
-    uses: sif-gha-workflows/.github/workflows/gradle/build.yml@main
+    uses: sif-gha-workflows/.github/workflows/gradle-build.yml@main
     secrets: inherit
     with:
       team: omsorgspenger
@@ -29,14 +29,14 @@ jobs:
 
   scan:
     needs: build
-    uses: sif-gha-workflows/.github/workflows/gradle/dep-security.yml@main
+    uses: sif-gha-workflows/.github/workflows/gradle-dep-security.yml@main
     secrets: inherit
     with:
       image: ${{ needs.build.outputs.image }}
 
   deploy:
     needs: [ build, scan ]
-    uses: sif-gha-workflows/.github/workflows/gradle/deploy.yml@main
+    uses: sif-gha-workflows/.github/workflows/gradle-deploy.yml@main
     secrets: inherit
     with:
       image: ${{ needs.build.outputs.image }}
