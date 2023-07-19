@@ -15,6 +15,7 @@ jobs:
   sonar:
     uses: navikt/sif-gha-workflows/.github/workflows/gradle-sonar.yml@main
     permissions:
+      contents: read
       pull-requests: read
     secrets: inherit
     with:
@@ -22,6 +23,11 @@ jobs:
 
   codeql:
     uses: navikt/sif-gha-workflows/.github/workflows/codeql-analysis.yml@main
+    permissions:
+      actions: read
+      contents: read
+      pull-requests: read
+      security-events: write
     secrets: inherit
     with:
       language: java
@@ -30,12 +36,17 @@ jobs:
 
   test:
     uses: navikt/sif-gha-workflows/.github/workflows/gradle-test.yml@main
+    permissions:
+      contents: read
     secrets: inherit
     with:
       readertoken: false
 
   build:
     uses: navikt/sif-gha-workflows/.github/workflows/gradle-build.yml@main
+    permissions:
+      contents: write
+      id-token: write
     secrets: inherit
     with:
       team: omsorgspenger
@@ -45,6 +56,8 @@ jobs:
   deploy:
     needs: [ test, build ]
     uses: navikt/sif-gha-workflows/.github/workflows/gradle-deploy.yml@main
+    permissions:
+      contents: read
     secrets: inherit
     with:
       image: ${{ needs.build.outputs.image }}
