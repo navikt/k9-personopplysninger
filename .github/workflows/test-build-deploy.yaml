@@ -14,6 +14,8 @@ on:
 jobs:
   sonar:
     uses: navikt/sif-gha-workflows/.github/workflows/gradle-sonar.yml@main
+    permissions:
+      pull-requests: read
     secrets: inherit
     with:
       readertoken: false
