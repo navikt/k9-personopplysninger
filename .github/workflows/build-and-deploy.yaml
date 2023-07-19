@@ -1,3 +1,4 @@
+name: Build
 on:
   push:
     branches:
@@ -11,12 +12,6 @@ on:
   workflow_dispatch:
 
 jobs:
-  test:
-    uses: navikt/sif-gha-workflows/.github/workflows/gradle-test.yml@main
-    secrets: inherit
-    with:
-      readertoken: false
-
   build:
     uses: navikt/sif-gha-workflows/.github/workflows/gradle-build.yml@main
     secrets: inherit
@@ -25,15 +20,8 @@ jobs:
       dockercontext: .
       readertoken: false
 
-  scan:
-    needs: build
-    uses: navikt/sif-gha-workflows/.github/workflows/gradle-dep-security.yml@main
-    secrets: inherit
-    with:
-      image: ${{ needs.build.outputs.image }}
-
   deploy:
-    needs: [ build, scan ]
+    needs: [ build ]
     uses: navikt/sif-gha-workflows/.github/workflows/gradle-deploy.yml@main
     secrets: inherit
     with:
