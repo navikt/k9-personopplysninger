@@ -30,7 +30,7 @@ jobs:
       security-events: write
     secrets: inherit
     with:
-      language: java
+      readertoken: false
       package-command: './gradlew clean build -x test'
       branch: master
 
