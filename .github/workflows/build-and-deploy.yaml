@@ -1,5 +1,3 @@
-name: Test, bygg, scan og deploy
-
 on:
   push:
     branches:
