@@ -12,8 +12,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  test:
-    uses: navikt/sif-gha-workflows/.github/workflows/gradle-test.yml@main
+  sonar:
+    uses: navikt/sif-gha-workflows/.github/workflows/gradle-sonar.yml@main
     secrets: inherit
     with:
       readertoken: false
@@ -25,6 +25,12 @@ jobs:
       language: java
       package-command: './gradlew clean build -x test'
       branch: master
+
+  test:
+    uses: navikt/sif-gha-workflows/.github/workflows/gradle-test.yml@main
+    secrets: inherit
+    with:
+      readertoken: false
 
   build:
     uses: navikt/sif-gha-workflows/.github/workflows/gradle-build.yml@main
