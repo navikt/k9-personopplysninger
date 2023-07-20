@@ -1,0 +1,18 @@
+name: Github Container Registry Package Cleaner
+on:
+  workflow_dispatch:
+    inputs:
+      versionstokeep:
+        type: string
+        required: false
+        default: 2
+
+jobs:
+  steps:
+  runs-on: ubuntu-latest
+    clean:
+      - uses: actions/delete-package-versions@v4
+      with:
+        package-name: ${{ env.GITHUB_REPOSITORY }}
+        package-type: maven
+        min-versions-to-keep: ${{ inputs.versionstokeep }}
