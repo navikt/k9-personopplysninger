@@ -2,10 +2,10 @@ name: Github Container Registry Package Cleaner
 on:
   workflow_dispatch:
     inputs:
-      versionstokeep:
+      versionstodelete:
         type: string
         required: false
-        default: 2
+        default: "2"
 
 jobs:
   clean:
@@ -13,6 +13,6 @@ jobs:
     steps:
       - uses: actions/delete-package-versions@v4
         with:
-          package-name: ${{ env.GITHUB_REPOSITORY }}
+          package-name: k9-personopplysninger
           package-type: maven
-          min-versions-to-keep: ${{ inputs.versionstokeep }}
+          num-old-versions-to-delete: ${{ inputs.versionstodelete }}
