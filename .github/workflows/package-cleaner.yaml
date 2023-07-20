@@ -5,6 +5,7 @@ on:
       versionstokeep:
         type: string
         required: true
+        default: '5'
       package:
         type: string
         required: true
@@ -12,11 +13,11 @@ on:
 jobs:
   clean:
     runs-on: ubuntu-latest
+    permissions:
+      packages: write
     steps:
-      - uses: GitHubSecurityLab/actions-permissions/monitor@v1
-        with:
-          config: ${{ vars.PERMISSIONS_CONFIG }}
-      - uses: actions/delete-package-versions@v4
+      - name: Deleting all but ${{ inputs.versionstokeep }} from ${{ inputs.package }}
+        uses: actions/delete-package-versions@v4
         with:
           package-name: ${{ inputs.package }}
           package-type: container
