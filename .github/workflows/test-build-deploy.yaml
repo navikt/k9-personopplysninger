@@ -66,7 +66,6 @@ jobs:
       team: omsorgspenger
 
   deploy:
-    if: !contains(github.event.head_commit.message, 'ci skip')
     needs: [ test, build ]
     uses: navikt/sif-gha-workflows/.github/workflows/gradle-deploy.yml@main
     permissions:
