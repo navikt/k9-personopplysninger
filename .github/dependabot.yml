@@ -12,7 +12,7 @@ updates:
       interval: daily
     groups:
       github:
-        patterns: 
+        patterns:
           - "*"
 
   - package-ecosystem: gradle
@@ -21,8 +21,10 @@ updates:
       interval: daily
     groups:
       gradle:
-        patterns: 
+        patterns:
           - "*"
+        exclude-patterns:
+          - "*dusseldorf*"
     registries:
       - k9-rapid
 
