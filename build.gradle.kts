@@ -1,10 +1,9 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 val junitJupiterVersion = "5.10.1"
 val k9rapidVersion = "1.20231002100147-90c2022"
-val ktorVersion = "2.3.6"
-val dusseldorfKtorVersion = "4.1.1"
+val ktorVersion = "2.3.7"
+val dusseldorfKtorVersion = "4.1.3"
 val jsonassertVersion = "1.5.1"
 val orgJsonVersion = "20231013"
 val mockkVersion = "1.13.8"
@@ -13,15 +12,16 @@ val assertjVersion = "3.24.2"
 val mainClass = "no.nav.omsorgspenger.AppKt"
 
 plugins {
-    kotlin("jvm") version "1.9.20"
+    kotlin("jvm") version "1.9.21"
     id("com.github.johnrengelman.shadow") version "8.1.1"
     id("org.sonarqube") version "4.4.1.3373"
     jacoco
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(17))
+    }
 }
 
 dependencies {
@@ -59,19 +59,12 @@ repositories {
 }
 
 tasks {
-    withType<KotlinCompile> {
-        kotlinOptions.jvmTarget = "17"
-    }
-
-    named<KotlinCompile>("compileTestKotlin") {
-        kotlinOptions.jvmTarget = "17"
-    }
-
     withType<Test> {
         useJUnitPlatform()
         testLogging {
             events("passed", "skipped", "failed")
         }
+        finalizedBy(jacocoTestReport) // report is always generated after tests run
     }
 
     withType<ShadowJar> {
@@ -87,20 +80,16 @@ tasks {
     }
 
     withType<Wrapper> {
-        gradleVersion = "8.2"
+        gradleVersion = "8.5"
     }
-}
 
-tasks.jacocoTestReport {
-    dependsOn(tasks.test) // tests are required to run before generating the report
-    reports {
-        xml.required.set(true)
-        csv.required.set(false)
+    withType<JacocoReport> {
+        dependsOn(test) // tests are required to run before generating the report
+        reports {
+            xml.required.set(true)
+            csv.required.set(false)
+        }
     }
-}
-
-tasks.test {
-    finalizedBy(tasks.jacocoTestReport) // report is always generated after tests run
 }
 
 sonarqube {
