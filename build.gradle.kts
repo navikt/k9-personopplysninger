@@ -20,7 +20,7 @@ plugins {
 
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(17))
+        languageVersion.set(JavaLanguageVersion.of(21))
     }
 }
 
@@ -80,14 +80,14 @@ tasks {
     }
 
     withType<Wrapper> {
-        gradleVersion = "8.5"
+        gradleVersion = "8.6"
     }
 
     withType<JacocoReport> {
         dependsOn(test) // tests are required to run before generating the report
         reports {
-            xml.required.set(true)
-            csv.required.set(false)
+            xml.required = true
+            csv.required = true
         }
     }
 }
