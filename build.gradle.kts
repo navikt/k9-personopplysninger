@@ -86,8 +86,8 @@ tasks {
     withType<JacocoReport> {
         dependsOn(test) // tests are required to run before generating the report
         reports {
-            xml.required.set(true)
-            csv.required.set(false)
+            xml.required = true
+            csv.required = true
         }
     }
 }
