@@ -36,6 +36,7 @@ internal class PdlClient(
             builder.header(HttpHeaders.Authorization, getAuthorizationHeader())
             builder.header("Nav-Call-Id", correlationId)
             builder.header("TEMA", "OMS")
+            builder.header("Behandlingsnummer", OMSORGSPENGER_RAMMEMELDING) 
             builder.accept(ContentType.Application.Json)
             builder.jsonBody(objectMapper.writeValueAsString(hentPersonInfoQuery(ident)))
         }.readTextOrThrow()
@@ -53,6 +54,7 @@ internal class PdlClient(
             builder.header(HttpHeaders.Authorization, getAuthorizationHeader())
             builder.header("Nav-Call-Id", correlationId)
             builder.header("TEMA", "OMS")
+            builder.header("Behandlingsnummer", OMSORGSPENGER_RAMMEMELDING) 
             builder.accept(ContentType.Application.Json)
             builder.jsonBody(objectMapper.writeValueAsString(hentRelasjonInfoQuery(ident)))
         }.readTextOrThrow()
@@ -81,6 +83,9 @@ internal class PdlClient(
     )
 
     private companion object {
+        // https://behandlingskatalog.intern.nav.no/process/purpose/PLEIE_OMSORGS_OG_OPPLAERINGSPENGER/4a1c9324-9c5e-4ddb-ac7f-c55d1dcd9736
+        const val OMSORGSPENGER_RAMMEMELDING = "B142"
+        
         private val secureLogger = LoggerFactory.getLogger("tjenestekall")
         private val objectMapper: ObjectMapper = jacksonObjectMapper()
             .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
