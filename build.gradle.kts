@@ -6,7 +6,7 @@ val ktorVersion = "2.3.12"
 val dusseldorfKtorVersion = "5.0.3"
 val jsonassertVersion = "1.5.3"
 val orgJsonVersion = "20240303"
-val mockkVersion = "1.13.11"
+val mockkVersion = "1.13.12"
 val assertjVersion = "3.26.3"
 
 val mainClass = "no.nav.omsorgspenger.AppKt"
