@@ -1,4 +1,4 @@
-FROM gcr.io/distroless/java21-debian12:latest
+FROM gcr.io/distroless/java21-debian12:nonroot
 LABEL org.opencontainers.image.source=https://github.com/navikt/k9-personopplysninger
 
 WORKDIR /app
