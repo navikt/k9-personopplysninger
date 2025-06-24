@@ -2,7 +2,7 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 val junitJupiterVersion = "5.13.1"
 val junitPlatformVersion = "1.13.1"
-val k9rapidVersion = "1.20250616113614-9760e08"
+val k9rapidVersion = "1.20250623153253-de9393d"
 val ktorVersion = "3.1.0"
 val dusseldorfKtorVersion = "7.0.0"
 val jsonassertVersion = "1.5.3"
@@ -13,7 +13,7 @@ val assertjVersion = "3.27.3"
 val mainClass = "no.nav.omsorgspenger.AppKt"
 
 plugins {
-    kotlin("jvm") version "2.1.10"
+    kotlin("jvm") version "2.2.0"
     id("com.github.johnrengelman.shadow") version "8.1.1"
     id("org.sonarqube") version "6.2.0.5505"
     jacoco
