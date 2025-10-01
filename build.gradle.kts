@@ -1,7 +1,7 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
-val junitJupiterVersion = "5.14.0"
-val junitPlatformVersion = "1.14.0"
+val junitJupiterVersion = "6.0.0"
+val junitPlatformVersion = "6.0.0"
 val k9rapidVersion = "1.20250916105515-e0bf24e"
 val ktorVersion = "3.2.3"
 val dusseldorfKtorVersion = "7.0.4"
