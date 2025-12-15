@@ -6,7 +6,7 @@ val ktorVersion = "3.2.3"
 val dusseldorfKtorVersion = "7.0.6"
 val jsonassertVersion = "1.5.3"
 val orgJsonVersion = "20250517"
-val mockkVersion = "1.14.6"
+val mockkVersion = "1.14.7"
 val assertjVersion = "3.27.6"
 
 val mainClass = "no.nav.omsorgspenger.AppKt"
@@ -14,7 +14,7 @@ val mainClass = "no.nav.omsorgspenger.AppKt"
 plugins {
     kotlin("jvm") version "2.2.21"
     id("com.github.johnrengelman.shadow") version "8.1.1"
-    id("org.sonarqube") version "7.2.0.6526"
+    id("org.sonarqube") version "7.2.1.6560"
     jacoco
 }
 
