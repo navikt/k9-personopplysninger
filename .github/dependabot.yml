@@ -41,3 +41,5 @@ updates:
     directory: "/"
     schedule:
       interval: daily
+    registries:
+      - ghcr
