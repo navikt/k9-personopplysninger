@@ -1,26 +1,27 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 val junitVersion = "6.0.2"
-val k9rapidVersion = "1.20251128134720-c92d062"
-val ktorVersion = "3.2.3"
+val k9rapidVersion = "1.20260128091601-a9f852d"
+val ktorVersion = "3.4.0"
 val dusseldorfKtorVersion = "7.0.6"
 val jsonassertVersion = "1.5.3"
 val orgJsonVersion = "20251224"
 val mockkVersion = "1.14.9"
 val assertjVersion = "3.27.7"
+val okhttpVersion = "5.3.2"
 
 val mainClass = "no.nav.omsorgspenger.AppKt"
 
 plugins {
     kotlin("jvm") version "2.3.0"
-    id("com.github.johnrengelman.shadow") version "8.1.1"
+    id("com.gradleup.shadow") version "9.3.1"
     id("org.sonarqube") version "7.2.2.6593"
     jacoco
 }
 
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(21))
+        languageVersion.set(JavaLanguageVersion.of(25))
     }
 }
 
@@ -32,6 +33,8 @@ dependencies {
     implementation("no.nav.helse:dusseldorf-ktor-client:$dusseldorfKtorVersion")
     implementation("no.nav.helse:dusseldorf-ktor-jackson:$dusseldorfKtorVersion")
     implementation("org.json:json:$orgJsonVersion")
+    implementation(platform("com.squareup.okhttp3:okhttp-bom:$okhttpVersion"))
+    implementation("com.squareup.okhttp3:okhttp-jvm")
 
     testImplementation ("org.skyscreamer:jsonassert:$jsonassertVersion")
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junitVersion")
@@ -79,10 +82,6 @@ tasks {
                 )
             )
         }
-    }
-
-    withType<Wrapper> {
-        gradleVersion = "8.6"
     }
 
     withType<JacocoReport> {
