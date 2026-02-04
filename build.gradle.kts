@@ -8,6 +8,7 @@ val jsonassertVersion = "1.5.3"
 val orgJsonVersion = "20251224"
 val mockkVersion = "1.14.9"
 val assertjVersion = "3.27.7"
+val okhttpVersion = "5.3.2"
 
 val mainClass = "no.nav.omsorgspenger.AppKt"
 
@@ -32,7 +33,8 @@ dependencies {
     implementation("no.nav.helse:dusseldorf-ktor-client:$dusseldorfKtorVersion")
     implementation("no.nav.helse:dusseldorf-ktor-jackson:$dusseldorfKtorVersion")
     implementation("org.json:json:$orgJsonVersion")
-    implementation("com.squareup.okhttp3:okhttp:5.3.2")
+    implementation(platform("com.squareup.okhttp3:okhttp-bom:$okhttpVersion"))
+    implementation("com.squareup.okhttp3:okhttp-jvm")
 
     testImplementation ("org.skyscreamer:jsonassert:$jsonassertVersion")
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junitVersion")
