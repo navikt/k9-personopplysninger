@@ -3,4 +3,4 @@ LABEL org.opencontainers.image.source=https://github.com/navikt/k9-personopplysn
 
 WORKDIR /app
 COPY build/libs/app.jar /app/app.jar
-CMD [ "app.jar" ]
+CMD [ "-jar", "app.jar" ]
