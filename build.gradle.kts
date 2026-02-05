@@ -10,7 +10,7 @@ val mockkVersion = "1.14.9"
 val assertjVersion = "3.27.7"
 val okhttpVersion = "5.3.2"
 
-val mainClass = "no.nav.omsorgspenger.AppKt"
+val appMainClass = "no.nav.omsorgspenger.AppKt"
 
 plugins {
     kotlin("jvm") version "2.3.0"
@@ -78,7 +78,7 @@ tasks {
         manifest {
             attributes(
                 mapOf(
-                    "Main-Class" to mainClass
+                    "Main-Class" to appMainClass
                 )
             )
         }
