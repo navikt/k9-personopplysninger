@@ -1,5 +1,7 @@
 package no.nav.omsorgspenger
 
+import io.ktor.http.ContentType
+import io.ktor.http.withCharset
 import io.ktor.serialization.jackson.*
 import io.ktor.server.application.*
 import io.ktor.server.plugins.contentnegotiation.*
@@ -14,7 +16,7 @@ import no.nav.helse.dusseldorf.ktor.health.UnHealthy
 
 internal fun Application.k9Personopplysninger(applicationContext: ApplicationContext) {
     install(ContentNegotiation) {
-        jackson()
+        jackson(contentType = ContentType.Application.Json.withCharset(Charsets.UTF_8))
     }
 
     val healthService = HealthService(
