@@ -16,14 +16,14 @@ internal class RelasjonMediatorTest {
     fun `Mor med barn + man med barn från tidigare førhållanden`() {
         val resultat = runBlocking {
             relasjonMediator.hentRelasjoner(
-                identitetsnummer = "08027622446",
-                til = setOf("24021350083", "29087623775"),
+                identitetsnummer = "24420167209",
+                til = setOf("26470392885", "14510058187"),
                 correlationId = "familie1"
             )
         }
 
-        val barn = "{relasjon=BARN, identitetsnummer=24021350083, borSammen=true}"
-        val far = "{relasjon=INGEN, identitetsnummer=29087623775, borSammen=false}"
+        val barn = "{relasjon=BARN, identitetsnummer=26470392885, borSammen=true}"
+        val far = "{relasjon=INGEN, identitetsnummer=14510058187, borSammen=false}"
 
         assert(resultat.toString().contains(barn)) { "Forventet: $barn i resultat: \n $resultat" }
         assert(resultat.toString().contains(far)) { "Forventet: $far i resultat: \n $resultat" }
@@ -33,14 +33,14 @@ internal class RelasjonMediatorTest {
     fun `Mor med barn på delt bosted og far på kontaktadresse`() {
         val resultat = runBlocking {
             relasjonMediator.hentRelasjoner(
-                identitetsnummer = "08027622446",
-                til = setOf("24021350083", "29087623775"),
+                identitetsnummer = "24420167209",
+                til = setOf("26470392885", "14510058187"),
                 correlationId = "familie2"
             )
         }
 
-        val barn = "{relasjon=BARN, identitetsnummer=24021350083, borSammen=true}"
-        val far = "{relasjon=INGEN, identitetsnummer=29087623775, borSammen=true}"
+        val barn = "{relasjon=BARN, identitetsnummer=26470392885, borSammen=true}"
+        val far = "{relasjon=INGEN, identitetsnummer=14510058187, borSammen=true}"
 
         assert(resultat.toString().contains(barn)) { "Forventet: $barn i resultat: \n $resultat" }
         assert(resultat.toString().contains(far)) { "Forventet: $far i resultat: \n $resultat" }
@@ -50,15 +50,15 @@ internal class RelasjonMediatorTest {
     fun `Mor med et barn på delt bosted, et på postadresse i fritt format og far på oppholdsadresse`() {
         val resultat = runBlocking {
             relasjonMediator.hentRelasjoner(
-                identitetsnummer = "08027622446",
-                til = setOf("24021350083", "24021350084", "29087623775"),
+                identitetsnummer = "24420167209",
+                til = setOf("26470392885", "15490357286", "14510058187"),
                 correlationId = "familie3"
             )
         }
 
-        val barn1 = "{relasjon=BARN, identitetsnummer=24021350083, borSammen=true}"
-        val barn2 = "{relasjon=BARN, identitetsnummer=24021350084, borSammen=true}"
-        val far = "{relasjon=INGEN, identitetsnummer=29087623775, borSammen=true}"
+        val barn1 = "{relasjon=BARN, identitetsnummer=26470392885, borSammen=true}"
+        val barn2 = "{relasjon=BARN, identitetsnummer=15490357286, borSammen=true}"
+        val far = "{relasjon=INGEN, identitetsnummer=14510058187, borSammen=true}"
 
         assert(resultat.toString().contains(barn1)) { "Forventet: $barn1 i resultat: \n $resultat" }
         assert(resultat.toString().contains(barn2)) { "Forventet: $barn2 i resultat: \n $resultat" }

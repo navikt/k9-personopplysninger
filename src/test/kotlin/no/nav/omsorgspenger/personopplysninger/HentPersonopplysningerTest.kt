@@ -173,12 +173,12 @@ internal class HentPersonopplysningerTest(
 
     @Test
     fun `Sender med tom lösning på person utan alla behovsattribut`() {
-        val (_, behovssekvens) = nyBehovsSekvens(setOf("21108424238"))
+        val (_, behovssekvens) = nyBehovsSekvens(setOf("14430175875"))
         rapid.sendTestMessage(behovssekvens)
 
         val resultat = rapid.inspektør.message(0)["@løsninger"]["HentPersonopplysninger"]["personopplysninger"].toString()
 
-        assertFalse(resultat.contains("21108424238"))
+        assertFalse(resultat.contains("14430175875"))
     }
 
     @Test

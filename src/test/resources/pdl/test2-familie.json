@@ -2,11 +2,11 @@
   "data": {
     "hentPersonBolk": [
       {
-        "ident": "08027622446",
+        "ident": "24420167209",
         "person": {
           "forelderBarnRelasjon": [
             {
-              "relatertPersonsIdent": "24021350083",
+              "relatertPersonsIdent": "26470392885",
               "relatertPersonsRolle": "BARN",
               "minRolleForPerson": "MOR"
             }
@@ -24,11 +24,11 @@
         "code": "ok"
       },
       {
-        "ident": "24021350083",
+        "ident": "26470392885",
         "person": {
           "forelderBarnRelasjon": [
             {
-              "relatertPersonsIdent": "08027622446",
+              "relatertPersonsIdent": "24420167209",
               "relatertPersonsRolle": "MOR",
               "minRolleForPerson": "BARN"
             }
@@ -53,21 +53,21 @@
         "code": "ok"
       },
       {
-        "ident": "29087623775",
+        "ident": "14510058187",
         "person": {
           "forelderBarnRelasjon": [
             {
-              "relatertPersonsIdent": "01041450025",
+              "relatertPersonsIdent": "17420373147",
               "relatertPersonsRolle": "BARN",
               "minRolleForPerson": "FAR"
             },
             {
-              "relatertPersonsIdent": "11081350126",
+              "relatertPersonsIdent": "18410162721",
               "relatertPersonsRolle": "BARN",
               "minRolleForPerson": "FAR"
             },
             {
-              "relatertPersonsIdent": "27121950125",
+              "relatertPersonsIdent": "11410183759",
               "relatertPersonsRolle": "BARN",
               "minRolleForPerson": "FAR"
             }

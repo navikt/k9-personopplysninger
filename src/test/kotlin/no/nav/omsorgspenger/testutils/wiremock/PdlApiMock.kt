@@ -146,7 +146,7 @@ private fun WireMockServer.stubPdlApiPersonUtenPersonInfo(): WireMockServer {
         )
             .withHeader("Authorization", containing("Bearer"))
             .withHeader("Content-Type", equalTo("application/json"))
-            .withRequestBody(matchingJsonPath("$.variables.identer", containing("21108424238")))
+            .withRequestBody(matchingJsonPath("$.variables.identer", containing("14430175875")))
             .willReturn(
                 WireMock.aResponse()
                     .withStatus(200)
@@ -157,7 +157,7 @@ private fun WireMockServer.stubPdlApiPersonUtenPersonInfo(): WireMockServer {
                                           "data": {
                                             "hentPersonBolk": [
                                               {
-                                                "ident": "21108424238",
+                                                "ident": "14430175875",
                                                 "person": {
                                                   "navn": [],
                                                   "foedsel": [],
@@ -168,10 +168,10 @@ private fun WireMockServer.stubPdlApiPersonUtenPersonInfo(): WireMockServer {
                                             ],
                                             "hentIdenterBolk": [
                                               {
-                                                "ident": "21108424238",
+                                                "ident": "14430175875",
                                                 "identer": [
                                                   {
-                                                    "ident": "21108424238",
+                                                    "ident": "14430175875",
                                                     "gruppe": "FOLKEREGISTERIDENT"
                                                   },
                                                   {
