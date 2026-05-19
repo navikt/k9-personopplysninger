@@ -2,13 +2,14 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 val junitVersion = "6.0.3"
 val k9rapidVersion = "1.20260508090506-edc9608"
-val ktorVersion = "3.4.0"
+val ktorVersion = "3.4.2"
 val dusseldorfKtorVersion = "7.0.8"
 val jsonassertVersion = "1.5.3"
 val orgJsonVersion = "20251224"
 val mockkVersion = "1.14.9"
 val assertjVersion = "3.27.7"
 val okhttpVersion = "5.3.2"
+val nettyVersion = "4.2.13.Final"
 
 val appMainClass = "no.nav.omsorgspenger.AppKt"
 
@@ -35,6 +36,7 @@ dependencies {
     implementation("org.json:json:$orgJsonVersion")
     implementation(platform("com.squareup.okhttp3:okhttp-bom:$okhttpVersion"))
     implementation("com.squareup.okhttp3:okhttp-jvm")
+    implementation(platform("io.netty:netty-bom:$nettyVersion"))
 
     testImplementation ("org.skyscreamer:jsonassert:$jsonassertVersion")
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junitVersion")
@@ -46,6 +48,7 @@ dependencies {
     testImplementation("io.ktor:ktor-server-test-host-jvm:$ktorVersion") {
         exclude(group = "org.eclipse.jetty")
     }
+    testImplementation("io.ktor:ktor-test-dispatcher-jvm:$ktorVersion")
 
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junitVersion")
 }
