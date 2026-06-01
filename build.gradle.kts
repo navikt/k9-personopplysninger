@@ -1,7 +1,7 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
-val junitVersion = "6.0.3"
-val k9rapidVersion = "1.20260508090506-edc9608"
+val junitVersion = "6.1.0"
+val k9rapidVersion = "1.20260521084156-d8354aa"
 val ktorVersion = "3.4.2"
 val dusseldorfKtorVersion = "7.0.8"
 val jsonassertVersion = "1.5.3"
@@ -9,7 +9,7 @@ val orgJsonVersion = "20251224"
 val mockkVersion = "1.14.9"
 val assertjVersion = "3.27.7"
 val okhttpVersion = "5.3.2"
-val nettyVersion = "4.2.13.Final"
+val nettyVersion = "4.2.14.Final"
 
 val appMainClass = "no.nav.omsorgspenger.AppKt"
 
