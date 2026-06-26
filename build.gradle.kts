@@ -1,9 +1,9 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 val junitVersion = "6.1.0"
-val k9rapidVersion = "1.20260521084156-d8354aa"
-val ktorVersion = "3.4.2"
-val dusseldorfKtorVersion = "7.0.9"
+val k9rapidVersion = "1.20260624143359-8f812c8"
+val ktorVersion = "3.5.0"
+val dusseldorfKtorVersion = "8.0.0"
 val jsonassertVersion = "1.5.3"
 val orgJsonVersion = "20260522"
 val mockkVersion = "1.14.11"
