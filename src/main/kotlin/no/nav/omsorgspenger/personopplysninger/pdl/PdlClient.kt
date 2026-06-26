@@ -66,7 +66,7 @@ internal class PdlClient(
         return objectMapper.readValue(response)
     }
 
-    private fun getAuthorizationHeader() = cachedAccessTokenClient.getAccessToken(pdlScope).asAuthoriationHeader()
+    private fun getAuthorizationHeader() = cachedAccessTokenClient.getClientCredentialsAccessToken(pdlScope).asAuthoriationHeader()
 
     override suspend fun check() = pdlBaseUrl.httpOptions { builder ->
         builder.header(HttpHeaders.Authorization, getAuthorizationHeader())
