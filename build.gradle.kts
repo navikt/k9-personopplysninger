@@ -9,7 +9,7 @@ val orgJsonVersion = "20260719"
 val mockkVersion = "1.14.11"
 val assertjVersion = "3.27.7"
 val okhttpVersion = "5.4.0"
-val nettyVersion = "4.2.16.Final"
+val nettyVersion = "4.2.17.Final"
 
 val appMainClass = "no.nav.omsorgspenger.AppKt"
 
